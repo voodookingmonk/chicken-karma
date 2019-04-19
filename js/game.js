@@ -1,6 +1,7 @@
+const interval = 3000;
+let time_now = new Date().getTime();
 
-
-var BootScene = new Phaser.Class({
+let BootScene = new Phaser.Class({
 
     Extends: Phaser.Scene,
 
@@ -21,6 +22,8 @@ var BootScene = new Phaser.Class({
         
         // our two characters
         this.load.spritesheet('player', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+		this.load.spritesheet('npc', 'assets/mushroom16_16.png', { frameWidth: 16, frameHeight: 16 });
+	
     },
 
     create: function ()
@@ -30,7 +33,7 @@ var BootScene = new Phaser.Class({
     }
 });
 
-var WorldScene = new Phaser.Class({
+let WorldScene = new Phaser.Class({
 
     Extends: Phaser.Scene,
 
@@ -49,14 +52,14 @@ var WorldScene = new Phaser.Class({
     create: function ()
     {
         // create the map
-        var map = this.make.tilemap({ key: 'map' });
+        let map = this.make.tilemap({ key: 'map' });
         
         // first parameter is the name of the tilemap in tiled
-        var tiles = map.addTilesetImage('spritesheet', 'tiles');
+        let tiles = map.addTilesetImage('spritesheet', 'tiles');
         
         // creating the layers
-        var grass = map.createStaticLayer('Grass', tiles, 0, 0);
-        var obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
+        let grass = map.createStaticLayer('Grass', tiles, 0, 0);
+        let obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
         
         // make all tiles in obstacles collidable
         obstacles.setCollisionByExclusion([-1]);
@@ -91,6 +94,21 @@ var WorldScene = new Phaser.Class({
 
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
+		this.NPC = this.physics.add.sprite(150, 75, 'npc', 6);
+		
+		/*for (let i = 0; i < 10; i++){
+			let x = Phaser.Math.RND.between(50, 150);
+			let y = Phaser.Math.RND.between(120, 300);
+			this.NPC_healer = this.physics.add.sprite(x, y, 'npc', 6);
+			//this.physics.add.collider(this.player, this.NPC_healer);
+		}*/
+		
+		/*this.NPC_healer = this.physics.add.sprite(150, 200, 'npc', 32);		
+		this.NPC_healer.setCollideWorldBounds(true);
+		this.NPC_healer.collidable(false);*/
+		
+		//let healer = this.physics.add.sprite(150, 200, 'npc', 6);		
+		
         
         // don't go out of the map
         this.physics.world.bounds.width = map.widthInPixels;
@@ -104,29 +122,36 @@ var WorldScene = new Phaser.Class({
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.player);
         this.cameras.main.roundPixels = true; // avoid tile bleed
-    
+		
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
         
         // where the enemies will be
-        this.spawns = this.physics.add.group({ classType: Phaser.GameObjects.Zone });
-        for(var i = 0; i < 30; i++) {
-            var x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-            var y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
-            // parameters are x, y, width, height
-            this.spawns.create(x, y, 20, 20);            
-        }        
+		//this.physics.add.collider(this.player, this.spawns);
         // add collider
-        this.physics.add.overlap(this.player, this.spawns, this.onMeetEnemy, false, this);
+        this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
+		//this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
+    },
+	onMeetNPC: function(player, zone) {    
+		
+		if (new Date().getTime() > (time_now + interval)){
+			time_now = new Date().getTime();
+			console.log(new Date().getTime() + "hello");
+		}
+	
+		
     },
     onMeetEnemy: function(player, zone) {        
         // we move the zone to some other location
-        zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-        zone.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
+        //zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
+        //zone.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
+		
         
         // shake the world
-        this.cameras.main.shake(300);
-        
+        //this.cameras.main.shake(50);
+		//console.log("Hello");
+		this.cameras.main.shake(50);
+		console.log("hello");
         // start battle 
     },
     update: function (time, delta)
@@ -182,7 +207,7 @@ var WorldScene = new Phaser.Class({
     
 });
 
-var config = {
+let config = {
     type: Phaser.AUTO,
     parent: 'content',
     width: 320,
@@ -201,4 +226,4 @@ var config = {
         WorldScene
     ]
 };
-var game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
