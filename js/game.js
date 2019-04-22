@@ -1,5 +1,7 @@
 const interval = 3000;
 let time_now = new Date().getTime();
+let NPC_time_now = new Date().getTime();
+let NPC_movement_direction = 0;
 
 let BootScene = new Phaser.Class({
 
@@ -22,7 +24,7 @@ let BootScene = new Phaser.Class({
         
         // our two characters
         this.load.spritesheet('player', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-		this.load.spritesheet('npc', 'assets/mushroom16_16.png', { frameWidth: 16, frameHeight: 16 });
+		this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
 	
     },
 
@@ -79,6 +81,7 @@ let WorldScene = new Phaser.Class({
             frameRate: 10,
             repeat: -1
         });
+		
         this.anims.create({
             key: 'up',
             frames: this.anims.generateFrameNumbers('player', { frames: [2, 8, 2, 14]}),
@@ -94,7 +97,7 @@ let WorldScene = new Phaser.Class({
 
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
-		this.NPC = this.physics.add.sprite(150, 75, 'npc', 6);
+		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
 		
 		/*for (let i = 0; i < 10; i++){
 			let x = Phaser.Math.RND.between(50, 150);
@@ -130,17 +133,91 @@ let WorldScene = new Phaser.Class({
 		//this.physics.add.collider(this.player, this.spawns);
         // add collider
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
+		
 		//this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
     },
-	onMeetNPC: function(player, zone) {    
+	onMeetNPC: function(player, NPC) {
+
+		this.checkDirection(player, NPC);
 		
 		if (new Date().getTime() > (time_now + interval)){
 			time_now = new Date().getTime();
-			console.log(new Date().getTime() + "hello");
+			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
 		}
 	
-		
     },
+	checkDirection: function(player, NPC){
+		
+		if ((player.x-NPC.x) < 0){
+			player.x -= 2;
+		} else {
+			player.x += 2;
+		}
+		
+		if ((player.y-NPC.y) < 0){
+			player.y -= 2;
+		} else {
+			player.y += 2;
+		}
+		
+		
+		/*if ((player.x-NPC.x) < 0){
+			console.log("A");
+			if ((player.y-NPC.y) < 0){
+				console.log("A1");
+			} else {
+				console.log("A2");
+			}
+		} else if ((player.x-NPC.x) > 0){
+			console.log("B");
+			if ((player.y-NPC.y) < 0){
+				console.log("B1");
+			} else {
+				console.log("B2");
+			}
+		}
+		
+		if ((player.y-NPC.y) < 0){
+			console.log("C");
+			if ((player.x-NPC.x) < 0){
+				console.log("C1");
+			} else {
+				console.log("C2");
+			}
+		} else if ((player.y-NPC.y) > 0){
+			console.log("D");
+			if ((player.x-NPC.x) < 0){
+				console.log("D1");
+			} else {
+				console.log("D2");
+			}
+		}*/
+		
+		
+		/*if ((player.x-NPC.x) < 0 && (player.y-NPC.y) < 0){
+			console.log("1"); // Ã¼leval vasakul
+		} else if ((player.x-NPC.x) < 0 && (player.y-NPC.y) > 0){
+			console.log("2"); // all vasakul
+			
+			player.x -= 5;
+		} else if ((player.x-NPC.x) > 0 && (player.y-NPC.y) < 0){
+			console.log("3"); // Ã¼leval paremal
+			
+			player.x += 5;
+			
+			
+		} else if ((player.x-NPC.x) > 0 && (player.y-NPC.y) > 0){
+			console.log("4"); // all paremal
+		}*/
+		
+		/*if ((player.y-NPC.y) < 0){
+			player.y -= 2;
+			player.x += 0;
+		} else { // alt poolt
+			player.y += 2;
+			player.x -= 0;
+		}*/
+	},
     onMeetEnemy: function(player, zone) {        
         // we move the zone to some other location
         //zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
@@ -157,6 +234,28 @@ let WorldScene = new Phaser.Class({
     update: function (time, delta)
     {
     //    this.controls.update(delta);
+	
+			// NPC roaming
+			
+		if (new Date().getTime() > (NPC_time_now + interval)){
+			if (NPC_movement_direction == 0){ NPC_movement_direction = 1; }
+			NPC_time_now = new Date().getTime();
+			if (NPC_movement_direction == 1){
+				this.NPC.body.setVelocityY(0);
+				this.NPC.body.setVelocityX(10);
+				NPC_movement_direction = 2;
+			} else if (NPC_movement_direction == 2){
+				this.NPC.body.setVelocityX(-10);
+				NPC_movement_direction = 3;
+			} else if (NPC_movement_direction == 3){
+				this.NPC.body.setVelocityX(0);
+				this.NPC.body.setVelocityY(10);
+				NPC_movement_direction = 4;
+			} else if (NPC_movement_direction == 4){
+				this.NPC.body.setVelocityY(-10);
+				NPC_movement_direction = 1;
+			}
+		}
     
         this.player.body.setVelocity(0);
 
@@ -203,6 +302,32 @@ let WorldScene = new Phaser.Class({
         {
             this.player.anims.stop();
         }
+		
+		// NPC roaming
+		
+		if (NPC_movement_direction == 1)
+        {
+            this.NPC.anims.play('up', true);
+        }
+        else if (NPC_movement_direction == 2)
+        {
+			this.NPC.anims.play('right', true);
+            this.NPC.flipX = false;
+        }
+		else if (NPC_movement_direction == 3)
+        {
+            this.NPC.anims.play('left', true);
+            this.NPC.flipX = true;
+        }
+        else if (NPC_movement_direction == 4)
+        {
+            this.NPC.anims.play('down', true);
+        }
+        else
+        {
+            this.NPC.anims.stop();
+        }
+		
     }
     
 });
