@@ -363,19 +363,19 @@ let WorldScene = new Phaser.Class({
 
 		// NPC roaming
 
-		if (NPC_movement_direction == 1)
+	if (NPC_movement_direction == 1)
         {
             this.NPC.anims.play('up', true);
         }
         else if (NPC_movement_direction == 2)
         {
-			this.NPC.anims.play('right', true);
+	    this.NPC.anims.play('right', true);
             this.NPC.flipX = false;
         }
-		else if (NPC_movement_direction == 3)
+	else if (NPC_movement_direction == 3)
         {
             this.NPC.anims.play('left', true);
-            this.NPC.flipX = true;
+            this.NPC.flipX = false;
         }
         else if (NPC_movement_direction == 4)
         {
