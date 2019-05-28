@@ -108,6 +108,7 @@ let WorldScene = new Phaser.Class({
     this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
     this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
     this.NPC3.visible = false;
+    this.NPC3.body.startFollow(this.player);
     scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
     scoreText.visible = false;
 
