@@ -5,7 +5,7 @@ let NPC_time_now = new Date().getTime();
 let NPC_movement_direction = 0;
 var scoreText;
 var liikumine = true;
-
+var test; //healthbar test
 
 
 let BootScene = new Phaser.Class({
@@ -29,11 +29,14 @@ let BootScene = new Phaser.Class({
 
         // our two characters
         this.load.spritesheet('player', 'assets/player.png', { frameWidth: 23, frameHeight: 35 });
-		this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-    this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-    this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+		    this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
 
-    },
+        //healthbar test:
+         this.load.image('mushroom', 'assets/mushroom16_16.png');
+
+ },
 
     create: function ()
     {
@@ -101,15 +104,26 @@ let WorldScene = new Phaser.Class({
             frameRate: 10,
             repeat: -1
         });
+        // HealthBar test
+
+        test = this.add.sprite(70, 230, 'mushroom');
+        test.fixedToCamera = true;
+        test.setScrollFactor(0);
+
+        //test.cameraOffset.setTo(20, 20);
+        var t = this.add.text(10, 220, "HealthBar: ", { font: "10px Arial", fill: "black", align: "center" });
+        t.fixedToCamera = true;
+        t.setScrollFactor(0);
+
 
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
-		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
-    this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
-    this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
-    this.NPC3.visible = false;
-    scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
-    scoreText.visible = false;
+    		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
+        this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
+        this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
+        this.NPC3.visible = false;
+        scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
+        scoreText.visible = false;
 
 		/*for (let i = 0; i < 10; i++){
 			let x = Phaser.Math.RND.between(50, 150);
@@ -375,7 +389,7 @@ let WorldScene = new Phaser.Class({
 		else if (NPC_movement_direction == 3)
         {
             this.NPC.anims.play('left', true);
-            this.NPC.flipX = true;
+            this.NPC.flipX = false;
         }
         else if (NPC_movement_direction == 4)
         {
