@@ -156,12 +156,13 @@ let WorldScene = new Phaser.Class({
   		if (new Date().getTime() > (time_now + interval)){
   			time_now = new Date().getTime();
   			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-        this.NPC3.visible = true;	
+        this.NPC3.visible = true;
+	this.NPC3.startFollow(this.player);
         scoreText = this.add.text(16, 16, 'Tere', { fontSize: '32px', fill: '#000' });
         scoreText.visible = true;
         liikumine = false;
   		}
-	    this.NPC3.startFollow(this.player);
+
 
       },
 
