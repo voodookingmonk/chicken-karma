@@ -107,8 +107,7 @@ let WorldScene = new Phaser.Class({
 		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
     this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
     this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
-    this.NPC3.visible = false;
-    this.NPC3.body.startFollow(this.player);
+    this.NPC3.visible = false;    
     scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
     scoreText.visible = false;
 
@@ -158,6 +157,7 @@ let WorldScene = new Phaser.Class({
   			time_now = new Date().getTime();
   			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
         this.NPC3.visible = true;
+	this.NPC3.physics.startFollow(this.player);
         scoreText = this.add.text(16, 16, 'Tere', { fontSize: '32px', fill: '#000' });
         scoreText.visible = true;
         liikumine = false;
