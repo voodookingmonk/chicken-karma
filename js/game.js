@@ -140,7 +140,7 @@ let WorldScene = new Phaser.Class({
         t.fixedToCamera = true;
         t.setScrollFactor(0);
 
-        
+
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
     		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
@@ -502,8 +502,8 @@ function health(bar){
 let config = {
     type: Phaser.AUTO,
     parent: 'content',
-    width: 1920,
-    height: 1080,
+    width: 320,
+    height: 240,
     zoom: 2,
     pixelArt: true,
     physics: {
