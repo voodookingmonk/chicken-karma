@@ -36,12 +36,6 @@ let BootScene = new Phaser.Class({
         this.load.tilemapTiledJSON('map', 'assets/map/map.json');
 
         // our two characters
-        /*
-        this.load.spritesheet('player', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-    		this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-        this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-        this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-        lisan vanad tagasi: */
         this.load.spritesheet('player', 'assets/player.png', { frameWidth: 23, frameHeight: 35 });
 		    this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
@@ -475,7 +469,7 @@ let WorldScene = new Phaser.Class({
 		else if (NPC_movement_direction == 3)
         {
             this.NPC.anims.play('left', true);
-            this.NPC.flipX = true;
+            this.NPC.flipX = false;
         }
         else if (NPC_movement_direction == 4)
         {
