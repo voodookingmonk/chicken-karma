@@ -7,6 +7,10 @@ var scoreText;
 var liikumine = true;
 var test; //healthbar test
 var HealthBar;
+let graphics;
+let bar;
+let bar2;
+var t;
 
 
 let BootScene = new Phaser.Class({
@@ -107,29 +111,25 @@ let WorldScene = new Phaser.Class({
         });
 
         // HealthBar test
-        //var bar = this.add.rectangle(50, 230, 150, 210, 0x6666ff);
-        let graphics = this.add.graphics();
-        var bar = new Phaser.Geom.Rectangle(65, 222, 70, 10);
+        graphics = this.add.graphics();
+        bar = new Phaser.Geom.Rectangle(65, 222, 70, 10);
+		    bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
         graphics.fillStyle(0xff3333);
         graphics.fillRectShape(bar);
         graphics.fixedToCamera = true;
         graphics.setScrollFactor(0);
 
-        test = this.add.sprite(20, 210, 'mushroom');
-        test.fixedToCamera = true;
-        test.setScrollFactor(0);
+		    console.log(bar.width);
+
+        //test = this.add.sprite(20, 210, 'mushroom');
+		    this.test = this.physics.add.sprite(70, 210, 'mushroom');
+        //test.fixedToCamera = true;
+        //test.setScrollFactor(0);
         //test.cameraOffset.setTo(20, 20);
 
-        var t = this.add.text(10, 220, "HealthBar: ", { font: "10px Arial", fill: "black", align: "center" });
+        t = this.add.text(10, 220, "HealthBar: ", { font: "10px Arial", fill: "black", align: "center" });
         t.fixedToCamera = true;
         t.setScrollFactor(0);
-
-        // Joonista kast: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/geom-rectangle/
-        /*var rect = new Phaser.Geom.Rectangle(50, 220, 50, 20);
-        graphics.fillStyle('0xRRGGBB', 0.5);   // color: 0xRRGGBB
-        graphics.fillRectShape(rect);
-        rect.fixedToCamera = true;
-        rect.setScrollFactor(0);*/
 
 
         // our player sprite created through the phycis system
@@ -176,9 +176,35 @@ let WorldScene = new Phaser.Class({
         // add collider
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
+		this.physics.add.overlap(this.player, this.test, this.killHealthBar, false, this);
 
 		//this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
     },
+
+	killHealthBar: function(player, test){
+
+		this.checkDirection(player, test);
+		//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
+
+		if(bar2.width < 70){
+			if (new Date().getTime() > (time_now + interval - 2500)){
+				time_now = new Date().getTime();
+				console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
+				bar2.width += 10;
+				console.log(bar2.width);
+				graphics = this.add.graphics();
+				graphics.fillRectShape(bar2);
+				graphics.fixedToCamera = true;
+				graphics.setScrollFactor(0);
+			}
+		}
+		else{
+			t = this.add.text(60, 100, "You dided man! ", { font: "30px Arial", fill: "red", align: "center" });
+			t.fixedToCamera = true;
+			t.setScrollFactor(0);
+		}
+	},
+
     onMeetNPC2: function(player, NPC2) {
 
   		this.checkDirection(player, NPC2);
@@ -309,8 +335,8 @@ let WorldScene = new Phaser.Class({
     //    this.controls.update(delta);
       //HealthBar
       //this.debug.geom(bar,'#0fffff');
-			// NPC roaming
 
+		// NPC roaming
 		if (new Date().getTime() > (NPC_time_now + interval)){
 			if (NPC_movement_direction == 0){ NPC_movement_direction = 1; }
 			NPC_time_now = new Date().getTime();
@@ -420,6 +446,14 @@ let WorldScene = new Phaser.Class({
     }
 
 });
+/*
+function health(bar){
+	$(document).on( "keydown", function( event ) {
+		if (e.which == 49){
+			bar.width -= 20;
+		}
+	});
+}*/
 
 let config = {
     type: Phaser.AUTO,
