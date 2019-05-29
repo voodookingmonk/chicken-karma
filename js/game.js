@@ -6,6 +6,7 @@ let NPC_movement_direction = 0;
 var scoreText;
 var liikumine = true;
 var test; //healthbar test
+var HealthBar;
 
 
 let BootScene = new Phaser.Class({
@@ -33,8 +34,8 @@ let BootScene = new Phaser.Class({
         this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
 
-        //healthbar test:
-         this.load.image('mushroom', 'assets/mushroom16_16.png');
+        //fixed to camera test:
+        this.load.image('mushroom', 'assets/mushroom16_16.png');
 
  },
 
@@ -104,16 +105,31 @@ let WorldScene = new Phaser.Class({
             frameRate: 10,
             repeat: -1
         });
-        // HealthBar test
 
-        test = this.add.sprite(70, 230, 'mushroom');
+        // HealthBar test
+        //var bar = this.add.rectangle(50, 230, 150, 210, 0x6666ff);
+        let graphics = this.add.graphics();
+        var bar = new Phaser.Geom.Rectangle(65, 222, 70, 10);
+        graphics.fillStyle(0xff3333);
+        graphics.fillRectShape(bar);
+        graphics.fixedToCamera = true;
+        graphics.setScrollFactor(0);
+
+        test = this.add.sprite(20, 210, 'mushroom');
         test.fixedToCamera = true;
         test.setScrollFactor(0);
-
         //test.cameraOffset.setTo(20, 20);
+
         var t = this.add.text(10, 220, "HealthBar: ", { font: "10px Arial", fill: "black", align: "center" });
         t.fixedToCamera = true;
         t.setScrollFactor(0);
+
+        // Joonista kast: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/geom-rectangle/
+        /*var rect = new Phaser.Geom.Rectangle(50, 220, 50, 20);
+        graphics.fillStyle('0xRRGGBB', 0.5);   // color: 0xRRGGBB
+        graphics.fillRectShape(rect);
+        rect.fixedToCamera = true;
+        rect.setScrollFactor(0);*/
 
 
         // our player sprite created through the phycis system
@@ -291,7 +307,8 @@ let WorldScene = new Phaser.Class({
     update: function (time, delta)
     {
     //    this.controls.update(delta);
-
+      //HealthBar
+      //this.debug.geom(bar,'#0fffff');
 			// NPC roaming
 
 		if (new Date().getTime() > (NPC_time_now + interval)){
