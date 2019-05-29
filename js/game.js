@@ -161,7 +161,7 @@ let WorldScene = new Phaser.Class({
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
         this.physics.add.overlap(this.player, this.npcEnemy, this.onMeetEnemyNPC, false, this);
-        this.physics.add.overlap(this.player, this.test, this.killHealthBar, false, this);
+        //this.physics.add.overlap(this.player, this.test, this.killHealthBar, false, this);
         //this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
 
         // HealthBar test
