@@ -188,7 +188,6 @@ let WorldScene = new Phaser.Class({
 			time_now = new Date().getTime();
 			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
       this.NPC3.visible = false;
-		this.NPC.physics.startFollow(this.player);
 		}
 
     },
