@@ -181,34 +181,7 @@ let WorldScene = new Phaser.Class({
   		}
     },
 	
-	onMeetNPC3: function(player, NPC3) {
-
-  		this.checkDirection(player, NPC3);
-
-  		if (new Date().getTime() > (time_now + interval)){
-  			time_now = new Date().getTime();
-  			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-        this.NPC3.physics.startFollow(this.player);
-  		}
-	    
-
-
-      },
-
-  	checkDirection: function(player, NPC3){
-  		if ((player.x-NPC3.x) < 0){
-  			player.x -= 2;			
-  		} else {
-  			player.x += 2;
-  		}
-
-  		if ((player.y-NPC3.y) < 0){
-  			player.y -= 2;
-  		} else {
-  			player.y += 2;			
-  		}
-    },
-
+	
 	onMeetNPC: function(player, NPC) {
 
 		this.checkDirection(player, NPC);
