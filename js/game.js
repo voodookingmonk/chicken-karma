@@ -3,6 +3,8 @@ const interval = 3000;
 let time_now = new Date().getTime();
 let NPC_time_now = new Date().getTime();
 let NPC_movement_direction = 0;
+let Enemy_time_now = new Date().getTime();
+let Enemy_movement_direction = 0;
 var scoreText;
 var liikumine = true;
 
@@ -28,11 +30,11 @@ let BootScene = new Phaser.Class({
         this.load.tilemapTiledJSON('map', 'assets/map/map.json');
 
         // our two characters
-        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 23, frameHeight: 35 });
+        this.load.spritesheet('player', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
 		this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
     this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
     this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-
+    this.load.spritesheet('npcEnemy', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
     },
 
     create: function ()
@@ -107,7 +109,8 @@ let WorldScene = new Phaser.Class({
 		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
     this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
     this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
-    this.NPC3.visible = false;    
+    this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
+    this.NPC3.visible = false;
     scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
     scoreText.visible = false;
 
@@ -132,6 +135,7 @@ let WorldScene = new Phaser.Class({
 
         // don't walk on trees
         this.physics.add.collider(this.player, obstacles);
+        this.physics.add.collider(this.npcEnemy, obstacles);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -146,10 +150,13 @@ let WorldScene = new Phaser.Class({
         // add collider
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
-	this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
+        this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
+        this.physics.add.overlap(this.player, this.npcEnemy, this.onMeetEnemyNPC, false, this);
+
 
 		//this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
     },
+
     onMeetNPC2: function(player, NPC2) {
 
   		this.checkDirection(player, NPC2);
@@ -157,19 +164,17 @@ let WorldScene = new Phaser.Class({
   		if (new Date().getTime() > (time_now + interval)){
   			time_now = new Date().getTime();
   			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-        this.NPC3.visible = true;	
+        this.NPC3.visible = true;
         scoreText = this.add.text(16, 16, 'Tere', { fontSize: '32px', fill: '#000' });
         scoreText.visible = true;
         liikumine = false;
   		}
-	    
-
 
       },
 
   	checkDirection: function(player, NPC2){
   		if ((player.x-NPC2.x) < 0){
-  			player.x -= 2;			
+  			player.x -= 2;
   		} else {
   			player.x += 2;
   		}
@@ -177,11 +182,10 @@ let WorldScene = new Phaser.Class({
   		if ((player.y-NPC2.y) < 0){
   			player.y -= 2;
   		} else {
-  			player.y += 2;			
+  			player.y += 2;
   		}
     },
-	
-	
+
 	onMeetNPC: function(player, NPC) {
 
 		this.checkDirection(player, NPC);
@@ -206,7 +210,38 @@ let WorldScene = new Phaser.Class({
 		} else {
 			player.y += 2;
 		}
+  },
 
+  onMeetEnemyNPC: function(player, npcEnemy) {
+
+    this.checkDirection(player, npcEnemy);
+
+    if (new Date().getTime() > (time_now + interval)){
+      time_now = new Date().getTime();
+      console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
+      scoreText = this.add.text(16, 16, 'OUCH', { fontSize: '32px', fill: '#000' });
+      scoreText.visible = true;
+      liikumine = false;
+    }
+
+    },
+
+    enemyFollow: function(player, npcEnemy){
+
+      if (Math.round(player.x) > Math.round(npcEnemy.x)){
+        this.npcEnemy.body.setVelocityX(50);
+        this.npcEnemy.body.setVelocityY(0);
+      } else if (Math.round(player.y) > Math.round(npcEnemy.y)){
+        this.npcEnemy.body.setVelocityY(50);
+        this.npcEnemy.body.setVelocityX(0);
+      } else if (Math.round(player.x) < Math.round(npcEnemy.x)){
+        this.npcEnemy.body.setVelocityX(-50);
+        this.npcEnemy.body.setVelocityY(0);
+      } else if (Math.round(player.y) < Math.round(npcEnemy.y)){
+        this.npcEnemy.body.setVelocityY(-50);
+        this.npcEnemy.body.setVelocityX(0);
+      }
+    },
 
 		/*if ((player.x-NPC.x) < 0){
 			console.log("A");
@@ -263,8 +298,8 @@ let WorldScene = new Phaser.Class({
 		} else { // alt poolt
 			player.y += 2;
 			player.x -= 0;
-		}*/
-	},
+		}
+	},*/
     onMeetEnemy: function(player, zone) {
         // we move the zone to some other location
         //zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
@@ -305,7 +340,7 @@ let WorldScene = new Phaser.Class({
 		}
 
         this.player.body.setVelocity(0);
-
+        this.enemyFollow(this.player, this.npcEnemy);
         // Horizontal movement
         if (liikumine==true){
           if (this.cursors.left.isDown)
@@ -367,19 +402,19 @@ let WorldScene = new Phaser.Class({
 
 		// NPC roaming
 
-	if (NPC_movement_direction == 1)
+		if (NPC_movement_direction == 1)
         {
             this.NPC.anims.play('up', true);
         }
         else if (NPC_movement_direction == 2)
         {
-	    this.NPC.anims.play('right', true);
+			this.NPC.anims.play('right', true);
             this.NPC.flipX = false;
         }
-	else if (NPC_movement_direction == 3)
+		else if (NPC_movement_direction == 3)
         {
             this.NPC.anims.play('left', true);
-            this.NPC.flipX = false;
+            this.NPC.flipX = true;
         }
         else if (NPC_movement_direction == 4)
         {
@@ -397,8 +432,8 @@ let WorldScene = new Phaser.Class({
 let config = {
     type: Phaser.AUTO,
     parent: 'content',
-    width: 320,
-    height: 240,
+    width: 1920,
+    height: 1080,
     zoom: 2,
     pixelArt: true,
     physics: {
