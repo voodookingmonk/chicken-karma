@@ -169,18 +169,18 @@ let WorldScene = new Phaser.Class({
   	checkDirection: function(player, NPC2){
   		if ((player.x-NPC2.x) < 0){
   			player.x -= 2;
-			this.NPC2.physics.startFollow(this.player)
+			this.NPC2.physics.startFollow(this.player);
   		} else {
   			player.x += 2;
-			this.NPC2.physics.startFollow(this.player)
+			this.NPC2.physics.startFollow(this.player);
   		}
 
   		if ((player.y-NPC2.y) < 0){
   			player.y -= 2;
-			this.NPC2.physics.startFollow(this.player)
+			this.NPC2.physics.startFollow(this.player);
   		} else {
   			player.y += 2;
-			this.NPC2.physics.startFollow(this.player)
+			this.NPC2.physics.startFollow(this.player);
   		}
     },
 
