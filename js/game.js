@@ -7,6 +7,12 @@ let Enemy_time_now = new Date().getTime();
 let Enemy_movement_direction = 0;
 var scoreText;
 var liikumine = true;
+var test; //healthbar test
+var HealthBar;
+let graphics;
+let bar;
+let bar2;
+var t;
 
 
 
@@ -31,11 +37,14 @@ let BootScene = new Phaser.Class({
 
         // our two characters
         this.load.spritesheet('player', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-		this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-    this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-    this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-    this.load.spritesheet('npcEnemy', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-    },
+    		this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('npcEnemy', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+
+        //fixed to camera test:
+        this.load.image('mushroom', 'assets/mushroom16_16.png');
+     },
 
     create: function ()
     {
@@ -106,13 +115,13 @@ let WorldScene = new Phaser.Class({
 
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
-		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
-    this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
-    this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
-    this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
-    this.NPC3.visible = false;
-    scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
-    scoreText.visible = false;
+    		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
+        this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
+        this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
+        this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
+        this.NPC3.visible = false;
+        scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
+        scoreText.visible = false;
 
 		/*for (let i = 0; i < 10; i++){
 			let x = Phaser.Math.RND.between(50, 150);
@@ -146,16 +155,58 @@ let WorldScene = new Phaser.Class({
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // where the enemies will be
-		//this.physics.add.collider(this.player, this.spawns);
+		    //this.physics.add.collider(this.player, this.spawns);
         // add collider
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
         this.physics.add.overlap(this.player, this.npcEnemy, this.onMeetEnemyNPC, false, this);
+        //this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
 
+        // HealthBar test
+        graphics = this.add.graphics();
+        bar = new Phaser.Geom.Rectangle(65, 222, 70, 10);
+		    bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
+        graphics.fillStyle(0xff3333);
+        graphics.fillRectShape(bar);
+        graphics.fixedToCamera = true;
+        graphics.setScrollFactor(0);
 
-		//this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
+		    console.log(bar.width);
+
+        //test = this.add.sprite(20, 210, 'mushroom');
+		    this.test = this.physics.add.sprite(70, 210, 'mushroom');
+        //test.fixedToCamera = true;
+        //test.setScrollFactor(0);
+        //test.cameraOffset.setTo(20, 20);
+        t = this.add.text(10, 220, "HealthBar: ", { font: "10px Arial", fill: "black", align: "center" });
+        t.fixedToCamera = true;
+        t.setScrollFactor(0);
     },
+
+    killHealthBar: function(player, test){
+
+  		this.checkDirection(player, test);
+  		//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
+
+  		if(bar2.width < 70){
+  			if (new Date().getTime() > (time_now + interval - 2500)){
+  				time_now = new Date().getTime();
+  				console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
+  				bar2.width += 10;
+  				console.log(bar2.width);
+  				graphics = this.add.graphics();
+  				graphics.fillRectShape(bar2);
+  				graphics.fixedToCamera = true;
+  				graphics.setScrollFactor(0);
+  			}
+  		}
+  		else{
+  			t = this.add.text(60, 100, "You dided man! ", { font: "30px Arial", fill: "red", align: "center" });
+  			t.fixedToCamera = true;
+  			t.setScrollFactor(0);
+  		}
+  	},
 
     onMeetNPC2: function(player, NPC2) {
 
@@ -428,6 +479,15 @@ let WorldScene = new Phaser.Class({
     }
 
 });
+
+/*
+function health(bar){
+	$(document).on( "keydown", function( event ) {
+		if (e.which == 49){
+			bar.width -= 20;
+		}
+	});
+}*/
 
 let config = {
     type: Phaser.AUTO,
