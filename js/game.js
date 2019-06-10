@@ -13,6 +13,7 @@ let graphics;
 let bar;
 let bar2;
 var t;
+let NPCS = [];
 
 
 
@@ -456,8 +457,10 @@ let WorldScene = new Phaser.Class({
 
 
 		// NPC roaming
+		
+		NPCroam();
 
-		if (NPC_movement_direction == 1)
+		/*if (NPC_movement_direction == 1)
         {
             this.NPC.anims.play('up', true);
         }
@@ -478,11 +481,79 @@ let WorldScene = new Phaser.Class({
         else
         {
             this.NPC.anims.stop();
-        }
+        }*/
 
     }
 
 });
+
+function NPCroam(){
+	NPCroamHelper(NPCS);
+	if (new Date().getTime() > (NPC_time_now + interval)){
+		NPC_time_now = new Date().getTime();
+		if (NPC_movement_direction == 0){ 
+			NPC_movement_direction = 1; 
+		} 
+		if (NPC_movement_direction == 1){
+			iterateNPCS(10, 0);
+			NPC_movement_direction = 2;
+		} else if (NPC_movement_direction == 2){
+			iterateNPCS(-10, 0);
+			NPC_movement_direction = 3;
+		} else if (NPC_movement_direction == 3){
+			iterateNPCS(0, 10);
+			NPC_movement_direction = 4;
+		} else if (NPC_movement_direction == 4){
+			iterateNPCS(0, -10);
+			NPC_movement_direction = 1;
+		}
+	}
+};
+
+function iterateNPCS(x, y){
+	NPCS.forEach(function(NPC){
+		NPC.body.setVelocityX(x);
+		NPC.body.setVelocityY(y);
+	});
+}
+
+function NPCroamHelper(){
+	NPCS.forEach(function(NPC){
+		if (NPC_movement_direction == 1){
+			NPC.anims.play('up', true);
+		}
+		else if (NPC_movement_direction == 2)
+		{
+			NPC.anims.play('right', true);
+			NPC.flipX = false;
+		}
+		else if (NPC_movement_direction == 3)
+		{
+			NPC.anims.play('left', true);
+			NPC.flipX = true;
+		}
+		else if (NPC_movement_direction == 4)
+		{
+			NPC.anims.play('down', true);
+		}
+		else
+		{
+			NPC.anims.stop();
+		}
+	});
+}
+
+function keypressListener(player, player2){
+	$(document).on("keypress keydown", function (e) {
+		if (e.which === 50){
+			player2.visible = true;
+			player.visible = false;
+		} else if (e.which === 49){
+			player2.visible = false;
+			player.visible = true;
+		}
+	});
+}
 
 /*
 function health(bar){
