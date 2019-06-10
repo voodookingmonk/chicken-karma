@@ -375,28 +375,6 @@ let WorldScene = new Phaser.Class({
     {
     //    this.controls.update(delta);
 
-			// NPC roaming
-
-		/*if (new Date().getTime() > (NPC_time_now + interval)){
-			if (NPC_movement_direction == 0){ NPC_movement_direction = 1; }
-			NPC_time_now = new Date().getTime();
-			if (NPC_movement_direction == 1){
-				this.NPC.body.setVelocityY(0);
-				this.NPC.body.setVelocityX(10);
-				NPC_movement_direction = 2;
-			} else if (NPC_movement_direction == 2){
-				this.NPC.body.setVelocityX(-10);
-				NPC_movement_direction = 3;
-			} else if (NPC_movement_direction == 3){
-				this.NPC.body.setVelocityX(0);
-				this.NPC.body.setVelocityY(10);
-				NPC_movement_direction = 4;
-			} else if (NPC_movement_direction == 4){
-				this.NPC.body.setVelocityY(-10);
-				NPC_movement_direction = 1;
-			}
-		}*/
-
         this.player.body.setVelocity(0);
 		
         this.enemyFollow(this.player, this.npcEnemy);
@@ -532,8 +510,9 @@ function NPCroamHelper(){
 		}
 		else if (NPC_movement_direction == 3)
 		{
+			console.log("here");
 			NPC.anims.play('left', true);
-			NPC.flipX = true;
+			NPC.flipX = false;
 		}
 		else if (NPC_movement_direction == 4)
 		{
