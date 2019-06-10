@@ -138,13 +138,15 @@ let WorldScene = new Phaser.Class({
 
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
-    		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
+		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
         this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
         this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
         this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
         this.NPC3.visible = false;
         scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
         scoreText.visible = false;
+		
+		NPCS = [this.NPC];
 
 		/*for (let i = 0; i < 10; i++){
 			let x = Phaser.Math.RND.between(50, 150);
@@ -375,7 +377,7 @@ let WorldScene = new Phaser.Class({
 
 			// NPC roaming
 
-		if (new Date().getTime() > (NPC_time_now + interval)){
+		/*if (new Date().getTime() > (NPC_time_now + interval)){
 			if (NPC_movement_direction == 0){ NPC_movement_direction = 1; }
 			NPC_time_now = new Date().getTime();
 			if (NPC_movement_direction == 1){
@@ -393,9 +395,10 @@ let WorldScene = new Phaser.Class({
 				this.NPC.body.setVelocityY(-10);
 				NPC_movement_direction = 1;
 			}
-		}
+		}*/
 
         this.player.body.setVelocity(0);
+		
         this.enemyFollow(this.player, this.npcEnemy);
         // Horizontal movement
         if (liikumine==true){
