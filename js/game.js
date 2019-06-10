@@ -2,6 +2,7 @@
 const interval = 3000;
 let time_now = new Date().getTime();
 let NPC_time_now = new Date().getTime();
+let previous_NPC_movement_direction = 0;
 let NPC_movement_direction = 0;
 let Enemy_time_now = new Date().getTime();
 let Enemy_movement_direction = 0;
@@ -14,6 +15,8 @@ let bar;
 let bar2;
 var t;
 let NPCS = [];
+let NPCSdir = [];
+let NPCmax = [];
 
 
 
@@ -118,16 +121,16 @@ let WorldScene = new Phaser.Class({
         // HealthBar test
         graphics = this.add.graphics();
         bar = new Phaser.Geom.Rectangle(65, 222, 70, 10);
-		    bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
+		bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
         graphics.fillStyle(0xff3333);
         graphics.fillRectShape(bar);
         graphics.fixedToCamera = true;
         graphics.setScrollFactor(0);
 
-		    console.log(bar.width);
+		console.log(bar.width);
 
         //test = this.add.sprite(20, 210, 'mushroom');
-		    this.test = this.physics.add.sprite(70, 210, 'mushroom');
+		this.test = this.physics.add.sprite(70, 210, 'mushroom');
         //test.fixedToCamera = true;
         //test.setScrollFactor(0);
         //test.cameraOffset.setTo(20, 20);
@@ -139,6 +142,8 @@ let WorldScene = new Phaser.Class({
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
 		this.NPC = this.physics.add.sprite(150, 75, 'npc', 16);
+		this.NPCx = this.physics.add.sprite(150, 75, 'npc', 16);
+		this.NPCy = this.physics.add.sprite(150, 75, 'npc', 16);
         this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
         this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
         this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
@@ -146,7 +151,7 @@ let WorldScene = new Phaser.Class({
         scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
         scoreText.visible = false;
 		
-		NPCS = [this.NPC];
+		NPCS = [this.NPC, this.NPCx, this.NPCy];
 
 		/*for (let i = 0; i < 10; i++){
 			let x = Phaser.Math.RND.between(50, 150);
@@ -220,12 +225,12 @@ let WorldScene = new Phaser.Class({
   		this.checkDirection(player, NPC2);
 
   		if (new Date().getTime() > (time_now + interval)){
-  			time_now = new Date().getTime();
-  			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-        this.NPC3.visible = true;
-        scoreText = this.add.text(16, 16, 'Tere', { fontSize: '32px', fill: '#000' });
-        scoreText.visible = true;
-        liikumine = false;
+			time_now = new Date().getTime();
+			console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
+			this.NPC3.visible = true;
+			scoreText = this.add.text(16, 16, 'Tere', { fontSize: '32px', fill: '#000' });
+			scoreText.visible = true;
+			liikumine = false;
   		}
 
       },
@@ -275,11 +280,11 @@ let WorldScene = new Phaser.Class({
     this.checkDirection(player, npcEnemy);
 
     if (new Date().getTime() > (time_now + interval)){
-      time_now = new Date().getTime();
-      console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-      scoreText = this.add.text(16, 16, 'OUCH', { fontSize: '32px', fill: '#000' });
-      scoreText.visible = true;
-      liikumine = false;
+		time_now = new Date().getTime();
+		console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
+		scoreText = this.add.text(16, 16, 'OUCH', { fontSize: '32px', fill: '#000' });
+		scoreText.visible = true;
+		liikumine = false;
     }
 
     },
@@ -300,64 +305,6 @@ let WorldScene = new Phaser.Class({
         this.npcEnemy.body.setVelocityX(0);
       }
     },
-
-		/*if ((player.x-NPC.x) < 0){
-			console.log("A");
-			if ((player.y-NPC.y) < 0){
-				console.log("A1");
-			} else {
-				console.log("A2");
-			}
-		} else if ((player.x-NPC.x) > 0){
-			console.log("B");
-			if ((player.y-NPC.y) < 0){
-				console.log("B1");
-			} else {
-				console.log("B2");
-			}
-		}
-
-		if ((player.y-NPC.y) < 0){
-			console.log("C");
-			if ((player.x-NPC.x) < 0){
-				console.log("C1");
-			} else {
-				console.log("C2");
-			}
-		} else if ((player.y-NPC.y) > 0){
-			console.log("D");
-			if ((player.x-NPC.x) < 0){
-				console.log("D1");
-			} else {
-				console.log("D2");
-			}
-		}*/
-
-
-		/*if ((player.x-NPC.x) < 0 && (player.y-NPC.y) < 0){
-			console.log("1"); // üleval vasakul
-		} else if ((player.x-NPC.x) < 0 && (player.y-NPC.y) > 0){
-			console.log("2"); // all vasakul
-
-			player.x -= 5;
-		} else if ((player.x-NPC.x) > 0 && (player.y-NPC.y) < 0){
-			console.log("3"); // üleval paremal
-
-			player.x += 5;
-
-
-		} else if ((player.x-NPC.x) > 0 && (player.y-NPC.y) > 0){
-			console.log("4"); // all paremal
-		}*/
-
-		/*if ((player.y-NPC.y) < 0){
-			player.y -= 2;
-			player.x += 0;
-		} else { // alt poolt
-			player.y += 2;
-			player.x -= 0;
-		}
-	},*/
     onMeetEnemy: function(player, zone) {
         // we move the zone to some other location
         //zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
@@ -373,7 +320,7 @@ let WorldScene = new Phaser.Class({
     },
     update: function (time, delta)
     {
-    //    this.controls.update(delta);
+		// this.controls.update(delta);
 
         this.player.body.setVelocity(0);
 		
@@ -437,32 +384,8 @@ let WorldScene = new Phaser.Class({
           }
 
 
-		// NPC roaming
-		
+		// enable NPC roaming	
 		NPCroam();
-
-		/*if (NPC_movement_direction == 1)
-        {
-            this.NPC.anims.play('up', true);
-        }
-        else if (NPC_movement_direction == 2)
-        {
-			this.NPC.anims.play('right', true);
-            this.NPC.flipX = false;
-        }
-		else if (NPC_movement_direction == 3)
-        {
-            this.NPC.anims.play('left', true);
-            this.NPC.flipX = false;
-        }
-        else if (NPC_movement_direction == 4)
-        {
-            this.NPC.anims.play('down', true);
-        }
-        else
-        {
-            this.NPC.anims.stop();
-        }*/
 
     }
 
@@ -471,58 +394,52 @@ let WorldScene = new Phaser.Class({
 function NPCroam(){
 	NPCroamHelper(NPCS);
 	if (new Date().getTime() > (NPC_time_now + interval)){
-		NPC_time_now = new Date().getTime();
-		if (NPC_movement_direction == 0){ 
-			NPC_movement_direction = 1; 
-		} 
-		if (NPC_movement_direction == 1){
-			iterateNPCS(10, 0);
-			NPC_movement_direction = 2;
-		} else if (NPC_movement_direction == 2){
-			iterateNPCS(-10, 0);
-			NPC_movement_direction = 3;
-		} else if (NPC_movement_direction == 3){
-			iterateNPCS(0, 10);
-			NPC_movement_direction = 4;
-		} else if (NPC_movement_direction == 4){
-			iterateNPCS(0, -10);
-			NPC_movement_direction = 1;
+		for (let i = 0; i < NPCS.length; i++){
+			NPC_time_now = new Date().getTime();
+			NPCSdir[i] = Math.floor(Math.random() * 4)+1;
+			if (NPCSdir[i] == 1){
+				makeNPCMove(NPCS[i], 10, 0);
+			} else if (NPCSdir[i] == 2){
+				makeNPCMove(NPCS[i], -10, 0);
+			} else if (NPCSdir[i] == 3){
+				makeNPCMove(NPCS[i], 0, 10);
+			} else if (NPCSdir[i] == 4){
+				makeNPCMove(NPCS[i], 0, -10);
+			}
 		}
 	}
 };
 
-function iterateNPCS(x, y){
-	NPCS.forEach(function(NPC){
-		NPC.body.setVelocityX(x);
-		NPC.body.setVelocityY(y);
-	});
+
+function makeNPCMove(NPC, x, y){
+	NPC.body.setVelocityX(x);
+	NPC.body.setVelocityY(y);
 }
 
 function NPCroamHelper(){
-	NPCS.forEach(function(NPC){
-		if (NPC_movement_direction == 1){
-			NPC.anims.play('up', true);
+	for (let i = 0; i < NPCS.length; i++){
+		if (NPCSdir[i] == 1){
+			NPCS[i].anims.play('right', true);
+			NPCS[i].flipX = false;
 		}
-		else if (NPC_movement_direction == 2)
+		else if (NPCSdir[i] == 2)
 		{
-			NPC.anims.play('right', true);
-			NPC.flipX = false;
+			NPCS[i].anims.play('left', true);
+			NPCS[i].flipX = false;
 		}
-		else if (NPC_movement_direction == 3)
-		{
-			console.log("here");
-			NPC.anims.play('left', true);
-			NPC.flipX = false;
+		else if (NPCSdir[i] == 3)
+		{	
+			NPCS[i].anims.play('down', true);
 		}
-		else if (NPC_movement_direction == 4)
+		else if (NPCSdir[i] == 4)
 		{
-			NPC.anims.play('down', true);
+			NPCS[i].anims.play('up', true);
 		}
 		else
 		{
-			NPC.anims.stop();
+			NPCS[i].anims.stop();
 		}
-	});
+	}
 }
 
 function keypressListener(player, player2){
