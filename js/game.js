@@ -47,17 +47,17 @@ let BootScene = new Phaser.Class({
 
         // our two characters
         this.load.spritesheet('player', 'assets/player.png', { frameWidth: 23, frameHeight: 35 });
-		this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
+		    this.load.spritesheet('npc', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('npc2', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('npc3', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-		
-		this.load.spritesheet('chicken', 'assets/chicken_21x16.png', { frameWidth: 21, frameHeight: 16 });
+        this.load.spritesheet('healer', 'assets/RPG_assets.png', {frameWidth: 16, frameHeight: 16});
+		    this.load.spritesheet('chicken', 'assets/chicken_21x16.png', { frameWidth: 21, frameHeight: 16 });
 
         this.load.spritesheet('npcEnemy', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
 
         //fixed to camera test:
         this.load.image('mushroom', 'assets/mushroom16_16.png');
-		
+
      },
 
     create: function ()
@@ -126,9 +126,9 @@ let WorldScene = new Phaser.Class({
             frameRate: 10,
             repeat: -1
         });
-		
+
 		// for chicken
-		
+
 		this.anims.create({
             key: 'NPCleft',
             frames: this.anims.generateFrameNumbers('chicken', { frames: [4, 5, 6, 7]}),
@@ -160,44 +160,42 @@ let WorldScene = new Phaser.Class({
         // HealthBar test
         graphics = this.add.graphics();
         bar = new Phaser.Geom.Rectangle(65, 222, 70, 10);
-		bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
+		    bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
         graphics.fillStyle(0xff3333);
         graphics.fillRectShape(bar);
         graphics.fixedToCamera = true;
         graphics.setScrollFactor(0);
 
-		console.log(bar.width);
 
-        //test = this.add.sprite(20, 210, 'mushroom');
-		this.test = this.physics.add.sprite(70, 210, 'mushroom');
         //test.fixedToCamera = true;
         //test.setScrollFactor(0);
         //test.cameraOffset.setTo(20, 20);
-        t = this.add.text(10, 220, "HealthBar: ", { font: "10px Arial", fill: "black", align: "center" });
+        t = this.add.text(10, 220, "Health: ", { font: "10px Arial", fill: "black", align: "center" });
         t.fixedToCamera = true;
         t.setScrollFactor(0);
 
 
         // our player sprite created through the phycis system
         this.player = this.physics.add.sprite(50, 100, 'player', 1);
-		
-		this.NPC = this.physics.add.sprite(350, 75, 'chicken', 2);
-		this.NPCx = this.physics.add.sprite(350, 75, 'chicken', 2);
-		this.NPCy = this.physics.add.sprite(350, 75, 'chicken', 2);
-		
-        this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16);
-        this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16);
+		    this.test = this.physics.add.sprite(70, 210, 'mushroom');
+		    this.NPC = this.physics.add.sprite(350, 75, 'chicken', 2);
+		    this.NPCx = this.physics.add.sprite(350, 75, 'chicken', 2);
+		    this.NPCy = this.physics.add.sprite(350, 75, 'chicken', 2);
+
+        this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16).setImmovable();
+        this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16).setImmovable();
         this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
+        this.healer = this.physics.add.sprite(50, 50, 'healer', 1).setImmovable();
         this.NPC3.visible = false;
         scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
         scoreText.visible = false;
-		
-		for (let i = 0; i < chickenCount; i++){
-            chickens.push({obj: this.physics.add.sprite(150, 75, 'chicken', 2), hp: 1, movingDir: 0});
-            this.physics.add.collider(chickens[i].obj, obstacles);
-            this.physics.add.collider(this.player, chickens[i].obj);
-            chickens[i].obj.setCollideWorldBounds(true);
-		}
+
+    		for (let i = 0; i < chickenCount; i++){
+          chickens.push({obj: this.physics.add.sprite(150, 75, 'chicken', 2), hp: 1, movingDir: 0});
+          this.physics.add.collider(chickens[i].obj, obstacles);
+          this.physics.add.collider(this.player, chickens[i].obj);
+          chickens[i].obj.setCollideWorldBounds(true);
+    		}
 
         // don't go out of the map
         this.physics.world.bounds.width = map.widthInPixels;
@@ -219,13 +217,14 @@ let WorldScene = new Phaser.Class({
         // where the enemies will be
 		    //this.physics.add.collider(this.player, this.spawns);
         // add collider
+        this.physics.add.collider(this.player, this.healer, this.heal);
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
         this.physics.add.overlap(this.player, this.npcEnemy, this.killHealthBar, false, this);
         this.physics.add.overlap(this.player, this.test, this.killHealthBar, false, this);
-		this.input.keyboard.on('keydown_E', this.dmg, this);
-        //this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
+        this.input.keyboard.on('keydown_E', this.dmg, this);
+
 
     },
     dmg: function(player, test){
@@ -237,13 +236,13 @@ let WorldScene = new Phaser.Class({
           console.log("big oof");
         }
       } else if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && enemyHealth > 0){
-        enemyHealth = enemyHealth - 50;
-        console.log("ouch");
-        if(enemyHealth == 0){
-          this.npcEnemy.destroy();
-          console.log("Tell my mother I love her");
-      } else {
-        console.log("you missed ya scrub");
+          enemyHealth = enemyHealth - 50;
+          console.log("ouch");
+          if(enemyHealth == 0){
+            this.npcEnemy.destroy();
+            console.log("Tell my mother I love her");
+        } else {
+            console.log("you missed ya scrub");
       }
     }
   },
@@ -265,11 +264,26 @@ let WorldScene = new Phaser.Class({
   			}
   		}
   		else{
-  			t = this.add.text(60, 100, "You dided man! ", { font: "30px Arial", fill: "red", align: "center" });
+  			t = this.add.text(60, 100, "You dided man!", { font: "30px Arial", fill: "red", align: "center" });
   			t.fixedToCamera = true;
   			t.setScrollFactor(0);
+        graphics.clear(bar2);
+        //respawn();
   		}
   	},
+
+    respawn: function(player){
+      this.player.x=50;
+      this.player.y=100;
+      bar2.width=30;
+      t = this.add.text(60, 100, "I AM ALIVE! ", { font: "30px Arial", fill: "red", align: "center" });
+    },
+
+    heal: function(player, healer){
+      bar.width=70;
+      bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
+      console.log("healed");
+    },
 
     onMeetNPC2: function(player, NPC2) {
 
@@ -305,9 +319,9 @@ let WorldScene = new Phaser.Class({
 		this.checkDirection(player, NPC);
 
 		if (new Date().getTime() > (time_now + interval)){
-            time_now = new Date().getTime();
-            console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-            this.NPC3.visible = false;
+      time_now = new Date().getTime();
+      console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
+      this.NPC3.visible = false;
 		}
 
     },
@@ -331,11 +345,11 @@ let WorldScene = new Phaser.Class({
     this.checkDirection(player, npcEnemy);
 
     if (new Date().getTime() > (time_now + interval)){
-		time_now = new Date().getTime();
-		console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-		scoreText = this.add.text(16, 16, 'OUCH', { fontSize: '32px', fill: '#000' });
-		scoreText.visible = true;
-		liikumine = false;
+  		time_now = new Date().getTime();
+  		console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
+  		scoreText = this.add.text(16, 16, 'OUCH', { fontSize: '32px', fill: '#000' });
+  		scoreText.visible = true;
+  		liikumine = false;
     }
 
     },
@@ -356,25 +370,12 @@ let WorldScene = new Phaser.Class({
         this.npcEnemy.body.setVelocityX(0);
       }
     },
-    onMeetEnemy: function(player, zone) {
-        // we move the zone to some other location
-        //zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-        //zone.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
-
-
-        // shake the world
-        //this.cameras.main.shake(50);
-		//console.log("Hello");
-		this.cameras.main.shake(50);
-		console.log("hello");
-        // start battle
-    },
     update: function (time, delta)
     {
 		// this.controls.update(delta);
 
         this.player.body.setVelocity(0);
-		
+
         this.enemyFollow(this.player, this.npcEnemy);
         // Horizontal movement
         if (liikumine==true){
@@ -424,7 +425,7 @@ let WorldScene = new Phaser.Class({
           }
 
 
-		// enable NPC roaming	
+		// enable NPC roaming
 		NPCroam();
 
     }
@@ -450,7 +451,7 @@ function NPCroam(){
 			}
 		}
 	}
-};
+}
 
 
 function makeNPCMove(NPC, x, y){
