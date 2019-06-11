@@ -191,6 +191,7 @@ let WorldScene = new Phaser.Class({
         this.NPC3.visible = false;
         scoreText = this.add.text(16, 16, 'tere', { fontSize: '32px', fill: '#000' });
         scoreText.visible = false;
+
 		
 		for (let i = 0; i < chickenCount; i++){
             chickens.push({obj: this.physics.add.sprite(150, 75, 'chicken', 2), hp: 1, movingDir: 0});
@@ -198,7 +199,10 @@ let WorldScene = new Phaser.Class({
             this.physics.add.collider(this.player, chickens[i].obj);
             chickens[i].obj.setCollideWorldBounds(true);
 		}
-
+        
+        //treetops and stuff above player
+        let top = map.createStaticLayer('Top', tiles, 0, 0);
+        
         // don't go out of the map
         this.physics.world.bounds.width = map.widthInPixels;
         this.physics.world.bounds.height = map.heightInPixels;
