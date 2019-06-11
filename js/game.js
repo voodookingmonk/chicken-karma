@@ -224,6 +224,7 @@ let WorldScene = new Phaser.Class({
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
         this.physics.add.overlap(this.player, this.npcEnemy, this.killHealthBar, false, this);
         this.physics.add.overlap(this.player, this.test, this.killHealthBar, false, this);
+		this.input.keyboard.on('keydown_E', this.dmg, this);
         //this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
 
     },
