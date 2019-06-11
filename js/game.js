@@ -193,6 +193,9 @@ let WorldScene = new Phaser.Class({
     		for (let i = 0; i < chickenCount; i++){
           chickens.push({obj: this.physics.add.sprite(150, 75, 'chicken', 2), hp: 1, movingDir: 0});
           this.physics.add.collider(chickens[i].obj, obstacles);
+          this.physics.add.collider(chickens[i].obj, this.NPC2);
+          this.physics.add.collider(chickens[i].obj, this.NPC3);
+          this.physics.add.collider(chickens[i].obj, this.healer);
           this.physics.add.collider(this.player, chickens[i].obj);
           chickens[i].obj.setCollideWorldBounds(true);
     		}
@@ -234,8 +237,11 @@ let WorldScene = new Phaser.Class({
         if(testHealth == 0){
           this.test.destroy();
           console.log("big oof");
+        } else {
+          console.log("ya missed");
         }
-      } else if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && enemyHealth > 0){
+      }
+      if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && enemyHealth > 0){
           enemyHealth = enemyHealth - 50;
           console.log("ouch");
           if(enemyHealth == 0){
