@@ -9,6 +9,8 @@ var scoreText;
 var liikumine = true;
 var test; //healthbar test
 var HealthBar;
+let testHealth=100;
+let enemyHealth=100;
 let graphics;
 let bar;
 let bar2;
@@ -220,12 +222,30 @@ let WorldScene = new Phaser.Class({
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
-        this.physics.add.overlap(this.player, this.npcEnemy, this.onMeetEnemyNPC, false, this);
+        this.physics.add.overlap(this.player, this.npcEnemy, this.killHealthBar, false, this);
         this.physics.add.overlap(this.player, this.test, this.killHealthBar, false, this);
         //this.physics.add.collider(this.player, this.NPC_healer, this.onMeetNPC, false, this);
 
     },
-
+    dmg: function(player, test){
+      if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && testHealth > 0) {
+        testHealth = testHealth - 50;
+        console.log("oof");
+        if(testHealth == 0){
+          this.test.destroy();
+          console.log("big oof");
+        }
+      } else if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && enemyHealth > 0){
+        enemyHealth = enemyHealth - 50;
+        console.log("ouch");
+        if(enemyHealth == 0){
+          this.npcEnemy.destroy();
+          console.log("Tell my mother I love her");
+      } else {
+        console.log("you missed ya scrub");
+      }
+    }
+  },
     killHealthBar: function(player, test){
 
   		this.checkDirection(player, test);
@@ -321,16 +341,16 @@ let WorldScene = new Phaser.Class({
 
     enemyFollow: function(player, npcEnemy){
 
-      if (Math.round(player.x) > Math.round(npcEnemy.x)){
+      if ((Math.round(player.x) > Math.round(npcEnemy.x)) && enemyHealth > 0){
         this.npcEnemy.body.setVelocityX(50);
         this.npcEnemy.body.setVelocityY(0);
-      } else if (Math.round(player.y) > Math.round(npcEnemy.y)){
+      } else if ((Math.round(player.y) > Math.round(npcEnemy.y)) && enemyHealth > 0){
         this.npcEnemy.body.setVelocityY(50);
         this.npcEnemy.body.setVelocityX(0);
-      } else if (Math.round(player.x) < Math.round(npcEnemy.x)){
+      } else if ((Math.round(player.x) < Math.round(npcEnemy.x)) && enemyHealth > 0){
         this.npcEnemy.body.setVelocityX(-50);
         this.npcEnemy.body.setVelocityY(0);
-      } else if (Math.round(player.y) < Math.round(npcEnemy.y)){
+      } else if ((Math.round(player.y) < Math.round(npcEnemy.y)) && enemyHealth > 0){
         this.npcEnemy.body.setVelocityY(-50);
         this.npcEnemy.body.setVelocityX(0);
       }
