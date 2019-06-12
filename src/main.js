@@ -1,7 +1,5 @@
 /* jshint esversion:6*/
 
-import {BootScene} from "./scenes/BootScene";
-import {WorldScene} from "./scenes/WorldScene";
 import {BootScene} from "./scenes/BootScene.js";
 import {WorldScene} from "./scenes/WorldScene.js";
 
