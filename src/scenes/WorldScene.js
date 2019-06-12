@@ -15,14 +15,17 @@ export class WorldScene extends Phaser.Scene{
     this.Enemy_movement_direction = 0;
     this.scoreText = null;
     this.liikumine = true;
+
     this.test = null; //healthbar test
-    this.HealthBar = null;
+    this.playerHealth = 100;
     this.testHealth = 100;
     this.enemyHealth = 100;
     this.graphics = null;
     this.bar = null;
     this.bar2 = null;
     this.t = null;
+		this.damage = null;
+		this.healed = null;
 
     this.NPCS = [];
     this.NPCSdir = [];
@@ -200,17 +203,24 @@ export class WorldScene extends Phaser.Scene{
         //this.chicken = this.add.existing(new Chickens(this, 100, 75, this.playerSpeedVal)).setDepth(2).setImmovable(true);
 
         //this.player = this.add.existing(new Chickens(this, 100, 75, this.playerSpeedVal)).setDepth(2).setImmovable(true);
-        
+
         //console.log(chickens.children.entries[0]);
 
-        // HealthBar test
+        // Create health bar:
         this.graphics = this.add.graphics();
-        this.bar = new Phaser.Geom.Rectangle(65, 222, 70, 10);
-        this.bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
+        this.bar = new Phaser.Geom.Rectangle(45, 222, 70, 10);
+        this.bar2 = new Phaser.Geom.Rectangle(45, 222, 0, 10);
         this.graphics.fillStyle(0xff3333);
         this.graphics.fillRectShape(this.bar);
         this.graphics.fixedToCamera = true;
         this.graphics.setScrollFactor(0);
+				this.t = this.add.text(10, 220, "Health: ", {
+            font: "10px Arial",
+            fill: "black",
+            align: "center"
+        });
+        t.fixedToCamera = true;
+        t.setScrollFactor(0);
 
         //treetops and stuff above player
         let top = map.createStaticLayer('Top', tiles, 0, 0);
@@ -235,17 +245,17 @@ export class WorldScene extends Phaser.Scene{
         // where the enemies will be
         //this.physics.add.collider(this.player, this.spawns);
         // add collider
-        this.physics.add.collider(this.player, this.healer, this.heal);
+        this.physics.add.collider(this.player, this.healer, this.heal, false, this);
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
-        this.physics.add.overlap(this.player, this.npcEnemy, this.killHealthBar, false, this);
-        this.physics.add.overlap(this.player, this.test, this.killHealthBar, false, this);
+				this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
+        this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
-	
-	
-	dmg(player, test) {
+
+
+	dmg (player, test) {
         if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && this.testHealth > 0) {
             this.testHealth = this.testHealth - 50;
             console.log("oof");
@@ -265,35 +275,33 @@ export class WorldScene extends Phaser.Scene{
             }
         }
     }
-	
-    killHealthBar (player, test) {
 
-        this.checkDirection(player, test);
-        //Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
+		damageToPlayer (player, test) {
 
-        if (this.bar2.width < 70) {
-            if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
-                this.time_now = new Date().getTime();
-                console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
-                this.bar2.width += 10;
-                console.log(this.bar2.width);
-                this.graphics = this.add.graphics();
-                this.graphics.fillRectShape(this.bar2);
-                this.graphics.fixedToCamera = true;
-                this.graphics.setScrollFactor(0);
-            }
-        } else {
-            this.t = this.add.text(60, 100, "You dided man!", {
-                font: "30px Arial",
-                fill: "red",
-                align: "center"
-            });
-            this.t.fixedToCamera = true;
-            this.t.setScrollFactor(0);
-            this.graphics.clear(this.bar2);
-            //respawn();
-        }
-    }
+				this.checkDirection(player, test);
+				//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
+				if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
+					this.time_now = new Date().getTime();
+
+				if (this.playerHealth > 0) {
+						this.damage = 1;
+						this.healed = 0;
+						this.playerHealth -= 10;
+						this.drawHealthBar();
+						}
+				 else {
+						this.t = this.add.text(60, 100, "You dided man!", {
+								font: "30px Arial",
+								fill: "red",
+								align: "center"
+						});
+						this.t.fixedToCamera = true;
+						this.t.setScrollFactor(0);
+						this.graphics.clear(bar2);
+						//respawn();
+				}
+			}
+		},
 
     respawn (player) {
         this.player.x = 50;
@@ -308,9 +316,12 @@ export class WorldScene extends Phaser.Scene{
 
     heal (player, healer) {
         if (this.bar != null){
-            this.bar.width = 70;
-            this.bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
+						this.healed = 1;
+						this.damage = 0;
+            this.playerHealth = 100;
+            this.drawHealthBar();
             console.log("healed");
+						this.healed = false;
         }
     }
 
@@ -354,7 +365,7 @@ export class WorldScene extends Phaser.Scene{
         }
 
     }
-	
+
     checkDirection (player, NPC) {
         if ((player.x - NPC.x) < 0) {
             player.x -= 2;
@@ -401,9 +412,9 @@ export class WorldScene extends Phaser.Scene{
             this.npcEnemy.body.setVelocityX(0);
         }
     }
-	
+
     update(){
-		
+
         this.player.body.setVelocity(0);
 
         this.enemyFollow(this.player, this.npcEnemy);
