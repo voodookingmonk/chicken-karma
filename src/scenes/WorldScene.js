@@ -253,6 +253,7 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
+
 	drawHealthBar(){
 			this.graphics = this.add.graphics();
 
@@ -296,32 +297,31 @@ export class WorldScene extends Phaser.Scene{
         }
     }
 
-		damageToPlayer (player, test) {
+    damageToPlayer (player, test) {
 
-				this.checkDirection(player, test);
-				//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
-				if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
-					this.time_now = new Date().getTime();
+            this.checkDirection(player, test);
+            //Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
+            if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
+                this.time_now = new Date().getTime();
 
-				if (this.playerHealth > 0) {
-						this.damage = 1;
-						this.healed = 0;
-						this.playerHealth -= 10;
-						this.drawHealthBar();
-						}
-				 else {
-						this.t = this.add.text(60, 100, "You dided man!", {
-								font: "30px Arial",
-								fill: "red",
-								align: "center"
-						});
-						this.t.fixedToCamera = true;
-						this.t.setScrollFactor(0);
-						this.graphics.clear(bar2);
-						//respawn();
-				}
-			}
-		}
+            if (this.playerHealth > 0) {
+                    this.damage = 1;
+                    this.healed = 0;
+                    this.playerHealth -= 10;
+                    this.drawHealthBar();
+            } else {
+                    this.t = this.add.text(60, 100, "You dided man!", {
+                            font: "30px Arial",
+                            fill: "red",
+                            align: "center"
+                    });
+                    this.t.fixedToCamera = true;
+                    this.t.setScrollFactor(0);
+                    this.graphics.clear(bar2);
+                    //respawn();
+            }
+        }
+    }
 
     respawn (player) {
         this.player.x = 50;
