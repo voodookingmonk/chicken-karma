@@ -15,7 +15,6 @@ export class WorldScene extends Phaser.Scene{
     this.Enemy_movement_direction = 0;
     this.scoreText = null;
     this.liikumine = true;
-
     this.test = null; //healthbar test
     this.playerHealth = 100;
     this.testHealth = 100;
@@ -32,8 +31,7 @@ export class WorldScene extends Phaser.Scene{
     this.NPCmax = [];
 
 
-    this.chickenCount = 20;
-    this.chickens = [];
+    this.chickenCount = 500;
     }
 
     init(){
@@ -44,6 +42,9 @@ export class WorldScene extends Phaser.Scene{
     }
 
     create(){
+
+        this.chickens = this.add.group();
+
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
 
@@ -150,7 +151,10 @@ export class WorldScene extends Phaser.Scene{
 
 
         // our player sprite created through the phycis system
-        this.player = this.physics.add.sprite(50, 100, 'player', 1);
+        //this.player = this.physics.add.sprite(50, 100, 'player', 1);
+
+        this.player = this.add.existing(new Player(this, 600, 300).setDepth(2).setImmovable(true));
+
         this.test = this.physics.add.sprite(70, 210, 'mushroom');
         this.NPC = this.physics.add.sprite(350, 75, 'chicken', 2);
         this.NPCx = this.physics.add.sprite(350, 75, 'chicken', 2);
@@ -168,19 +172,17 @@ export class WorldScene extends Phaser.Scene{
         });
         scoreText.visible = false;
 
-        /*for (let i = 0; i < chickenCount; i++) {
-            chickens.push({
-                obj: this.physics.add.sprite(150, 75, 'chicken', 2),
-                hp: 1,
-                movingDir: 0
-            });
-            this.physics.add.collider(chickens[i].obj, obstacles);
-            this.physics.add.collider(this.player, chickens[i].obj);
-            this.physics.add.collider(chickens[i].obj, this.healer);
-            this.physics.add.collider(chickens[i].obj, this.NPC2);
-            this.physics.add.collider(chickens[i].obj, this.NPC3);
-            chickens[i].obj.setCollideWorldBounds(true);
-        }*/
+        for (let i = 0; i < this.chickenCount; i++) {
+            let x = Phaser.Math.RND.between(0, 800);
+            let y = Phaser.Math.RND.between(0, 600);
+
+            let singleChicken = this.add.existing(new Chicken(this, x, y));
+            this.physics.add.existing(singleChicken);
+            this.chickens.add(singleChicken);
+            
+        }
+
+        console.log(this.chickens);
 
         /*$(document).on("keypress keydown", function (e) {
             if (e.which === 50) {
@@ -190,15 +192,15 @@ export class WorldScene extends Phaser.Scene{
             }
         });*/
 
-        this.chickens = this.add.group();
+        //this.chickens = this.add.group();
 
-        for (let i = 0; i < 20; i++) {
+        /*for (let i = 0; i < 20; i++) {
             let x = Phaser.Math.RND.between(0, 800);
             let y = Phaser.Math.RND.between(0, 600);
 
             //let newChick = chickens.create(new Chickens(this, x, y, 'chicken'));
             let newChick = this.chickens.create(x, y, 'chicken', 2);
-        }
+        }*/
 
         //this.chicken = this.add.existing(new Chickens(this, 100, 75, this.playerSpeedVal)).setDepth(2).setImmovable(true);
 
@@ -249,7 +251,7 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
-				this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
+        this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
@@ -332,8 +334,8 @@ export class WorldScene extends Phaser.Scene{
 
     heal (player, healer) {
         if (this.bar != null){
-						this.healed = 1;
-						this.damage = 0;
+            this.healed = 1;
+            this.damage = 0;
             this.playerHealth = 100;
             this.drawHealthBar(this.healed, this.damage, this.playerHealth);
             console.log("healed");
@@ -434,8 +436,9 @@ export class WorldScene extends Phaser.Scene{
         this.player.body.setVelocity(0);
 
         this.enemyFollow(this.player, this.npcEnemy);
+
         // Horizontal movement
-        if (this.liikumine == true) {
+        /*if (this.liikumine == true) {
             if (this.cursors.left.isDown) {
                 this.player.body.setVelocityX(-80);
             } else if (this.cursors.right.isDown) {
@@ -463,8 +466,7 @@ export class WorldScene extends Phaser.Scene{
             } else {
                 this.player.anims.stop();
             }
-        }
-
+        }*/
 
         if (this.cursors.space.isDown && this.liikumine == false) {
             this.scoreText.destroy();
@@ -484,5 +486,159 @@ export class WorldScene extends Phaser.Scene{
 		// enable NPC roaming
 		//chickenRoam();
 
+    }
+}
+
+class Player extends Phaser.Physics.Arcade.Sprite{
+    constructor (scene, x, y){
+        super(scene, x, y);
+
+        this.setTexture('player');
+        this.setPosition(x, y);
+        scene.physics.world.enableBody(this, 0);
+        this.body.collideWorldBounds = true;
+        this.keys = this.scene.input.keyboard.createCursorKeys();
+        this.speed = 300;
+
+        this.moveleft = false;
+        this.moveright = false;
+        this.moveup = false;
+        this.movedown = false;
+    }
+
+    create(){
+
+    }
+
+    preUpdate(time, delta){
+        super.preUpdate(time, delta);
+
+        //Player movement
+        // Horizontal movement
+        if (this.keys.left.isDown) {
+            this.body.setVelocityX(-this.speed);
+        } else if (this.keys.right.isDown) {
+            this.body.setVelocityX(this.speed);
+        }
+
+        // Vertical movement
+        if (this.keys.up.isDown) {
+            this.body.setVelocityY(-this.speed);
+        } else if (this.keys.down.isDown) {
+            this.body.setVelocityY(this.speed);
+        }
+
+        // Update the animation last and give left/right animations precedence over up/down animations
+        if (this.keys.left.isDown) {
+            this.anims.play('left', true);
+            this.flipX = false;
+        } else if (this.keys.right.isDown) {
+            this.anims.play('right', true);
+            this.flipX = false;
+        } else if (this.keys.up.isDown) {
+            this.anims.play('up', true);
+        } else if (this.keys.down.isDown) {
+            this.anims.play('down', true);
+        } else {
+            this.anims.stop();
+        }
+    }
+
+    increaseSpeed(add){
+        this.speed += add;
+    }
+}
+
+class Chicken extends Phaser.Physics.Arcade.Sprite{
+    constructor (scene, x, y){
+        super(scene, x, y);
+
+        this.setTexture('chicken');
+        this.setPosition(x, y);
+        scene.physics.world.enableBody(this, 0);
+        this.body.collideWorldBounds = true;
+        this.keys = this.scene.input.keyboard.createCursorKeys();
+        this.speed = 300;
+
+        this.moveleft = false;
+        this.moveright = false;
+        this.moveup = false;
+        this.movedown = false;
+
+        this.chickenDir = 0;
+    }
+
+    create(){
+
+    }
+
+    preUpdate(time, delta){
+        super.preUpdate(time, delta);
+
+        let supaTime = 0;
+        let interval = 0;
+        let speed = 80;
+
+        //if (new Date().getTime() > (this.NPC_time_now + this.interval)){
+            //this.NPC_time_now = new Date().getTime();
+            this.chickenDir = Phaser.Math.RND.between(0, 8);
+
+            if (this.chickenDir == 1){ // right
+                this.makeNPCMove(speed, 0);
+
+                this.anims.play('NPCright', true);
+                this.flipX = false;
+
+            } else if (this.chickenDir == 2){ // left
+
+                this.makeNPCMove(-speed, 0);
+                this.anims.play('NPCleft', true);
+                this.flipX = true;
+
+            } else if (this.chickenDir == 3){ // down
+
+                this.makeNPCMove(0, speed);
+                this.anims.play('NPCdown', true);
+
+            } else if (this.chickenDir == 4){ // up
+
+                this.makeNPCMove(0, -speed);
+                this.anims.play('NPCup', true);
+
+            } else if (this.chickenDir == 5){
+
+                this.makeNPCMove(speed, -speed);
+                this.anims.play('NPCright', true);
+                this.flipX = false;
+
+            } else if (this.chickenDir == 6){
+
+                this.makeNPCMove(speed, speed);
+                this.anims.play('NPCright', true);
+                this.flipX = false;
+
+            } else if (this.chickenDir == 7){
+
+                this.makeNPCMove(-speed, -speed);
+                this.anims.play('NPCleft', true);
+                this.flipX = true;
+
+            } else if (this.chickenDir == 8){
+
+                this.makeNPCMove(-speed, speed);
+                this.anims.play('NPCleft', true);
+                this.flipX = true;
+
+            }
+        //}
+    }
+
+    makeNPCMove(x, y){
+        this.body.setVelocityX(x);
+        this.body.setVelocityY(y);
+    }
+
+    increaseSpeed(add){
+        this.speed += add;
     }
 }
