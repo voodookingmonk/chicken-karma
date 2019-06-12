@@ -39,6 +39,9 @@ let BootScene = new Phaser.Class({
         },
 
     preload: function () {
+
+        this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
+
         // map tiles
         this.load.image('tiles', 'assets/map/spritesheet.png');
 
@@ -104,6 +107,10 @@ let WorldScene = new Phaser.Class({
     },
 
     create: function () {
+
+        this.sys.install('DialogModalPlugin');
+        console.log(this.sys.dialogModal);
+
         // create the map
         let map = this.make.tilemap({
             key: 'map'
@@ -242,6 +249,9 @@ let WorldScene = new Phaser.Class({
             });
             this.physics.add.collider(chickens[i].obj, obstacles);
             this.physics.add.collider(this.player, chickens[i].obj);
+            this.physics.add.collider(chickens[i].obj, this.healer);
+            this.physics.add.collider(chickens[i].obj, this.NPC2);
+            this.physics.add.collider(chickens[i].obj, this.NPC3);
             chickens[i].obj.setCollideWorldBounds(true);
         }
 
@@ -286,7 +296,8 @@ let WorldScene = new Phaser.Class({
                 this.test.destroy();
                 console.log("big oof");
             }
-        } else if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && enemyHealth > 0) {
+        }
+        if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && enemyHealth > 0) {
             enemyHealth = enemyHealth - 50;
             console.log("ouch");
             if (enemyHealth == 0) {
@@ -418,7 +429,7 @@ let WorldScene = new Phaser.Class({
 
     },
 
-    enemyFollow: function (player, npcEnemy) {
+   enemyFollow: function (player, npcEnemy) {
 
         if ((Math.round(player.x) > Math.round(npcEnemy.x)) && enemyHealth > 0) {
             this.npcEnemy.body.setVelocityX(50);
