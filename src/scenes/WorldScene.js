@@ -253,7 +253,27 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
+	drawHealthBar(){
+			this.graphics = this.add.graphics();
 
+				if(this.healed == 1){
+				this.graphics.clear(this.bar2);
+				//bar = new Phaser.Geom.Rectangle(45, 222, playerHealth, 10);
+				this.graphics.fillStyle(0xff3333);
+				this.graphics.fillRectShape(this.bar);
+				this.graphics.fixedToCamera = true;
+				this.graphics.setScrollFactor(0);
+			}
+				if(this.damage == 1){
+						var damageSize = 100 - this.playerHealth;
+						this.bar2 = new Phaser.Geom.Rectangle(45, 222, this.damageSize, 10);
+						this.graphics.fillRectShape(this.bar2);
+						this.graphics.fixedToCamera = true;
+						this.graphics.setScrollFactor(0);
+				}
+				this.damage = 0;
+				this.healed = 0;
+		}
 
 	dmg (player, test) {
         if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && this.testHealth > 0) {
