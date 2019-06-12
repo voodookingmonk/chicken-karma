@@ -316,7 +316,6 @@ export class WorldScene extends Phaser.Scene{
 						});
 						this.t.fixedToCamera = true;
 						this.t.setScrollFactor(0);
-						this.graphics.clear(this.bar2);
 						//respawn();
 				}
 			}
