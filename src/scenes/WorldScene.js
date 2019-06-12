@@ -271,8 +271,6 @@ export class WorldScene extends Phaser.Scene{
 						this.graphics.fixedToCamera = true;
 						this.graphics.setScrollFactor(0);
 				}
-				this.damage = 0;
-				this.healed = 0;
 		}
 
 	dmg (player, test) {
