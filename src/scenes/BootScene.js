@@ -1,5 +1,6 @@
 /* jshint esversion:6*/
 import { CST } from "../CST";
+import { CST } from "../CST.js";
 
 export class BootScene extends Phaser.Scene{
 	constructor(){

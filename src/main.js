@@ -2,6 +2,8 @@
 
 import {BootScene} from "./scenes/BootScene";
 import {WorldScene} from "./scenes/WorldScene";
+import {BootScene} from "./scenes/BootScene.js";
+import {WorldScene} from "./scenes/WorldScene.js";
 
 let config = {
     type: Phaser.AUTO,
