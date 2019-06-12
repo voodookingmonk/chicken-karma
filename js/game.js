@@ -15,7 +15,6 @@ let graphics;
 let bar;
 let bar2;
 var t;
-let quest1 = true;
 
 let NPCS = [];
 let NPCSdir = [];
@@ -40,6 +39,9 @@ let BootScene = new Phaser.Class({
         },
 
     preload: function () {
+
+        this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
+
         // map tiles
         this.load.image('tiles', 'assets/map/spritesheet.png');
 
@@ -100,7 +102,14 @@ let WorldScene = new Phaser.Class({
             });
         },
 
+    preload: function () {
+
+    },
+
     create: function () {
+
+        this.sys.install('DialogModalPlugin');
+        console.log(this.sys.dialogModal);
 
         // create the map
         let map = this.make.tilemap({
@@ -226,8 +235,8 @@ let WorldScene = new Phaser.Class({
         this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
         this.healer = this.physics.add.sprite(50, 50, 'healer', 1).setImmovable();
         this.NPC3.visible = false;
-        scoreText = this.add.text(8, 8, 'tere', {
-            fontSize: '12px',
+        scoreText = this.add.text(16, 16, 'tere', {
+            fontSize: '32px',
             fill: '#000'
         });
         scoreText.visible = false;
@@ -340,7 +349,7 @@ let WorldScene = new Phaser.Class({
     },
     heal: function (player, healer) {
         bar.width = 70;
-        bar2 = Phaser.Geom.Rectangle(65, 222, 0, 10);
+        bar2 = new Phaser.Geom.Rectangle(65, 222, 0, 10);
         console.log("healed");
     },
 
@@ -352,8 +361,8 @@ let WorldScene = new Phaser.Class({
             time_now = new Date().getTime();
             console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
             this.NPC3.visible = true;
-            scoreText = this.add.text(8, 8, 'Tere', {
-                fontSize: '12px',
+            scoreText = this.add.text(16, 16, 'Tere', {
+                fontSize: '32px',
                 fill: '#000'
             });
             scoreText.visible = true;
@@ -409,8 +418,8 @@ let WorldScene = new Phaser.Class({
         if (new Date().getTime() > (time_now + interval)) {
             time_now = new Date().getTime();
             console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-            scoreText = this.add.text(8, 8, 'OUCH', {
-                fontSize: '12px',
+            scoreText = this.add.text(16, 16, 'OUCH', {
+                fontSize: '32px',
                 fill: '#000'
             });
             scoreText.visible = true;
@@ -473,23 +482,13 @@ let WorldScene = new Phaser.Class({
         }
 
 
-        if (this.cursors.space.isDown && liikumine == false && quest1 == true) {
+        if (this.cursors.space.isDown && liikumine == false) {
             scoreText.destroy();
-            scoreText = this.add.text(8, 8, 'Tegemist on suht algelise testiga mängust :)', {
-                fontSize: '12px',
+            scoreText = this.add.text(16, 16, 'Headaega', {
+                fontSize: '32px',
                 fill: '#000'
             });
-            if (this.cursors.space.isDown && liikumine == false && quest1 == true) {
-              scoreText.destroy();
-              scoreText = this.add.text(8, 8, 'Ole hea mine hävita see roheline seen ning see hull tüdruk kes kõiki ründab.', {
-                  fontSize: '12px',
-                  fill: '#000'
-              });
-              liikumine = true;
-            }
-            if (this.cursors.space.isDown && quest1 == false){
-              liikumine = true;
-            }
+            liikumine = true;
         }
         if ((this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.down.isDown || this.cursors.down.isDown) && liikumine == true) {
             scoreText.destroy();
@@ -550,6 +549,27 @@ function makeNPCMove(NPC, x, y){
 	NPC.body.setVelocityX(x);
 	NPC.body.setVelocityY(y);
 }
+
+function keypressListener(player, player2) {
+    $(document).on("keypress keydown", function (e) {
+        if (e.which === 50) {
+            player2.visible = true;
+            player.visible = false;
+        } else if (e.which === 49) {
+            player2.visible = false;
+            player.visible = true;
+        }
+    });
+}
+
+/*
+function health(bar){
+	$(document).on( "keydown", function( event ) {
+		if (e.which == 49){
+			bar.width -= 20;
+		}
+	});
+}*/
 
 let config = {
     type: Phaser.AUTO,
