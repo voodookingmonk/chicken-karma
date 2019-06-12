@@ -208,7 +208,7 @@ export class WorldScene extends Phaser.Scene{
 
         // Create health bar:
         this.graphics = this.add.graphics();
-        this.bar = new Phaser.Geom.Rectangle(45, 222, 70, 10);
+        this.bar = new Phaser.Geom.Rectangle(45, 222, 100, 10);
         this.bar2 = new Phaser.Geom.Rectangle(45, 222, 0, 10);
         this.graphics.fillStyle(0xff3333);
         this.graphics.fillRectShape(this.bar);
