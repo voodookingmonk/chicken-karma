@@ -39,6 +39,9 @@ let BootScene = new Phaser.Class({
         },
 
     preload: function () {
+
+        this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
+
         // map tiles
         this.load.image('tiles', 'assets/map/spritesheet.png');
 
@@ -104,6 +107,10 @@ let WorldScene = new Phaser.Class({
     },
 
     create: function () {
+
+        this.sys.install('DialogModalPlugin');
+        console.log(this.sys.dialogModal);
+
         // create the map
         let map = this.make.tilemap({
             key: 'map'
@@ -241,10 +248,10 @@ let WorldScene = new Phaser.Class({
                 movingDir: 0
             });
             this.physics.add.collider(chickens[i].obj, obstacles);
+            this.physics.add.collider(this.player, chickens[i].obj);
+            this.physics.add.collider(chickens[i].obj, this.healer);
             this.physics.add.collider(chickens[i].obj, this.NPC2);
             this.physics.add.collider(chickens[i].obj, this.NPC3);
-            this.physics.add.collider(chickens[i].obj, this.healer);
-            this.physics.add.collider(this.player, chickens[i].obj);
             chickens[i].obj.setCollideWorldBounds(true);
         }
 
@@ -421,7 +428,7 @@ let WorldScene = new Phaser.Class({
 
     },
 
-    enemyFollow: function (player, npcEnemy) {
+   enemyFollow: function (player, npcEnemy) {
 
         if ((Math.round(player.x) > Math.round(npcEnemy.x)) && enemyHealth > 0) {
             this.npcEnemy.body.setVelocityX(50);
@@ -504,32 +511,32 @@ function chickenRoam(){
 			NPC_time_now = new Date().getTime();
       chickens[i].movingDir = Math.ceil(Math.random() * 8);
       if (chickens[i].movingDir == 1){ // right
-        makeNPCMove(chickens[i].obj, speed, 0); 
+        makeNPCMove(chickens[i].obj, speed, 0);
         chickens[i].obj.anims.play('NPCright', true);
         chickens[i].obj.flipX = false;
       } else if (chickens[i].movingDir == 2){ // left
-        makeNPCMove(chickens[i].obj, -speed, 0); 
+        makeNPCMove(chickens[i].obj, -speed, 0);
         chickens[i].obj.anims.play('NPCleft', true);
 			  chickens[i].obj.flipX = true;
 			} else if (chickens[i].movingDir == 3){ // down
-        makeNPCMove(chickens[i].obj, 0, speed); 
+        makeNPCMove(chickens[i].obj, 0, speed);
         chickens[i].obj.anims.play('NPCdown', true);
 			} else if (chickens[i].movingDir == 4){ // up
         makeNPCMove(chickens[i].obj, 0, -speed);
         chickens[i].obj.anims.play('NPCup', true);
-			} else if (chickens[i].movingDir == 5){ 
+			} else if (chickens[i].movingDir == 5){
         makeNPCMove(chickens[i].obj, speed, -speed);
         chickens[i].obj.anims.play('NPCright', true);
         chickens[i].obj.flipX = false;
-			} else if (chickens[i].movingDir == 6){ 
+			} else if (chickens[i].movingDir == 6){
         makeNPCMove(chickens[i].obj, speed, speed);
         chickens[i].obj.anims.play('NPCright', true);
         chickens[i].obj.flipX = false;
-			} else if (chickens[i].movingDir == 7){ 
+			} else if (chickens[i].movingDir == 7){
         makeNPCMove(chickens[i].obj, -speed, -speed);
         chickens[i].obj.anims.play('NPCleft', true);
 			  chickens[i].obj.flipX = true;
-			} else if (chickens[i].movingDir == 8){ 
+			} else if (chickens[i].movingDir == 8){
         makeNPCMove(chickens[i].obj, -speed, speed);
         chickens[i].obj.anims.play('NPCleft', true);
 			  chickens[i].obj.flipX = true;
