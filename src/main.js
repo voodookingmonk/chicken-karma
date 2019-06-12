@@ -2,6 +2,7 @@
 
 import {BootScene} from "./scenes/BootScene.js";
 import {WorldScene} from "./scenes/WorldScene.js";
+import {UIScene} from "./scenes/UIScene.js";
 
 let config = {
     type: Phaser.AUTO,
@@ -20,7 +21,7 @@ let config = {
         }
     },
     scene:[
-      BootScene, WorldScene
+      BootScene, WorldScene, UIScene
     ],
     parent: 'game'
 };
