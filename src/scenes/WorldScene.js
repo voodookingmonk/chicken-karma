@@ -221,6 +221,7 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
+
 	drawHealthBar(){
 			this.graphics = this.add.graphics();
 
