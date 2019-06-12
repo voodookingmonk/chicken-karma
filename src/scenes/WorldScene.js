@@ -253,21 +253,22 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
-
-	drawHealthBar(){
-			this.graphics = this.add.graphics();
-
+  
+	drawHealthBar(healed, damage, playerHealth){
+				this.graphics = this.add.graphics();
+				
 				if(this.healed == 1){
 				this.graphics.clear(this.bar2);
-				//bar = new Phaser.Geom.Rectangle(45, 222, playerHealth, 10);
+				// bar = new Phaser.Geom.Rectangle(45, 222, playerHealth, 10);
 				this.graphics.fillStyle(0xff3333);
 				this.graphics.fillRectShape(this.bar);
 				this.graphics.fixedToCamera = true;
 				this.graphics.setScrollFactor(0);
+				
 			}
 				if(this.damage == 1){
 						var damageSize = 100 - this.playerHealth;
-						this.bar2 = new Phaser.Geom.Rectangle(45, 222, this.damageSize, 10);
+						this.bar2 = new Phaser.Geom.Rectangle(45, 222, damageSize, 10);
 						this.graphics.fillRectShape(this.bar2);
 						this.graphics.fixedToCamera = true;
 						this.graphics.setScrollFactor(0);
@@ -297,31 +298,31 @@ export class WorldScene extends Phaser.Scene{
         }
     }
 
-    damageToPlayer (player, test) {
+		damageToPlayer (player, test) {
+				this.checkDirection(player, test);
+				//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
+				if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
+					this.time_now = new Date().getTime();
 
-            this.checkDirection(player, test);
-            //Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
-            if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
-                this.time_now = new Date().getTime();
-
-            if (this.playerHealth > 0) {
-                    this.damage = 1;
-                    this.healed = 0;
-                    this.playerHealth -= 10;
-                    this.drawHealthBar();
-            } else {
-                    this.t = this.add.text(60, 100, "You dided man!", {
-                            font: "30px Arial",
-                            fill: "red",
-                            align: "center"
-                    });
-                    this.t.fixedToCamera = true;
-                    this.t.setScrollFactor(0);
-                    this.graphics.clear(bar2);
-                    //respawn();
-            }
-        }
-    }
+				if (this.playerHealth > 0) {
+						this.damage = 1;
+						this.healed = 0;
+						this.playerHealth -= 10;
+						this.drawHealthBar(this.healed, this.damage, this.playerHealth);
+						}
+				 else {
+						this.t = this.add.text(60, 100, "You dided man!", {
+								font: "30px Arial",
+								fill: "red",
+								align: "center"
+						});
+						this.t.fixedToCamera = true;
+						this.t.setScrollFactor(0);
+						this.graphics.clear(this.bar2);
+						//respawn();
+				}
+			}
+		}
 
     respawn (player) {
         this.player.x = 50;
@@ -339,7 +340,7 @@ export class WorldScene extends Phaser.Scene{
 						this.healed = 1;
 						this.damage = 0;
             this.playerHealth = 100;
-            this.drawHealthBar();
+            this.drawHealthBar(this.healed, this.damage, this.playerHealth);
             console.log("healed");
 						this.healed = false;
         }
