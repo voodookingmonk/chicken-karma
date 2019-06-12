@@ -255,7 +255,6 @@ export class WorldScene extends Phaser.Scene{
     }
 	drawHealthBar(healed, damage, playerHealth){
 				this.graphics = this.add.graphics();
-				console.log("DRAW");
 				if(this.healed == 1){
 
 				this.graphics.clear(this.bar2);
@@ -264,10 +263,8 @@ export class WorldScene extends Phaser.Scene{
 				this.graphics.fillRectShape(this.bar);
 				this.graphics.fixedToCamera = true;
 				this.graphics.setScrollFactor(0);
-				console.log("HEAL");
 			}
 				if(this.damage == 1){
-						console.log("DAMM");
 						var damageSize = 100 - this.playerHealth;
 						this.bar2 = new Phaser.Geom.Rectangle(45, 222, damageSize, 10);
 						this.graphics.fillRectShape(this.bar2);
