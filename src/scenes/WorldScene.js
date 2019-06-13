@@ -238,14 +238,14 @@ export class WorldScene extends Phaser.Scene{
 
         // Create health bar:
         this.graphics = this.add.graphics();
-        this.bar = new Phaser.Geom.Rectangle(45, 222, 100, 10);
-        this.bar2 = new Phaser.Geom.Rectangle(45, 222, 0, 10);
+        this.bar = new Phaser.Geom.Rectangle(43, 10, 50, 7);
+        this.bar2 = new Phaser.Geom.Rectangle(43, 10, 0, 7);
         this.graphics.fillStyle(0xff3333);
         this.graphics.fillRectShape(this.bar);
         this.graphics.fixedToCamera = true;
         this.graphics.setScrollFactor(0);
-				this.t = this.add.text(10, 220, "Health: ", {
-            font: "10px Arial",
+				this.t = this.add.text(10, 6.5, "Health: ", {
+            font: "9px Arial",
             fill: "black",
             align: "center"
         });
@@ -286,20 +286,20 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
-	drawHealthBar(healed, damage, playerHealth){
-				this.graphics = this.add.graphics();
-				if(this.healed == 1){
 
-				this.graphics.clear(this.bar2);
-				// bar = new Phaser.Geom.Rectangle(45, 222, playerHealth, 10);
-				this.graphics.fillStyle(0xff3333);
-				this.graphics.fillRectShape(this.bar);
-				this.graphics.fixedToCamera = true;
-				this.graphics.setScrollFactor(0);
-			}
+	 drawHealthBar (healed, damage, playerHealth){
+				this.graphics = this.add.graphics();
+
+				if(this.healed == 1){
+						this.graphics.clear(this.bar2);
+						this.graphics.fillStyle(0xff3333);
+						this.graphics.fillRectShape(this.bar);
+						this.graphics.fixedToCamera = true;
+						this.graphics.setScrollFactor(0);
+				}
 				if(this.damage == 1){
-						var damageSize = 100 - this.playerHealth;
-						this.bar2 = new Phaser.Geom.Rectangle(45, 222, damageSize, 10);
+						var damageSize = (100 - this.playerHealth) / 2;
+						this.bar2 = new Phaser.Geom.Rectangle(43, 10, damageSize, 7);
 						this.graphics.fillRectShape(this.bar2);
 						this.graphics.fixedToCamera = true;
 						this.graphics.setScrollFactor(0);
@@ -347,7 +347,6 @@ export class WorldScene extends Phaser.Scene{
 						});
 						this.t.fixedToCamera = true;
 						this.t.setScrollFactor(0);
-						this.graphics.clear(this.bar2);
 						//respawn();
 				}
 			}
