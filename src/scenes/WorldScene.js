@@ -138,18 +138,6 @@ export class WorldScene extends Phaser.Scene{
             repeat: -1
         });
 
-        //test.fixedToCamera = true;
-        //test.setScrollFactor(0);
-        //test.cameraOffset.setTo(20, 20);
-        this.t = this.add.text(10, 220, "Health: ", {
-            font: "10px Arial",
-            fill: "black",
-            align: "center"
-        });
-        this.t.fixedToCamera = true;
-        this.t.setScrollFactor(0);
-
-
         // our player sprite created through the phycis system
         //this.player = this.physics.add.sprite(50, 100, 'player', 1);
 
@@ -179,7 +167,7 @@ export class WorldScene extends Phaser.Scene{
             let singleChicken = this.add.existing(new Chicken(this, x, y));
             this.physics.add.existing(singleChicken);
             this.chickens.add(singleChicken);
-            
+
         }
 
         console.log(this.chickens);
@@ -255,17 +243,16 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
-	drawHealthBar(healed, damage, playerHealth){
+	 drawHealthBar (healed, damage, playerHealth){
 				this.graphics = this.add.graphics();
-				if(this.healed == 1){
 
-				this.graphics.clear(this.bar2);
-				// bar = new Phaser.Geom.Rectangle(45, 222, playerHealth, 10);
-				this.graphics.fillStyle(0xff3333);
-				this.graphics.fillRectShape(this.bar);
-				this.graphics.fixedToCamera = true;
-				this.graphics.setScrollFactor(0);
-			}
+				if(this.healed == 1){
+						this.graphics.clear(this.bar2);
+						this.graphics.fillStyle(0xff3333);
+						this.graphics.fillRectShape(this.bar);
+						this.graphics.fixedToCamera = true;
+						this.graphics.setScrollFactor(0);
+				}
 				if(this.damage == 1){
 						var damageSize = 100 - this.playerHealth;
 						this.bar2 = new Phaser.Geom.Rectangle(45, 222, damageSize, 10);
