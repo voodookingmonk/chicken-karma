@@ -16,6 +16,9 @@ export class UIScene extends Phaser.Scene{
     }
 
     create(){
+        let gameScene = this.scene.get(CST.SCENES.WORLD);
+        console.log(gameScene);
+        console.log("UI loaded"); // end
     }
 
     update(){
