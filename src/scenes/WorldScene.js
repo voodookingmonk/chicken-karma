@@ -1,5 +1,6 @@
 /* jshint esversion:6*/
 import { CST } from "../CST.js";
+import thisGame from "../main.js";
 
 export class WorldScene extends Phaser.Scene{
 	constructor(){
@@ -23,8 +24,13 @@ export class WorldScene extends Phaser.Scene{
     this.bar = null;
     this.bar2 = null;
     this.t = null;
-		this.damage = null;
-		this.healed = null;
+    this.damage = null;
+    this.healed = null;
+
+    this.map = null;
+    this.tiles = null;
+    this.grass = null;
+    this.obstacles = null;
 
     this.NPCS = [];
     this.NPCSdir = [];
@@ -32,6 +38,7 @@ export class WorldScene extends Phaser.Scene{
 
 
     this.chickenCount = 500;
+
     }
 
     init(){
@@ -39,29 +46,21 @@ export class WorldScene extends Phaser.Scene{
     }
 
     preload(){
-    }
-
-    create(){
-
-        this.chickens = this.add.group();
-
-		//this.sys.install('DialogModalPlugin');
-        //console.log(this.sys.dialogModal);
 
         // create the map
-        let map = this.make.tilemap({
+        this.map = this.make.tilemap({
             key: 'map'
         });
 
         // first parameter is the name of the tilemap in tiled
-        let tiles = map.addTilesetImage('spritesheet', 'tiles');
+        this.tiles = this.map.addTilesetImage('spritesheet', 'tiles');
 
         // creating the layers
-        let grass = map.createStaticLayer('Grass', tiles, 0, 0);
-        let obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
+        this.grass = this.map.createStaticLayer('Grass', this.tiles, 0, 0);
+        this.obstacles = this.map.createStaticLayer('Obstacles', this.tiles, 0, 0);
 
         // make all tiles in obstacles collidable
-        obstacles.setCollisionByExclusion([-1]);
+        this.obstacles.setCollisionByExclusion([-1]);
 
         //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
         this.anims.create({
@@ -103,7 +102,7 @@ export class WorldScene extends Phaser.Scene{
         // for chicken
 
         this.anims.create({
-            key: 'NPCleft',
+            key: 'chickenLeft',
             frames: this.anims.generateFrameNumbers('chicken', {
                 frames: [4, 5, 6, 7]
             }),
@@ -113,7 +112,7 @@ export class WorldScene extends Phaser.Scene{
 
         // animation with key 'right'
         this.anims.create({
-            key: 'NPCright',
+            key: 'chickenRight',
             frames: this.anims.generateFrameNumbers('chicken', {
                 frames: [4, 5, 6, 7]
             }),
@@ -122,7 +121,7 @@ export class WorldScene extends Phaser.Scene{
         });
 
         this.anims.create({
-            key: 'NPCup',
+            key: 'chickenUp',
             frames: this.anims.generateFrameNumbers('chicken', {
                 frames: [8, 9, 10, 11]
             }),
@@ -130,7 +129,7 @@ export class WorldScene extends Phaser.Scene{
             repeat: -1
         });
         this.anims.create({
-            key: 'NPCdown',
+            key: 'chickenDown',
             frames: this.anims.generateFrameNumbers('chicken', {
                 frames: [0, 1, 2, 3]
             }),
@@ -138,10 +137,68 @@ export class WorldScene extends Phaser.Scene{
             repeat: -1
         });
 
+        // for enemy
+
+        this.anims.create({
+            key: 'enemyLeft',
+            frames: this.anims.generateFrameNumbers('enemy', {
+                frames: [22, 28, 34]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        // animation with key 'right'
+        this.anims.create({
+            key: 'enemyRight',
+            frames: this.anims.generateFrameNumbers('enemy', {
+                frames: [22, 28, 34]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'enemyUp',
+            frames: this.anims.generateFrameNumbers('enemy', {
+                frames: [23, 29, 35]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'enemyDown',
+            frames: this.anims.generateFrameNumbers('enemy', {
+                frames: [21, 27, 33]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+    }
+
+    create(){
+
+		//this.sys.install('DialogModalPlugin');
+        //console.log(this.sys.dialogModal);
+
+        //test.fixedToCamera = true;
+        //test.setScrollFactor(0);
+        //test.cameraOffset.setTo(20, 20);
+        this.t = this.add.text(10, 220, "Health: ", {
+            font: "10px Arial",
+            fill: "black",
+            align: "center"
+        });
+        this.t.fixedToCamera = true;
+        this.t.setScrollFactor(0);
+
+
         // our player sprite created through the phycis system
         //this.player = this.physics.add.sprite(50, 100, 'player', 1);
 
         this.player = this.add.existing(new Player(this, 600, 300).setDepth(2).setImmovable(true));
+        this.newEnemy = this.add.existing(new Enemy(this, 600, 300).setDepth(2).setImmovable(true));
 
         this.test = this.physics.add.sprite(70, 210, 'mushroom');
         this.NPC = this.physics.add.sprite(350, 75, 'chicken', 2);
@@ -160,6 +217,10 @@ export class WorldScene extends Phaser.Scene{
         });
         scoreText.visible = false;
 
+
+        this.chickens = this.add.group();
+        this.enemies = this.add.group();
+
         for (let i = 0; i < this.chickenCount; i++) {
             let x = Phaser.Math.RND.between(0, 800);
             let y = Phaser.Math.RND.between(0, 600);
@@ -167,34 +228,13 @@ export class WorldScene extends Phaser.Scene{
             let singleChicken = this.add.existing(new Chicken(this, x, y));
             this.physics.add.existing(singleChicken);
             this.chickens.add(singleChicken);
-
-        }
-
-        console.log(this.chickens);
-
-        /*$(document).on("keypress keydown", function (e) {
-            if (e.which === 50) {
-                this.scene.restart();
-            } else if (e.which === 49) {
-                console.log("pere");
+            if (i <= this.chickenCount/2){
+                console.log("what");
+                let singleEnemy = this.add.existing(new Enemy(this, x, y));
+                this.physics.add.existing(singleEnemy);
+                this.enemies.add(singleEnemy);
             }
-        });*/
-
-        //this.chickens = this.add.group();
-
-        /*for (let i = 0; i < 20; i++) {
-            let x = Phaser.Math.RND.between(0, 800);
-            let y = Phaser.Math.RND.between(0, 600);
-
-            //let newChick = chickens.create(new Chickens(this, x, y, 'chicken'));
-            let newChick = this.chickens.create(x, y, 'chicken', 2);
-        }*/
-
-        //this.chicken = this.add.existing(new Chickens(this, 100, 75, this.playerSpeedVal)).setDepth(2).setImmovable(true);
-
-        //this.player = this.add.existing(new Chickens(this, 100, 75, this.playerSpeedVal)).setDepth(2).setImmovable(true);
-
-        //console.log(chickens.children.entries[0]);
+        }
 
         // Create health bar:
         this.graphics = this.add.graphics();
@@ -213,19 +253,22 @@ export class WorldScene extends Phaser.Scene{
         this.t.setScrollFactor(0);
 
         //treetops and stuff above player
-        let top = map.createStaticLayer('Top', tiles, 0, 0);
+        let top = this.map.createStaticLayer('Top', this.tiles, 0, 0);
 
         // don't go out of the map
-        this.physics.world.bounds.width = map.widthInPixels;
-        this.physics.world.bounds.height = map.heightInPixels;
+        this.physics.world.bounds.width = this.map.widthInPixels;
+        this.physics.world.bounds.height = this.map.heightInPixels;
         this.player.setCollideWorldBounds(true);
 
         // don't walk on trees
-        this.physics.add.collider(this.player, obstacles);
-        this.physics.add.collider(this.npcEnemy, obstacles);
+        this.physics.add.collider(this.player, this.obstacles);
+        this.physics.add.collider(this.npcEnemy, this.obstacles);
+        this.physics.add.collider(this.chickens, this.obstacles);
+        this.physics.add.collider(this.enemies, this.obstacles);
+
 
         // limit camera to map
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(this.player);
         this.cameras.main.roundPixels = true; // avoid tile bleed
 
@@ -420,41 +463,9 @@ export class WorldScene extends Phaser.Scene{
     }
 
     update(){
-
-        this.player.body.setVelocity(0);
+        //this.player.body.setVelocity(0);
 
         this.enemyFollow(this.player, this.npcEnemy);
-
-        // Horizontal movement
-        /*if (this.liikumine == true) {
-            if (this.cursors.left.isDown) {
-                this.player.body.setVelocityX(-80);
-            } else if (this.cursors.right.isDown) {
-                this.player.body.setVelocityX(80);
-            }
-
-            // Vertical movement
-            if (this.cursors.up.isDown) {
-                this.player.body.setVelocityY(-80);
-            } else if (this.cursors.down.isDown) {
-                this.player.body.setVelocityY(80);
-            }
-
-            // Update the animation last and give left/right animations precedence over up/down animations
-            if (this.cursors.left.isDown) {
-                this.player.anims.play('left', true);
-                this.player.flipX = false;
-            } else if (this.cursors.right.isDown) {
-                this.player.anims.play('right', true);
-                this.player.flipX = false;
-            } else if (this.cursors.up.isDown) {
-                this.player.anims.play('up', true);
-            } else if (this.cursors.down.isDown) {
-                this.player.anims.play('down', true);
-            } else {
-                this.player.anims.stop();
-            }
-        }*/
 
         if (this.cursors.space.isDown && this.liikumine == false) {
             this.scoreText.destroy();
@@ -486,7 +497,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         scene.physics.world.enableBody(this, 0);
         this.body.collideWorldBounds = true;
         this.keys = this.scene.input.keyboard.createCursorKeys();
-        this.speed = 300;
+        this.speed = 200;
 
         this.moveleft = false;
         this.moveright = false;
@@ -500,6 +511,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
+
+        this.body.setVelocity(0);
 
         //Player movement
         // Horizontal movement
@@ -531,10 +544,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             this.anims.stop();
         }
     }
-
-    increaseSpeed(add){
-        this.speed += add;
-    }
 }
 
 class Chicken extends Phaser.Physics.Arcade.Sprite{
@@ -553,7 +562,10 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.moveup = false;
         this.movedown = false;
 
-        this.chickenDir = 0;
+        this.direction = 0;
+        this.previousTimer = 0;
+        this.speed = 10;
+        this.firstTime = true;
     }
 
     create(){
@@ -562,71 +574,163 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
+        this.previousTimer += 1;
 
-        let supaTime = 0;
-        let interval = 0;
-        let speed = 80;
+        this.roaming();
+    }
 
-        //if (new Date().getTime() > (this.NPC_time_now + this.interval)){
-            //this.NPC_time_now = new Date().getTime();
-            this.chickenDir = Phaser.Math.RND.between(0, 8);
+    roaming(){
+        this.direction = Phaser.Math.RND.between(0, 8);
 
-            if (this.chickenDir == 1){ // right
-                this.makeNPCMove(speed, 0);
+        if (this.previousTimer == 75 || this.firstTime){
+            this.firstTime = false;
+            if (this.direction == 1){ // right
+                this.makeNPCMove(this.speed, 0);
 
-                this.anims.play('NPCright', true);
+                this.anims.play('chickenRight', true);
                 this.flipX = false;
 
-            } else if (this.chickenDir == 2){ // left
+            } else if (this.direction == 2){ // left
 
-                this.makeNPCMove(-speed, 0);
-                this.anims.play('NPCleft', true);
+                this.makeNPCMove(-this.speed, 0);
+                this.anims.play('chickenRight', true);
                 this.flipX = true;
 
-            } else if (this.chickenDir == 3){ // down
+            } else if (this.direction == 3){ // down
 
-                this.makeNPCMove(0, speed);
-                this.anims.play('NPCdown', true);
+                this.makeNPCMove(0, this.speed);
+                this.anims.play('chickenDown', true);
 
-            } else if (this.chickenDir == 4){ // up
+            } else if (this.direction == 4){ // up
 
-                this.makeNPCMove(0, -speed);
-                this.anims.play('NPCup', true);
+                this.makeNPCMove(0, -this.speed);
+                this.anims.play('chickenUp', true);
 
-            } else if (this.chickenDir == 5){
+            } else if (this.direction == 5){
 
-                this.makeNPCMove(speed, -speed);
-                this.anims.play('NPCright', true);
+                this.makeNPCMove(this.speed, -this.speed);
+                this.anims.play('chickenRight', true);
                 this.flipX = false;
 
-            } else if (this.chickenDir == 6){
+            } else if (this.direction == 6){
 
-                this.makeNPCMove(speed, speed);
-                this.anims.play('NPCright', true);
+                this.makeNPCMove(this.speed, this.speed);
+                this.anims.play('chickenRight', true);
                 this.flipX = false;
 
-            } else if (this.chickenDir == 7){
+            } else if (this.direction == 7){
 
-                this.makeNPCMove(-speed, -speed);
-                this.anims.play('NPCleft', true);
+                this.makeNPCMove(-this.speed, -this.speed);
+                this.anims.play('chickenLeft', true);
                 this.flipX = true;
 
-            } else if (this.chickenDir == 8){
+            } else if (this.direction == 8){
 
-                this.makeNPCMove(-speed, speed);
-                this.anims.play('NPCleft', true);
+                this.makeNPCMove(-this.speed, this.speed);
+                this.anims.play('chickenLeft', true);
                 this.flipX = true;
 
             }
-        //}
+            this.previousTimer = 0;
+        }
     }
 
     makeNPCMove(x, y){
         this.body.setVelocityX(x);
         this.body.setVelocityY(y);
     }
+}
 
-    increaseSpeed(add){
-        this.speed += add;
+class Enemy extends Phaser.Physics.Arcade.Sprite{
+    constructor (scene, x, y){
+        super(scene, x, y);
+
+        this.setTexture('enemy');
+        this.setPosition(x, y);
+        scene.physics.world.enableBody(this, 0);
+        this.body.collideWorldBounds = true;
+        this.keys = this.scene.input.keyboard.createCursorKeys();
+        this.speed = 80;
+
+        this.moveleft = false;
+        this.moveright = false;
+        this.moveup = false;
+        this.movedown = false;
+
+        this.direction = 0;
+        this.previousTimer = 0;
+        this.speed = 40;
+        this.firstTime = true;
+    }
+
+    create(){
+
+    }
+
+    preUpdate(time, delta){
+        super.preUpdate(time, delta);
+        this.previousTimer += 1;
+        this.roaming();
+    }
+
+    roaming(){
+        if (this.previousTimer == 75 || this.firstTime){
+            this.firstTime = false;
+            this.direction = Phaser.Math.RND.between(0, 8);
+            if (this.direction == 1){ // right
+                this.makeNPCMove(this.speed, 0);
+
+                this.anims.play('enemyRight', true);
+                this.flipX = false;
+
+            } else if (this.direction == 2){ // left
+
+                this.makeNPCMove(-this.speed, 0);
+                this.anims.play('enemyLeft', true);
+                this.flipX = true;
+
+            } else if (this.direction == 3){ // down
+
+                this.makeNPCMove(0, this.speed);
+                this.anims.play('enemyDown', true);
+
+            } else if (this.direction == 4){ // up
+
+                this.makeNPCMove(0, -this.speed);
+                this.anims.play('enemyUp', true);
+
+            } else if (this.direction == 5){
+
+                this.makeNPCMove(this.speed, -this.speed);
+                this.anims.play('enemyRight', true);
+                this.flipX = false;
+
+            } else if (this.direction == 6){
+
+                this.makeNPCMove(this.speed, this.speed);
+                this.anims.play('enemyRight', true);
+                this.flipX = false;
+
+            } else if (this.direction == 7){
+
+                this.makeNPCMove(-this.speed, -this.speed);
+                this.anims.play('enemyLeft', true);
+                this.flipX = true;
+
+            } else if (this.direction == 8){
+
+                this.makeNPCMove(-this.speed, this.speed);
+                this.anims.play('enemyLeft', true);
+                this.flipX = true;
+
+            }
+
+            this.previousTimer = 0;
+        }
+    }
+
+    makeNPCMove(x, y){
+        this.body.setVelocityX(x);
+        this.body.setVelocityY(y);
     }
 }
