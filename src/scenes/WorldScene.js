@@ -182,18 +182,6 @@ export class WorldScene extends Phaser.Scene{
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
 
-        //test.fixedToCamera = true;
-        //test.setScrollFactor(0);
-        //test.cameraOffset.setTo(20, 20);
-        this.t = this.add.text(10, 220, "Health: ", {
-            font: "10px Arial",
-            fill: "black",
-            align: "center"
-        });
-        this.t.fixedToCamera = true;
-        this.t.setScrollFactor(0);
-
-
         // our player sprite created through the phycis system
         //this.player = this.physics.add.sprite(50, 100, 'player', 1);
 
