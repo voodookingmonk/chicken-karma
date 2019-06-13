@@ -13,27 +13,30 @@ export class WorldScene extends Phaser.Scene{
     this.NPC_movement_direction = 0;
     this.Enemy_time_now = new Date().getTime();
     this.Enemy_movement_direction = 0;
-    this.scoreText = null;
+    this.npcText = null;
     this.liikumine = true;
-
     this.test = null; //healthbar test
     this.playerHealth = 100;
     this.testHealth = 100;
     this.enemyHealth = 100;
-    this.graphics = null;
     this.bar = null;
     this.bar2 = null;
     this.t = null;
 		this.damage = null;
 		this.healed = null;
+		this.talking = 0;
+		this.quest1 = 0;
+		this.text = null;
 
     this.NPCS = [];
     this.NPCSdir = [];
     this.NPCmax = [];
 
+		this.graphics = 0;
+		this.graphicsText = 0;
 
-    this.chickenCount = 20;
-    this.chickens = [];
+
+    this.chickenCount = 500;
     }
 
     init(){
@@ -44,6 +47,10 @@ export class WorldScene extends Phaser.Scene{
     }
 
     create(){
+
+
+      this.chickens = this.add.group();
+
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
 
@@ -137,20 +144,8 @@ export class WorldScene extends Phaser.Scene{
             repeat: -1
         });
 
-        //test.fixedToCamera = true;
-        //test.setScrollFactor(0);
-        //test.cameraOffset.setTo(20, 20);
-        this.t = this.add.text(10, 220, "Health: ", {
-            font: "10px Arial",
-            fill: "black",
-            align: "center"
-        });
-        this.t.fixedToCamera = true;
-        this.t.setScrollFactor(0);
+        this.player = this.add.existing(new Player(this, 600, 300).setDepth(2).setImmovable(true));
 
-
-        // our player sprite created through the phycis system
-        this.player = this.physics.add.sprite(50, 100, 'player', 1);
         this.test = this.physics.add.sprite(70, 210, 'mushroom');
         this.NPC = this.physics.add.sprite(350, 75, 'chicken', 2);
         this.NPCx = this.physics.add.sprite(350, 75, 'chicken', 2);
@@ -162,25 +157,23 @@ export class WorldScene extends Phaser.Scene{
         this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
         this.healer = this.physics.add.sprite(50, 50, 'healer', 1).setImmovable();
         this.NPC3.visible = false;
-        let scoreText = this.add.text(16, 16, 'tere', {
+				let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
             fill: '#000'
         });
-        scoreText.visible = false;
+        npcText.visible = false;
 
-        /*for (let i = 0; i < chickenCount; i++) {
-            chickens.push({
-                obj: this.physics.add.sprite(150, 75, 'chicken', 2),
-                hp: 1,
-                movingDir: 0
-            });
-            this.physics.add.collider(chickens[i].obj, obstacles);
-            this.physics.add.collider(this.player, chickens[i].obj);
-            this.physics.add.collider(chickens[i].obj, this.healer);
-            this.physics.add.collider(chickens[i].obj, this.NPC2);
-            this.physics.add.collider(chickens[i].obj, this.NPC3);
-            chickens[i].obj.setCollideWorldBounds(true);
-        }*/
+        for (let i = 0; i < this.chickenCount; i++) {
+            let x = Phaser.Math.RND.between(0, 800);
+            let y = Phaser.Math.RND.between(0, 600);
+
+            let singleChicken = this.add.existing(new Chicken(this, x, y));
+            this.physics.add.existing(singleChicken);
+            this.chickens.add(singleChicken);
+
+        }
+
+        console.log(this.chickens);
 
         /*$(document).on("keypress keydown", function (e) {
             if (e.which === 50) {
@@ -190,15 +183,15 @@ export class WorldScene extends Phaser.Scene{
             }
         });*/
 
-        this.chickens = this.add.group();
+        //this.chickens = this.add.group();
 
-        for (let i = 0; i < 20; i++) {
+        /*for (let i = 0; i < 20; i++) {
             let x = Phaser.Math.RND.between(0, 800);
             let y = Phaser.Math.RND.between(0, 600);
 
             //let newChick = chickens.create(new Chickens(this, x, y, 'chicken'));
             let newChick = this.chickens.create(x, y, 'chicken', 2);
-        }
+        }*/
 
         //this.chicken = this.add.existing(new Chickens(this, 100, 75, this.playerSpeedVal)).setDepth(2).setImmovable(true);
 
@@ -208,13 +201,13 @@ export class WorldScene extends Phaser.Scene{
 
         // Create health bar:
         this.graphics = this.add.graphics();
-        this.bar = new Phaser.Geom.Rectangle(45, 222, 70, 10);
-        this.bar2 = new Phaser.Geom.Rectangle(45, 222, 0, 10);
+        this.bar = new Phaser.Geom.Rectangle(45, 10, 100, 10);
+        this.bar2 = new Phaser.Geom.Rectangle(45, 10, 0, 10);
         this.graphics.fillStyle(0xff3333);
         this.graphics.fillRectShape(this.bar);
         this.graphics.fixedToCamera = true;
         this.graphics.setScrollFactor(0);
-				this.t = this.add.text(10, 220, "Health: ", {
+				this.t = this.add.text(10, 10, "Health: ", {
             font: "10px Arial",
             fill: "black",
             align: "center"
@@ -242,86 +235,82 @@ export class WorldScene extends Phaser.Scene{
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // where the enemies will be
-        //this.physics.add.collider(this.player, this.spawns);
-        // add collider
         this.physics.add.collider(this.player, this.healer, this.heal, false, this);
         this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
         this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
         this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
-				this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
+        this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
     }
 
-	drawHealthBar(){
-			this.graphics = this.add.graphics();
+
+	 drawHealthBar (healed, damage, playerHealth){
+				this.graphics = this.add.graphics();
 
 				if(this.healed == 1){
-				this.graphics.clear(this.bar2);
-				//bar = new Phaser.Geom.Rectangle(45, 222, playerHealth, 10);
-				this.graphics.fillStyle(0xff3333);
-				this.graphics.fillRectShape(this.bar);
-				this.graphics.fixedToCamera = true;
-				this.graphics.setScrollFactor(0);
-			}
+						this.graphics.clear(this.bar2);
+						this.graphics.fillStyle(0xff3333);
+						this.graphics.fillRectShape(this.bar);
+						this.graphics.fixedToCamera = true;
+						this.graphics.setScrollFactor(0);
+				}
 				if(this.damage == 1){
 						var damageSize = 100 - this.playerHealth;
-						this.bar2 = new Phaser.Geom.Rectangle(45, 222, this.damageSize, 10);
+						this.bar2 = new Phaser.Geom.Rectangle(45, 10, damageSize, 10);
 						this.graphics.fillRectShape(this.bar2);
 						this.graphics.fixedToCamera = true;
 						this.graphics.setScrollFactor(0);
 				}
-				this.damage = 0;
-				this.healed = 0;
 		}
 
 	dmg (player, test) {
         if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && this.testHealth > 0) {
             this.testHealth = this.testHealth - 50;
-            console.log("oof");
             if (this.testHealth == 0) {
                 this.test.destroy();
-                console.log("big oof");
             }
         }
         if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && this.enemyHealth > 0) {
             this.enemyHealth = this.enemyHealth - 50;
-            console.log("ouch");
             if (this.enemyHealth == 0) {
                 this.npcEnemy.destroy();
-                console.log("Tell my mother I love her");
-            } else {
-                console.log("you missed ya scrub");
             }
         }
     }
 
-    damageToPlayer (player, test) {
+		damageToPlayer (player, test) {
+				this.checkDirection(player, test);
+				//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
+				if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
+					this.time_now = new Date().getTime();
 
-            this.checkDirection(player, test);
-            //Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
-            if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
-                this.time_now = new Date().getTime();
+				if (this.playerHealth > 0) {
+						this.damage = 1;
+						this.healed = 0;
+						this.playerHealth -= 10;
+						this.drawHealthBar(this.healed, this.damage, this.playerHealth);
+						}
+				 else {
 
-            if (this.playerHealth > 0) {
-                    this.damage = 1;
-                    this.healed = 0;
-                    this.playerHealth -= 10;
-                    this.drawHealthBar();
-            } else {
-                    this.t = this.add.text(60, 100, "You dided man!", {
-                            font: "30px Arial",
-                            fill: "red",
-                            align: "center"
-                    });
-                    this.t.fixedToCamera = true;
-                    this.t.setScrollFactor(0);
-                    this.graphics.clear(bar2);
-                    //respawn();
-            }
-        }
-    }
+					 this.graphicsText = this.add.graphics();
+					 this.text = new Phaser.Geom.Rectangle(0, 90, 400, 50, 32);
+					 this.graphicsText.fillStyle(0x000000, 1);
+					 this.graphicsText.fillRectShape(this.text);
+					 this.graphicsText.fixedToCamera = true;
+					 this.graphicsText.setScrollFactor(0);
+
+						this.t = this.add.text(100, 100, "You died", {
+								font: "30px Arial",
+								fill: "red",
+								align: "center"
+						});
+						this.t.fixedToCamera = true;
+						this.t.setScrollFactor(0);
+						//respawn();
+				}
+			}
+		}
 
     respawn (player) {
         this.player.x = 50;
@@ -336,10 +325,10 @@ export class WorldScene extends Phaser.Scene{
 
     heal (player, healer) {
         if (this.bar != null){
-						this.healed = 1;
-						this.damage = 0;
+            this.healed = 1;
+            this.damage = 0;
             this.playerHealth = 100;
-            this.drawHealthBar();
+            this.drawHealthBar(this.healed, this.damage, this.playerHealth);
             console.log("healed");
 						this.healed = false;
         }
@@ -351,12 +340,29 @@ export class WorldScene extends Phaser.Scene{
             this.time_now = new Date().getTime();
             console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
             this.NPC3.visible = true;
-            this.scoreText = this.add.text(16, 16, 'Tere', {
-                fontSize: '32px',
+
+						this.graphicsText = this.add.graphics();
+						this.text = new Phaser.Geom.Rectangle(32, 180, 250, 50, 32);
+						this.graphicsText.fillStyle(0xffffff, 0.7);
+						this.graphicsText.fillRectShape(this.text);
+						this.graphicsText.fixedToCamera = true;
+						this.graphicsText.setScrollFactor(0);
+
+						this.talking = 1;
+            this.npcText = this.add.text(35, 185, 'Tere', {
+                fontSize: '12px',
                 fill: '#000'
             });
-            this.scoreText.visible = true;
+						this.npcText.fixedToCamera = true;
+						this.npcText.setScrollFactor(0);
+            this.npcText.visible = true;
             this.liikumine = false;
+						if (this.testHealth > 0 && this.enemyHealth > 0) {
+							this.quest1 = 1;
+						} else {
+							this.quest1 = 2;
+						}
+
         }
 
     }
@@ -406,12 +412,6 @@ export class WorldScene extends Phaser.Scene{
         if (new Date().getTime() > (time_now + interval)) {
             time_now = new Date().getTime();
             console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
-            scoreText = this.add.text(16, 16, 'OUCH', {
-                fontSize: '32px',
-                fill: '#000'
-            });
-            scoreText.visible = true;
-            liikumine = false;
         }
 
     }
@@ -438,8 +438,9 @@ export class WorldScene extends Phaser.Scene{
         this.player.body.setVelocity(0);
 
         this.enemyFollow(this.player, this.npcEnemy);
+
         // Horizontal movement
-        if (this.liikumine == true) {
+      /*  if (this.liikumine == true) {
             if (this.cursors.left.isDown) {
                 this.player.body.setVelocityX(-80);
             } else if (this.cursors.right.isDown) {
@@ -467,26 +468,200 @@ export class WorldScene extends Phaser.Scene{
             } else {
                 this.player.anims.stop();
             }
-        }
+        } */
 
-
-        if (this.cursors.space.isDown && this.liikumine == false) {
-            this.scoreText.destroy();
-            this.scoreText = this.add.text(16, 16, 'Headaega', {
-                fontSize: '32px',
-                fill: '#000'
-            });
-            this.liikumine = true;
-        }
+				if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 1) {
+								this.npcText.destroy();
+								this.talking = 2;
+								this.npcText = this.add.text(35, 185, 'Tegemist on suht algelise testiga mängust :)', {
+										fontSize: '12px',
+										fill: '#000'
+								});
+								this.npcText.fixedToCamera = true;
+								this.npcText.setScrollFactor(0);
+							}
+				if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 2) {
+					this.npcText.destroy();
+					this.talking = 3;
+					this.npcText = this.add.text(35, 185, 'Ole hea mine hävita see roheline seen ning see hull tüdruk kes kõiki ründab.', {
+							fontSize: '12px',
+							fill: '#000'
+					});
+					this.npcText.fixedToCamera = true;
+					this.npcText.setScrollFactor(0);
+					this.liikumine = true;
+				}
+				if (this.cursors.space.isDown && this.quest1 == 2) {
+					this.npcText.destroy();
+					this.talking == 3
+					this.npcText = this.add.text(35, 185, 'Done', {
+							fontSize: '12px',
+							fill: '#000'
+					});
+					this.npcText.fixedToCamera = true;
+					this.npcText.setScrollFactor(0);
+					this.liikumine = true;
+				}
         if ((this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.down.isDown || this.cursors.down.isDown) && this.liikumine == true) {
-            if (this.scoreText != null){
-                this.scoreText.destroy();
+            if (this.npcText != null){
+							  this.talking = 0;
+                this.npcText.destroy();
+								this.graphicsText.destroy(this.text);
             }
         }
+    }
+}
 
+class Player extends Phaser.Physics.Arcade.Sprite{
+    constructor (scene, x, y){
+        super(scene, x, y);
 
-		// enable NPC roaming
-		//chickenRoam();
+        this.setTexture('player');
+        this.setPosition(x, y);
+        scene.physics.world.enableBody(this, 0);
+        this.body.collideWorldBounds = true;
+        this.keys = this.scene.input.keyboard.createCursorKeys();
+        this.speed = 300;
 
+        this.moveleft = false;
+        this.moveright = false;
+        this.moveup = false;
+        this.movedown = false;
+    }
+
+    create(){
+
+    }
+
+    preUpdate(time, delta){
+        super.preUpdate(time, delta);
+
+        //Player movement
+        // Horizontal movement
+        if (this.keys.left.isDown) {
+            this.body.setVelocityX(-this.speed);
+        } else if (this.keys.right.isDown) {
+            this.body.setVelocityX(this.speed);
+        }
+
+        // Vertical movement
+        if (this.keys.up.isDown) {
+            this.body.setVelocityY(-this.speed);
+        } else if (this.keys.down.isDown) {
+            this.body.setVelocityY(this.speed);
+        }
+
+        // Update the animation last and give left/right animations precedence over up/down animations
+        if (this.keys.left.isDown) {
+            this.anims.play('left', true);
+            this.flipX = false;
+        } else if (this.keys.right.isDown) {
+            this.anims.play('right', true);
+            this.flipX = false;
+        } else if (this.keys.up.isDown) {
+            this.anims.play('up', true);
+        } else if (this.keys.down.isDown) {
+            this.anims.play('down', true);
+        } else {
+            this.anims.stop();
+        }
+    }
+
+    increaseSpeed(add){
+        this.speed += add;
+    }
+}
+
+class Chicken extends Phaser.Physics.Arcade.Sprite{
+    constructor (scene, x, y){
+        super(scene, x, y);
+
+        this.setTexture('chicken');
+        this.setPosition(x, y);
+        scene.physics.world.enableBody(this, 0);
+        this.body.collideWorldBounds = true;
+        this.keys = this.scene.input.keyboard.createCursorKeys();
+        this.speed = 300;
+
+        this.moveleft = false;
+        this.moveright = false;
+        this.moveup = false;
+        this.movedown = false;
+
+        this.chickenDir = 0;
+    }
+
+    create(){
+
+    }
+
+    preUpdate(time, delta){
+        super.preUpdate(time, delta);
+
+        let supaTime = 0;
+        let interval = 0;
+        let speed = 80;
+
+        //if (new Date().getTime() > (this.NPC_time_now + this.interval)){
+            //this.NPC_time_now = new Date().getTime();
+            this.chickenDir = Phaser.Math.RND.between(0, 8);
+
+            if (this.chickenDir == 1){ // right
+                this.makeNPCMove(speed, 0);
+
+                this.anims.play('NPCright', true);
+                this.flipX = false;
+
+            } else if (this.chickenDir == 2){ // left
+
+                this.makeNPCMove(-speed, 0);
+                this.anims.play('NPCleft', true);
+                this.flipX = true;
+
+            } else if (this.chickenDir == 3){ // down
+
+                this.makeNPCMove(0, speed);
+                this.anims.play('NPCdown', true);
+
+            } else if (this.chickenDir == 4){ // up
+
+                this.makeNPCMove(0, -speed);
+                this.anims.play('NPCup', true);
+
+            } else if (this.chickenDir == 5){
+
+                this.makeNPCMove(speed, -speed);
+                this.anims.play('NPCright', true);
+                this.flipX = false;
+
+            } else if (this.chickenDir == 6){
+
+                this.makeNPCMove(speed, speed);
+                this.anims.play('NPCright', true);
+                this.flipX = false;
+
+            } else if (this.chickenDir == 7){
+
+                this.makeNPCMove(-speed, -speed);
+                this.anims.play('NPCleft', true);
+                this.flipX = true;
+
+            } else if (this.chickenDir == 8){
+
+                this.makeNPCMove(-speed, speed);
+                this.anims.play('NPCleft', true);
+                this.flipX = true;
+
+            }
+        //}
+    }
+
+    makeNPCMove(x, y){
+        this.body.setVelocityX(x);
+        this.body.setVelocityY(y);
+    }
+
+    increaseSpeed(add){
+        this.speed += add;
     }
 }
