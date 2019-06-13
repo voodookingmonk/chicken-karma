@@ -53,15 +53,24 @@ export class BootScene extends Phaser.Scene{
             frameHeight: 16
         });
 
+        this.load.spritesheet('enemy', './assets/RPG_assets.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        });
+
         //fixed to camera test:
         this.load.image('mushroom', './assets/mushroom16_16.png');
     }
 
     create(){
-		this.scene.start('WorldScene');   
+        this.scene.start('WorldScene');   
+        this.scene.start('UIScene');
+        console.log("Boot loaded");
     }
 
     update(){
-        
+    }
+
+    updateCounter(){
     }
 }
