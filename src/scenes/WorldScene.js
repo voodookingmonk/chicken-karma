@@ -33,6 +33,7 @@ export class WorldScene extends Phaser.Scene{
     this.tiles = null;
     this.grass = null;
     this.obstacles = null;
+    this.singleNPC = null;
 
     /*this.NPCS = [];
     this.NPCSdir = [];
@@ -189,33 +190,17 @@ export class WorldScene extends Phaser.Scene{
 
         let uiScene = this.scene.get(CST.SCENES.UI);
 
-		//this.sys.install('DialogModalPlugin');
-        //console.log(this.sys.dialogModal);
-
         // our player sprite created through the phycis system
-        //this.player = this.physics.add.sprite(50, 100, 'player', 1);
 
-        this.player = this.add.existing(new Player(this, 600, 300).setDepth(2).setImmovable(true));
-        this.newEnemy = this.add.existing(new Enemy(this, 600, 300).setDepth(2).setImmovable(true));
-        this.NPC = this.add.existing(new NPC(this, 600, 300).setDepth(2).setImmovable(true));
+        this.player = this.add.existing(new Player(this, 600, 300));
+        this.newEnemy = this.add.existing(new Enemy(this, 600, 300));
+        this.NPC = this.add.existing(new NPC(this, 600, 300, this.player));
 
-        /*this.test = this.physics.add.sprite(70, 210, 'mushroom');
-        this.NPC = this.physics.add.sprite(350, 75, 'chicken', 2);
-        this.NPCx = this.physics.add.sprite(350, 75, 'chicken', 2);
-        this.NPCy = this.physics.add.sprite(350, 75, 'chicken', 2);*/
-        //this.chicken = this.physics.add.sprite(100, 75, 'chicken', 2);
-
-        /*this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16).setImmovable();
-        this.NPC3 = this.physics.add.sprite(175, 200, 'npc3', 16).setImmovable();
-        this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
-        this.healer = this.physics.add.sprite(50, 50, 'healer', 1).setImmovable();
-        this.NPC3.visible = false;*/
         let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
             fill: '#000'
         });
         npcText.visible = false;
-
 
         this.chickens = this.add.group();
         this.enemies = this.add.group();
@@ -230,14 +215,14 @@ export class WorldScene extends Phaser.Scene{
             this.chickens.add(singleChicken);
             if (i <= this.chickenCount/2){
                 let singleEnemy = this.add.existing(new Enemy(this, x, y));
-                let singleNPC = this.add.existing(new NPC(this, x+200, y+200).setDepth(2).setImmovable(true));
+                //this.singleNPC = this.add.existing(new NPC(this, x, y, this.player));
                 this.physics.add.existing(singleEnemy);
-                this.physics.add.existing(singleNPC);
+                //this.physics.add.existing(this.singleNPC);
                 this.enemies.add(singleEnemy);
-                this.npcs.add(singleNPC);
+                //this.npcs.add(this.singleNPC);
             }
         }
-
+        
         // Create health bar:
         this.graphics = this.add.graphics();
         this.bar = new Phaser.Geom.Rectangle(45, 10, 100, 10);
@@ -268,7 +253,8 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.collider(this.chickens, this.obstacles);
         this.physics.add.collider(this.enemies, this.obstacles);
         this.physics.add.collider(this.npcs, this.obstacles);
-
+        this.physics.add.collider(this.npcs, this.player);
+        this.physics.add.collider(this.npcs, this.npcs);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -463,6 +449,12 @@ export class WorldScene extends Phaser.Scene{
 
     update(){
 
+        /*if(this.NPC != undefined){
+            if(this.NPC.active === true){
+                this.physics.accelerateToObject(this.NPC, this.player, 1300);
+            }
+        }*/
+
         //console.log(this.player.x + " " + this.player.y);
 
         //this.enemyFollow(this.player, this.npcEnemy);
@@ -568,7 +560,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 }
 
 class NPC extends Phaser.Physics.Arcade.Sprite{
-    constructor (scene, x, y){
+    constructor (scene, x, y, player){
         super(scene, x, y);
 
         this.setTexture('npc');
@@ -577,21 +569,36 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
         this.body.collideWorldBounds = true;
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
+        this.scene = scene;
 
         this.moveleft = false;
         this.moveright = false;
         this.moveup = false;
         this.movedown = false;
+        this.player = player;
+        this.counter = 0;
     }
 
     create(){
+
+        console.log(this.body.debugShowBody);
 
     }
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
+        this.counter += 1;
+
+        if (this.counter === 100){
+            this.counter = 0;
+        }
 
         this.body.setVelocity(0);
+        this.follow(this.player);
+    }
+
+    follow(player){
+        this.scene.physics.moveToObject(this, player, 10);
     }
 }
 
