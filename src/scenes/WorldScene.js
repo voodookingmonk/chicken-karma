@@ -206,6 +206,8 @@ export class WorldScene extends Phaser.Scene{
         this.enemies = this.add.group();
         this.npcs = this.add.group();
 
+        this.npcs.add(this.NPC);
+
         for (let i = 0; i < this.chickenCount; i++) {
             let x = Phaser.Math.RND.between(500, 700);
             let y = Phaser.Math.RND.between(200, 400);
@@ -563,7 +565,7 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
     constructor (scene, x, y, player){
         super(scene, x, y);
 
-        this.setTexture('npc');
+        this.setTexture('enemy');
         this.setPosition(x, y);
         scene.physics.world.enableBody(this, 0);
         this.body.collideWorldBounds = true;
@@ -581,8 +583,6 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
 
     create(){
 
-        console.log(this.body.debugShowBody);
-
     }
 
     preUpdate(time, delta){
@@ -590,7 +590,20 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
         this.counter += 1;
 
         if (this.counter === 100){
+            console.log(this.body.velocity.y);
             this.counter = 0;
+        }
+
+        if (this.body.velocity.x > 0){
+
+            this.anims.play('enemyRight', true);
+            this.flipX = false;
+
+        } else if (this.body.velocity.x < 0){
+
+            this.anims.play('enemyLeft', true);
+            this.flipX = true;
+
         }
 
         this.body.setVelocity(0);
@@ -598,7 +611,7 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
     }
 
     follow(player){
-        this.scene.physics.moveToObject(this, player, 10);
+        this.scene.physics.moveToObject(this, player, 80);
     }
 }
 
