@@ -187,6 +187,8 @@ export class WorldScene extends Phaser.Scene{
 
     create(){
 
+        let uiScene = this.scene.get(CST.SCENES.UI);
+
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
 
