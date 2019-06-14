@@ -52,9 +52,6 @@ export class WorldScene extends Phaser.Scene{
 
     preload(){
 
-
-      this.chickens = this.add.group();
-
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
 
