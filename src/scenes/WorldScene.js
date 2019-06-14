@@ -1,6 +1,7 @@
 /* jshint esversion:6*/
 import { CST } from "../CST.js";
 import thisGame from "../main.js";
+import { UIScene } from "./UIScene.js";
 
 export class WorldScene extends Phaser.Scene{
 	constructor(){
@@ -16,15 +17,15 @@ export class WorldScene extends Phaser.Scene{
     this.Enemy_movement_direction = 0;
     this.npcText = null;
     this.liikumine = true;
-    this.test = null; //healthbar test
+    //Healthbar:
+    this.test = null; 
     this.playerHealth = 100;
+    this.playerHealthMax = 100;
     this.testHealth = 100;
     this.enemyHealth = 100;
-    this.bar = null;
-    this.bar2 = null;
-    this.t = null;
     this.damage = null;
-    this.healed = null;
+    this.firstZero = true;
+    //Quest:
     this.talking = 0;
     this.quest1 = 0;
     this.text = null;
@@ -43,6 +44,8 @@ export class WorldScene extends Phaser.Scene{
 
 
     this.chickenCount = 500;
+
+    this.checkHealth = 100;
 
     }
 
@@ -186,6 +189,8 @@ export class WorldScene extends Phaser.Scene{
     }
 
     create(){
+        //let UIScene = this.scene.get(CST.SCENES.UI);
+
 
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
@@ -232,22 +237,6 @@ export class WorldScene extends Phaser.Scene{
             }
         }
 
-        // Create health bar:
-        this.graphics = this.add.graphics();
-        this.bar = new Phaser.Geom.Rectangle(45, 10, 100, 10);
-        this.bar2 = new Phaser.Geom.Rectangle(45, 10, 0, 10);
-        this.graphics.fillStyle(0xff3333);
-        this.graphics.fillRectShape(this.bar);
-        this.graphics.fixedToCamera = true;
-        this.graphics.setScrollFactor(0);
-				this.t = this.add.text(10, 10, "Health: ", {
-            font: "10px Arial",
-            fill: "black",
-            align: "center"
-        });
-        this.t.fixedToCamera = true;
-        this.t.setScrollFactor(0);
-
         //treetops and stuff above player
         let top = this.map.createStaticLayer('Top', this.tiles, 0, 0);
 
@@ -281,25 +270,6 @@ export class WorldScene extends Phaser.Scene{
         }
 
 
-    drawHealthBar (healed, damage, playerHealth){
-        this.graphics = this.add.graphics();
-
-        if(this.healed == 1){
-            this.graphics.clear(this.bar2);
-            this.graphics.fillStyle(0xff3333);
-            this.graphics.fillRectShape(this.bar);
-            this.graphics.fixedToCamera = true;
-            this.graphics.setScrollFactor(0);
-        }
-        if(this.damage == 1){
-            var damageSize = (100 - this.playerHealth) / 2;
-            this.bar2 = new Phaser.Geom.Rectangle(43, 10, damageSize, 7);
-            this.graphics.fillRectShape(this.bar2);
-            this.graphics.fixedToCamera = true;
-            this.graphics.setScrollFactor(0);
-        }
-    }
-
 	dmg (player, test) {
         if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && this.testHealth > 0) {
             this.testHealth = this.testHealth - 50;
@@ -320,29 +290,12 @@ export class WorldScene extends Phaser.Scene{
 				//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
         if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
             this.time_now = new Date().getTime();
-
-            if (this.playerHealth > 0) {
-                this.damage = 1;
-                this.healed = 0;
-                this.playerHealth -= 10;
-                this.drawHealthBar(this.healed, this.damage, this.playerHealth);
-                }
-            else {
-                this.graphicsText = this.add.graphics();
-                this.text = new Phaser.Geom.Rectangle(0, 90, 400, 50, 32);
-                this.graphicsText.fillStyle(0x000000, 1);
-                this.graphicsText.fillRectShape(this.text);
-                this.graphicsText.fixedToCamera = true;
-                this.graphicsText.setScrollFactor(0);
-
-                this.t = this.add.text(100, 100, "You died", {
-                        font: "30px Arial",
-                        fill: "red",
-                        align: "center"
-                });
-                this.t.fixedToCamera = true;
-                this.t.setScrollFactor(0);
-                //respawn();
+            this.damage = 10;
+            if(this.damage >= this.playerHealth && this.firstZero == true){
+                this.playerHealth = 0;
+                this.firstZero = false;
+            }else{
+                this.playerHealth -= this.damage;
             }
         }
     }
@@ -358,15 +311,9 @@ export class WorldScene extends Phaser.Scene{
         });
     }
 
-    heal (player, healer) {
-        if (this.bar != null){
-            this.healed = 1;
-            this.damage = 0;
+    heal () {
             this.playerHealth = 100;
-            this.drawHealthBar(this.healed, this.damage, this.playerHealth);
             console.log("healed");
-						this.healed = false;
-        }
     }
 
     onMeetNPC2 (player, NPC2) {
@@ -515,6 +462,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.moveright = false;
         this.moveup = false;
         this.movedown = false;
+        this.scene = scene;
     }
 
     create(){
