@@ -1,7 +1,6 @@
 /* jshint esversion:6*/
 import { CST } from "../CST.js";
 import thisGame from "../main.js";
-import { UIScene } from "./UIScene.js";
 
 export class WorldScene extends Phaser.Scene{
 	constructor(){
@@ -24,28 +23,26 @@ export class WorldScene extends Phaser.Scene{
     this.bar = null;
     this.bar2 = null;
     this.t = null;
-    this.damage = null;
-    this.healed = null;
-    this.talking = 0;
-    this.quest1 = 0;
-    this.text = null;
+		this.damage = null;
+		this.healed = null;
+		this.talking = 0;
+		this.quest1 = 0;
+		this.text = null;
 
-    this.map = null;
-    this.tiles = null;
-    this.grass = null;
-    this.obstacles = null;
+		this.map = null;
+		this.tiles = null;
+		this.grass = null;
+		this.obstacles = null;
 
     this.NPCS = [];
     this.NPCSdir = [];
     this.NPCmax = [];
 
-    this.graphics = 0;
-    this.graphicsText = 0;
+		this.graphics = 0;
+		this.graphicsText = 0;
 
 
-    this.chickenCount = 20;
-
-    this.checkDialog = false;
+    this.chickenCount = 500;
 
     }
 
@@ -54,6 +51,12 @@ export class WorldScene extends Phaser.Scene{
     }
 
     preload(){
+    }
+
+    create(){
+
+
+      this.chickens = this.add.group();
 
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
@@ -190,8 +193,6 @@ export class WorldScene extends Phaser.Scene{
 
     create(){
 
-        let uiScene = this.scene.get(CST.SCENES.UI);
-
 		//this.sys.install('DialogModalPlugin');
         //console.log(this.sys.dialogModal);
 
@@ -212,7 +213,7 @@ export class WorldScene extends Phaser.Scene{
         this.npcEnemy = this.physics.add.sprite(300, 150, 'npcEnemy', 16);
         this.healer = this.physics.add.sprite(50, 50, 'healer', 1).setImmovable();
         this.NPC3.visible = false;
-        let npcText = this.add.text(16, 16, 'tere', {
+				let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
             fill: '#000'
         });
@@ -230,6 +231,7 @@ export class WorldScene extends Phaser.Scene{
             this.physics.add.existing(singleChicken);
             this.chickens.add(singleChicken);
             if (i <= this.chickenCount/2){
+                console.log("what");
                 let singleEnemy = this.add.existing(new Enemy(this, x, y));
                 this.physics.add.existing(singleEnemy);
                 this.enemies.add(singleEnemy);
@@ -282,27 +284,27 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
         this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);
         this.input.keyboard.on('keydown_E', this.dmg, this);
-        }
-
-
-    drawHealthBar (healed, damage, playerHealth){
-        this.graphics = this.add.graphics();
-
-        if(this.healed == 1){
-            this.graphics.clear(this.bar2);
-            this.graphics.fillStyle(0xff3333);
-            this.graphics.fillRectShape(this.bar);
-            this.graphics.fixedToCamera = true;
-            this.graphics.setScrollFactor(0);
-        }
-        if(this.damage == 1){
-            var damageSize = (100 - this.playerHealth) / 2;
-            this.bar2 = new Phaser.Geom.Rectangle(43, 10, damageSize, 7);
-            this.graphics.fillRectShape(this.bar2);
-            this.graphics.fixedToCamera = true;
-            this.graphics.setScrollFactor(0);
-        }
     }
+
+
+	 drawHealthBar (healed, damage, playerHealth){
+				this.graphics = this.add.graphics();
+
+				if(this.healed == 1){
+						this.graphics.clear(this.bar2);
+						this.graphics.fillStyle(0xff3333);
+						this.graphics.fillRectShape(this.bar);
+						this.graphics.fixedToCamera = true;
+						this.graphics.setScrollFactor(0);
+				}
+				if(this.damage == 1){
+						var damageSize = (100 - this.playerHealth) / 2;
+						this.bar2 = new Phaser.Geom.Rectangle(43, 10, damageSize, 7);
+						this.graphics.fillRectShape(this.bar2);
+						this.graphics.fixedToCamera = true;
+						this.graphics.setScrollFactor(0);
+				}
+		}
 
 	dmg (player, test) {
         if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && this.testHealth > 0) {
@@ -319,37 +321,38 @@ export class WorldScene extends Phaser.Scene{
         }
     }
 
-    damageToPlayer (player, test) {
-        this.checkDirection(player, test);
+		damageToPlayer (player, test) {
+				this.checkDirection(player, test);
 				//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
-        if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
-            this.time_now = new Date().getTime();
+				if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
+					this.time_now = new Date().getTime();
 
-            if (this.playerHealth > 0) {
-                this.damage = 1;
-                this.healed = 0;
-                this.playerHealth -= 10;
-                this.drawHealthBar(this.healed, this.damage, this.playerHealth);
-                }
-            else {
-                this.graphicsText = this.add.graphics();
-                this.text = new Phaser.Geom.Rectangle(0, 90, 400, 50, 32);
-                this.graphicsText.fillStyle(0x000000, 1);
-                this.graphicsText.fillRectShape(this.text);
-                this.graphicsText.fixedToCamera = true;
-                this.graphicsText.setScrollFactor(0);
+				if (this.playerHealth > 0) {
+						this.damage = 1;
+						this.healed = 0;
+						this.playerHealth -= 10;
+						this.drawHealthBar(this.healed, this.damage, this.playerHealth);
+						}
+				 else {
 
-                this.t = this.add.text(100, 100, "You died", {
-                        font: "30px Arial",
-                        fill: "red",
-                        align: "center"
-                });
-                this.t.fixedToCamera = true;
-                this.t.setScrollFactor(0);
-                //respawn();
-            }
-        }
-    }
+					 this.graphicsText = this.add.graphics();
+					 this.text = new Phaser.Geom.Rectangle(0, 90, 400, 50, 32);
+					 this.graphicsText.fillStyle(0x000000, 1);
+					 this.graphicsText.fillRectShape(this.text);
+					 this.graphicsText.fixedToCamera = true;
+					 this.graphicsText.setScrollFactor(0);
+
+						this.t = this.add.text(100, 100, "You died", {
+								font: "30px Arial",
+								fill: "red",
+								align: "center"
+						});
+						this.t.fixedToCamera = true;
+						this.t.setScrollFactor(0);
+						//respawn();
+				}
+			}
+		}
 
     respawn (player) {
         this.player.x = 50;
@@ -379,17 +382,45 @@ export class WorldScene extends Phaser.Scene{
             this.time_now = new Date().getTime();
             console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
             this.NPC3.visible = true;
-            this.checkDialog = true;
-            this.talking = 1;
+
+						this.graphicsText = this.add.graphics();
+						this.text = new Phaser.Geom.Rectangle(32, 180, 250, 50, 32);
+						this.graphicsText.fillStyle(0xffffff, 0.7);
+						this.graphicsText.fillRectShape(this.text);
+						this.graphicsText.fixedToCamera = true;
+						this.graphicsText.setScrollFactor(0);
+
+						this.talking = 1;
+            this.npcText = this.add.text(35, 185, 'Tere', {
+                fontSize: '12px',
+                fill: '#000'
+            });
+						this.npcText.fixedToCamera = true;
+						this.npcText.setScrollFactor(0);
+            this.npcText.visible = true;
             this.liikumine = false;
-            if (this.testHealth > 0 && this.enemyHealth > 0) {
-                this.quest1 = 1;
-            } else {
-                this.quest1 = 2;
-            }
+						if (this.testHealth > 0 && this.enemyHealth > 0) {
+							this.quest1 = 1;
+						} else {
+							this.quest1 = 2;
+						}
 
         }
 
+    }
+
+    checkDirection (player, NPC2) {
+        if ((player.x - NPC2.x) < 0) {
+            player.x -= 2;
+        } else {
+            player.x += 2;
+        }
+
+        if ((player.y - NPC2.y) < 0) {
+            player.y -= 2;
+        } else {
+            player.y += 2;
+        }
     }
 
     onMeetNPC (player, NPC) {
@@ -445,52 +476,80 @@ export class WorldScene extends Phaser.Scene{
     }
 
     update(){
+        //this.player.body.setVelocity(0);
 
         this.enemyFollow(this.player, this.npcEnemy);
-        // LAS SEE OLLA SIIN
-      /*  if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 1) {
-            //this.npcText.destroy();
-            this.talking = 2;
-            this.npcText = this.add.text(35, 185, 'Tegemist on suht algelise testiga mängust :)', {
-                    fontSize: '12px',
-                    fill: '#000',
-                    depth: '999',
-                    wordWrap: { width: 100, useAdvancedWrap: true }
-            });
-            this.npcText.fixedToCamera = true;
-            this.npcText.setScrollFactor(0);
-        }
-        if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 2) {
-            //this.npcText.destroy();
-            this.talking = 3;
-            this.npcText = this.add.text(35, 185, 'Ole hea mine hävita see roheline seen ning see hull tüdruk kes kõiki ründab.', {
-                    fontSize: '12px',
-                    fill: '#000',
-                    depth: '999',
-                    wordWrap: { width: 300, useAdvancedWrap: true }
-            });
-            this.npcText.fixedToCamera = true;
-            this.npcText.setScrollFactor(0);
-            this.liikumine = true;
-        }
-        if (this.cursors.space.isDown && this.quest1 == 2) {
-            //this.npcText.destroy();
-            this.talking == 3
-            this.npcText = this.add.text(35, 185, 'Done', {
-                    fontSize: '12px',
-                    fill: '#000'
-            });
-            this.npcText.fixedToCamera = true;
-            this.npcText.setScrollFactor(0);
-            this.liikumine = true;
-        }
+
+        // Horizontal movement
+      /*  if (this.liikumine == true) {
+            if (this.cursors.left.isDown) {
+                this.player.body.setVelocityX(-80);
+            } else if (this.cursors.right.isDown) {
+                this.player.body.setVelocityX(80);
+            }
+
+            // Vertical movement
+            if (this.cursors.up.isDown) {
+                this.player.body.setVelocityY(-80);
+            } else if (this.cursors.down.isDown) {
+                this.player.body.setVelocityY(80);
+            }
+
+            // Update the animation last and give left/right animations precedence over up/down animations
+            if (this.cursors.left.isDown) {
+                this.player.anims.play('left', true);
+                this.player.flipX = false;
+            } else if (this.cursors.right.isDown) {
+                this.player.anims.play('right', true);
+                this.player.flipX = false;
+            } else if (this.cursors.up.isDown) {
+                this.player.anims.play('up', true);
+            } else if (this.cursors.down.isDown) {
+                this.player.anims.play('down', true);
+            } else {
+                this.player.anims.stop();
+            }
+        } */
+
+				if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 1) {
+								this.npcText.destroy();
+								this.talking = 2;
+								this.npcText = this.add.text(35, 185, 'Tegemist on suht algelise testiga mängust :)', {
+										fontSize: '12px',
+										fill: '#000'
+								});
+								this.npcText.fixedToCamera = true;
+								this.npcText.setScrollFactor(0);
+							}
+				if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 2) {
+					this.npcText.destroy();
+					this.talking = 3;
+					this.npcText = this.add.text(35, 185, 'Ole hea mine hävita see roheline seen ning see hull tüdruk kes kõiki ründab.', {
+							fontSize: '12px',
+							fill: '#000'
+					});
+					this.npcText.fixedToCamera = true;
+					this.npcText.setScrollFactor(0);
+					this.liikumine = true;
+				}
+				if (this.cursors.space.isDown && this.quest1 == 2) {
+					this.npcText.destroy();
+					this.talking == 3
+					this.npcText = this.add.text(35, 185, 'Done', {
+							fontSize: '12px',
+							fill: '#000'
+					});
+					this.npcText.fixedToCamera = true;
+					this.npcText.setScrollFactor(0);
+					this.liikumine = true;
+				}
         if ((this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.down.isDown || this.cursors.down.isDown) && this.liikumine == true) {
             if (this.npcText != null){
-                this.talking = 0;
-                //this.npcText.destroy();
-                //this.graphicsText.destroy(this.text);
+							  this.talking = 0;
+                this.npcText.destroy();
+								this.graphicsText.destroy(this.text);
             }
-        }*/
+        }
     }
 }
 
