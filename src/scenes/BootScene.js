@@ -63,6 +63,7 @@ export class BootScene extends Phaser.Scene{
     }
 
     create(){
+        this.scene.start('LoadScene');
         this.scene.start('WorldScene');   
         this.scene.start('UIScene');
         console.log("Boot loaded");
