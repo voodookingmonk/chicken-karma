@@ -244,8 +244,9 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.collider(this.chickens, this.obstacles);
         this.physics.add.collider(this.enemies, this.obstacles);
         this.physics.add.collider(this.npcs, this.obstacles);
-        this.physics.add.collider(this.npcs, this.player);
         this.physics.add.collider(this.npcs, this.npcs);
+
+        this.physics.add.collider(this.npcs, this.player);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -254,6 +255,8 @@ export class WorldScene extends Phaser.Scene{
 
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.physics.add.collider(this.player, this.npcs, this.attack, null, this);
 
         //this.physics.add.collider(this.player, this.healer, this.heal, false, this);
         //this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
@@ -264,6 +267,9 @@ export class WorldScene extends Phaser.Scene{
         this.input.keyboard.on('keydown_E', this.dmg, this);
         }
 
+    attack(player, enemy){
+        
+    }
 
 	dmg (player, test) {
         if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && this.testHealth > 0) {
@@ -513,6 +519,8 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
     constructor (scene, x, y, player){
         super(scene, x, y);
 
+        this.health = 10;
+
         this.setTexture('enemy');
         this.setPosition(x, y);
         scene.physics.world.enableBody(this, 0);
@@ -538,7 +546,7 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
         this.counter += 1;
 
         if (this.counter === 100){
-            console.log(this.body.velocity.y);
+            //console.log(this.body.velocity.y);
             this.counter = 0;
         }
 
@@ -566,6 +574,8 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
 class Chicken extends Phaser.Physics.Arcade.Sprite{
     constructor (scene, x, y){
         super(scene, x, y);
+
+        this.health = 10;
 
         this.setTexture('chicken');
         this.setPosition(x, y);
@@ -600,7 +610,10 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.previousTimer += 1;
 
         this.randomRoaming();
+        this.maxBounds();
+    }
 
+    maxBounds(){
         if (this.x > this.maxX){
             this.anims.play('chickenRight', true);
             this.flipX = true;
