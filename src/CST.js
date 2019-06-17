@@ -4,6 +4,8 @@ export const CST = {
     SCENES: {
 		BOOT: "BootScene",
     WORLD: "WorldScene",
-    UI: "UIScene"
+    UI: "UIScene",
+    LOAD: "LoadScene",
+    HELP: "HelpScene"
     }
 };
