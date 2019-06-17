@@ -18,7 +18,7 @@ export class WorldScene extends Phaser.Scene{
     this.npcText = null;
     this.liikumine = true;
     //Healthbar:
-    this.test = null; 
+    this.test = null;
     this.playerHealth = 100;
     this.playerHealthMax = 100;
     this.testHealth = 100;
@@ -43,6 +43,8 @@ export class WorldScene extends Phaser.Scene{
     this.chickenCount = 100; // amount of chickens spawned
 
     this.checkHealth = 100;
+
+		this.checkDialog = false;
 
     }
 
@@ -196,7 +198,10 @@ export class WorldScene extends Phaser.Scene{
         this.player = this.add.existing(new Player(this, 600, 300));
         this.newEnemy = this.add.existing(new Enemy(this, 600, 300));
         this.NPC = this.add.existing(new NPC(this, 600, 300, this.player));
-
+				//lisan dialoogi katsetuseks
+				this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16).setImmovable();
+				this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
+				//dialoogi katse lõpp
         let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
             fill: '#000'
@@ -332,23 +337,9 @@ export class WorldScene extends Phaser.Scene{
         if (new Date().getTime() > (this.time_now + this.interval)) {
             this.time_now = new Date().getTime();
             console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
-            this.NPC3.visible = true;
-
-            this.graphicsText = this.add.graphics();
-            this.text = new Phaser.Geom.Rectangle(32, 180, 250, 50, 32);
-            this.graphicsText.fillStyle(0xffffff, 0.7);
-            this.graphicsText.fillRectShape(this.text);
-            this.graphicsText.fixedToCamera = true;
-            this.graphicsText.setScrollFactor(0);
 
             this.talking = 1;
-            this.npcText = this.add.text(35, 185, 'Tere', {
-                fontSize: '12px',
-                fill: '#000'
-            });
-            this.npcText.fixedToCamera = true;
-            this.npcText.setScrollFactor(0);
-            this.npcText.visible = true;
+						this.checkDialog = true;
             this.liikumine = false;
             if (this.testHealth > 0 && this.enemyHealth > 0) {
                 this.quest1 = 1;
@@ -424,7 +415,7 @@ export class WorldScene extends Phaser.Scene{
 
         //this.enemyFollow(this.player, this.npcEnemy);
 
-        if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 1) {
+      /*  if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 1) {
             this.npcText.destroy();
             this.talking = 2;
             this.npcText = this.add.text(35, 185, 'Tegemist on suht algelise testiga mängust :)', {
@@ -447,7 +438,7 @@ export class WorldScene extends Phaser.Scene{
         }
         if (this.cursors.space.isDown && this.quest1 == 2) {
             this.npcText.destroy();
-            this.talking == 3
+            this.talking = 3;
             this.npcText = this.add.text(35, 185, 'Done', {
                     fontSize: '12px',
                     fill: '#000'
@@ -462,7 +453,7 @@ export class WorldScene extends Phaser.Scene{
                 this.npcText.destroy();
                 this.graphicsText.destroy(this.text);
             }
-        }
+        }*/
     }
 }
 
@@ -705,7 +696,7 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
     }
 
     specificRoaming(){
-        
+
     }
 
     makeNPCMove(x, y){
