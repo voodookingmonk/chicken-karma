@@ -35,15 +35,11 @@ export class WorldScene extends Phaser.Scene{
     this.obstacles = null;
     this.singleNPC = null;
 
-    /*this.NPCS = [];
-    this.NPCSdir = [];
-    this.NPCmax = [];*/
-
     this.graphics = 0;
     this.graphicsText = 0;
 
 
-    this.chickenCount = 100;
+    this.chickenCount = 100; // amount of chickens spawned
 
     }
 
@@ -257,7 +253,7 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.collider(this.npcs, this.obstacles);
         this.physics.add.collider(this.npcs, this.npcs);
 
-        this.physics.add.collider(this.npcs, this.player);
+        //this.physics.add.collider(this.npcs, this.player);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -267,7 +263,7 @@ export class WorldScene extends Phaser.Scene{
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.physics.add.collider(this.player, this.npcs, this.attack, null, this);
+        this.physics.add.collider(this.player, this.npcs, this.collide, null, this);
 
         //this.physics.add.collider(this.player, this.healer, this.heal, false, this);
         //this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
@@ -278,8 +274,22 @@ export class WorldScene extends Phaser.Scene{
         this.input.keyboard.on('keydown_E', this.dmg, this);
         }
 
-    attack(player, enemy){
-        
+    collide(player, enemy){
+        enemy.firstTime = true;
+
+        if (enemy.counter === 75){
+            player.health -= 1;
+        }
+
+
+
+        console.log(player.health);
+        //enemy.active = false;
+        //enemy.visible = false;
+    }
+
+    attack(){
+
     }
 
     drawHealthBar (healed, damage, playerHealth){
@@ -520,6 +530,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
 
+        this.health = 10;
+
         this.moveleft = false;
         this.moveright = false;
         this.moveup = false;
@@ -580,6 +592,7 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
         this.scene = scene;
+
 
         this.moveleft = false;
         this.moveright = false;
