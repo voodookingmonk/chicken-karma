@@ -188,10 +188,7 @@ export class WorldScene extends Phaser.Scene{
     }
 
     create(){
-        //let UIScene = this.scene.get(CST.SCENES.UI);
-
-
-        let uiScene = this.scene.get(CST.SCENES.UI);
+      	let uiScene = this.scene.get(CST.SCENES.UI);
 
         // our player sprite created through the phycis system
 
@@ -225,7 +222,7 @@ export class WorldScene extends Phaser.Scene{
                 this.physics.add.existing(singleEnemy);
                 //this.physics.add.existing(this.singleNPC);
                 this.enemies.add(singleEnemy);
-                //this.npcs.add(this.singleNPC);
+
             }
         }
 
@@ -239,14 +236,10 @@ export class WorldScene extends Phaser.Scene{
 
         // don't walk on trees
         this.physics.add.collider(this.player, this.obstacles);
-        /*this.physics.add.collider(this.npcEnemy, this.obstacles);*/
         this.physics.add.collider(this.chickens, this.obstacles);
         this.physics.add.collider(this.enemies, this.obstacles);
         this.physics.add.collider(this.npcs, this.obstacles);
         this.physics.add.collider(this.npcs, this.npcs);
-
-        //this.physics.add.collider(this.npcs, this.player);
-
         // limit camera to map
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(this.player);
@@ -376,23 +369,6 @@ export class WorldScene extends Phaser.Scene{
             console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
         }
 
-    }
-
-	enemyFollow (player, npcEnemy) {
-
-        if ((Math.round(player.x) > Math.round(this.npcEnemy.x)) && this.enemyHealth > 0) {
-            this.npcEnemy.body.setVelocityX(50);
-            this.npcEnemy.body.setVelocityY(0);
-        } else if ((Math.round(player.y) > Math.round(this.npcEnemy.y)) && this.enemyHealth > 0) {
-            this.npcEnemy.body.setVelocityY(50);
-            this.npcEnemy.body.setVelocityX(0);
-        } else if ((Math.round(player.x) < Math.round(this.npcEnemy.x)) && this.enemyHealth > 0) {
-            this.npcEnemy.body.setVelocityX(-50);
-            this.npcEnemy.body.setVelocityY(0);
-        } else if ((Math.round(player.y) < Math.round(this.npcEnemy.y)) && this.enemyHealth > 0) {
-            this.npcEnemy.body.setVelocityY(-50);
-            this.npcEnemy.body.setVelocityX(0);
-        }
     }
 
     update(){
