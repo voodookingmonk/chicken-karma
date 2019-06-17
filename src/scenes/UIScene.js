@@ -45,8 +45,7 @@ export class UIScene extends Phaser.Scene{
         });
 
 				//Dialoog
-				this.talking = 1;
-				this.test = 0;
+				//this.talking = 1;
     }
 
     update(){
@@ -57,13 +56,9 @@ export class UIScene extends Phaser.Scene{
 
 				//dialoog
 				if (this.gameScene.checkDialog === false) {
-						//console.log("false");
-					/*  if (this.talking == 0) {
-								this.graphics.npcText.destroy();
-						}*/
+					this.talking = 1;
 				} else {
-						console.log(this.talking);
-						this.test = 1;
+						//console.log(this.talking);
 						this.graphics = new DialogBox(this, 32, 180, 250, 50, 35, 185, "Tere", this.talking);
 						this.graphics.drawDialogBox();
 						this.graphics.addText();

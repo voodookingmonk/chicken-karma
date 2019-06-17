@@ -198,10 +198,8 @@ export class WorldScene extends Phaser.Scene{
         this.player = this.add.existing(new Player(this, 600, 300));
         this.newEnemy = this.add.existing(new Enemy(this, 600, 300));
         this.NPC = this.add.existing(new NPC(this, 600, 300, this.player));
-				//lisan dialoogi katsetuseks
-				this.NPC2 = this.physics.add.sprite(100, 100, 'npc2', 16).setImmovable();
-				this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
-				//dialoogi katse lõpp
+				this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC2, false, this);
+
         let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
             fill: '#000'
@@ -259,12 +257,6 @@ export class WorldScene extends Phaser.Scene{
 
         this.physics.add.collider(this.player, this.npcs, this.collide, null, this);
 
-        //this.physics.add.collider(this.player, this.healer, this.heal, false, this);
-        //this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
-        /*this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
-        this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
-        this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
-        this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);*/
         this.input.keyboard.on('keydown_E', this.dmg, this);
         }
 
@@ -277,7 +269,7 @@ export class WorldScene extends Phaser.Scene{
 
 
 
-        console.log(player.health);
+        //console.log(player.health);
         //enemy.active = false;
         //enemy.visible = false;
     }
@@ -336,7 +328,7 @@ export class WorldScene extends Phaser.Scene{
         this.checkDirection(player, NPC2);
         if (new Date().getTime() > (this.time_now + this.interval)) {
             this.time_now = new Date().getTime();
-            console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
+            //console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
 
             this.talking = 1;
 						this.checkDialog = true;
@@ -405,55 +397,6 @@ export class WorldScene extends Phaser.Scene{
 
     update(){
 
-        /*if(this.NPC != undefined){
-            if(this.NPC.active === true){
-                this.physics.accelerateToObject(this.NPC, this.player, 1300);
-            }
-        }*/
-
-        //console.log(this.player.x + " " + this.player.y);
-
-        //this.enemyFollow(this.player, this.npcEnemy);
-
-      /*  if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 1) {
-            this.npcText.destroy();
-            this.talking = 2;
-            this.npcText = this.add.text(35, 185, 'Tegemist on suht algelise testiga mängust :)', {
-                    fontSize: '12px',
-                    fill: '#000'
-            });
-            this.npcText.fixedToCamera = true;
-            this.npcText.setScrollFactor(0);
-        }
-        if (this.cursors.space.isDown && this.quest1 == 1 && this.talking == 2) {
-            this.npcText.destroy();
-            this.talking = 3;
-            this.npcText = this.add.text(35, 185, 'Ole hea mine hävita see roheline seen ning see hull tüdruk kes kõiki ründab.', {
-                    fontSize: '12px',
-                    fill: '#000'
-            });
-            this.npcText.fixedToCamera = true;
-            this.npcText.setScrollFactor(0);
-            this.liikumine = true;
-        }
-        if (this.cursors.space.isDown && this.quest1 == 2) {
-            this.npcText.destroy();
-            this.talking = 3;
-            this.npcText = this.add.text(35, 185, 'Done', {
-                    fontSize: '12px',
-                    fill: '#000'
-            });
-            this.npcText.fixedToCamera = true;
-            this.npcText.setScrollFactor(0);
-            this.liikumine = true;
-        }
-        if ((this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.down.isDown || this.cursors.down.isDown) && this.liikumine == true) {
-            if (this.npcText != null){
-                this.talking = 0;
-                this.npcText.destroy();
-                this.graphicsText.destroy(this.text);
-            }
-        }*/
     }
 }
 
