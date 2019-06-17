@@ -104,7 +104,6 @@ export class UIScene extends Phaser.Scene{
             this.graphicsText.fillStyle(0x000000, 1);
             this.graphicsText.fillRectShape(this.text);
 
-
             this.t = this.add.text(100, 100, "You died", {
                     font: "30px Arial",
                     fill: "red",
@@ -150,7 +149,7 @@ class DialogBox extends Phaser.GameObjects.Graphics{
                 fill: '#000',
                 wordWrap: { width: 250, useAdvancedWrap: true }
             });
-         }
+        }
 
 
         if (this.talking >=2) {
@@ -161,6 +160,6 @@ class DialogBox extends Phaser.GameObjects.Graphics{
                 wordWrap: { width: 300, useAdvancedWrap: true }
             });
             this.talking = 2;
-         }
+        }
     }
 }
