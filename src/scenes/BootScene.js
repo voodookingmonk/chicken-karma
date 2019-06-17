@@ -53,9 +53,9 @@ export class BootScene extends Phaser.Scene{
             frameHeight: 16
         });
 
-        this.load.spritesheet('enemy', './assets/RPG_assets.png', {
-            frameWidth: 16,
-            frameHeight: 16
+        this.load.spritesheet('enemy', './assets/monster_25x35.png', {
+            frameWidth: 25,
+            frameHeight: 35
         });
 
         //fixed to camera test:

@@ -152,7 +152,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyLeft',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [22, 28, 34]
+                frames: [8, 9, 10, 11]
             }),
             frameRate: 10,
             repeat: -1
@@ -162,7 +162,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyRight',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [22, 28, 34]
+                frames: [8, 9, 10, 11]
             }),
             frameRate: 10,
             repeat: -1
@@ -171,7 +171,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyUp',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [23, 29, 35]
+                frames: [4, 5, 6, 7]
             }),
             frameRate: 10,
             repeat: -1
@@ -179,7 +179,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyDown',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [21, 27, 33]
+                frames: [0, 1, 2, 3]
             }),
             frameRate: 10,
             repeat: -1
