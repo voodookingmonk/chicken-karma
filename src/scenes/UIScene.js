@@ -26,24 +26,18 @@ export class UIScene extends Phaser.Scene{
         console.log("UI loaded"); // end
 
         this.gameScene = this.scene.get(CST.SCENES.WORLD);
-        //console.log(gameScene);
         this.playerHealth = this.gameScene.playerHealth;
         this.playerHealthMax = this.gameScene.playerHealthMax;
 
         //call HelpScene
-        this.helpButton  = this.add.image(300, 5, "help").setOrigin(0).setDepth(1).setInteractive();
+        this.helpButton  = this.add.image(310, 10, "help").setInteractive();
         
-        this.helpButton.on("pointerover", ()=>{
-            this.helpButton.setTexture("help");
-        });
-        this.helpButton.on("pointerout", ()=>{
-            this.helpButton.setTexture("help");
-        });
         this.helpButton.on("pointerdown", ()=>{
             this.scene.start('HelpScene');
             this.scene.stop('UIScene');
             this.scene.pause('WorldScene');
         });
+
         // graphics fixedToCamera
         this.graphics = this.add.graphics();
         this.graphics.fixedToCamera = true;
@@ -71,7 +65,6 @@ export class UIScene extends Phaser.Scene{
         
 
         
-
         //dialoog
         if (this.gameScene.checkDialog === false) {
             this.talking = 1;

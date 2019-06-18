@@ -15,29 +15,32 @@ export class HelpScene extends Phaser.Scene{
     preload(){
         this.load.image("close", "assets/mushroom16_16.png");
         this.load.image("help", "assets/help.png"); 
+        this.load.image("reset", "assets/reset.png"); 
     }
 
     create(){
         let gameScene = this.scene.get(CST.SCENES.WORLD);
 
         console.log("HelpScene loaded"); // end
-        let help = this.add.image(10, 10, "help").setOrigin(0).setDepth(0);
+        let help = this.add.image(10, 10, "help").setOrigin(0);
 
         //close HelpScene
-        let closeButton  = this.add.image(280,25, "close").setOrigin(0).setDepth(1).setInteractive();
+        let closeButton  = this.add.image(280,25, "close").setInteractive();
 
-        closeButton.on("pointerover", ()=>{
-            closeButton.setTexture("close");
-        });
-        closeButton.on("pointerout", ()=>{
-            closeButton.setTexture("close");
-        });
         closeButton.on("pointerdown", ()=>{
             this.scene.start('UIScene');
             this.scene.resume('WorldScene');
             this.scene.sleep('HelpScene');
             
         });
+
+        //reset game
+        let resetButton  = this.add.image(275, 50, "reset").setInteractive();
+
+        resetButton.on("pointerdown", ()=>{
+            this.scene.start('LoadScene');  
+        });
+
 
     }
 
