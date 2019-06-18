@@ -273,6 +273,9 @@ export class WorldScene extends Phaser.Scene{
 
         if (Phaser.Input.Keyboard.JustDown(this.keyE)){
             enemy.health -= 1;
+            this.scene.stop('UIScene');
+            this.scene.start('EndScene');   
+
         }
 
         //console.log(player.health + " " + enemy.health);
@@ -284,36 +287,6 @@ export class WorldScene extends Phaser.Scene{
 
     attack(){
 
-    }
-
-	dmg (player, test) {
-        if (((Math.abs(this.player.x - this.test.x) <= 40) && (Math.abs(this.player.y - this.test.y) <= 40)) && this.testHealth > 0) {
-            this.testHealth = this.testHealth - 50;
-            if (this.testHealth == 0) {
-                this.test.destroy();
-            }
-        }
-        if ((Math.abs(this.player.x - this.npcEnemy.x) <= 40) && (Math.abs(this.player.y - this.npcEnemy.y) <= 40) && this.enemyHealth > 0) {
-            this.enemyHealth = this.enemyHealth - 50;
-            if (this.enemyHealth == 0) {
-                this.npcEnemy.destroy();
-            }
-        }
-    }
-
-    damageToPlayer (player, test) {
-        this.checkDirection(player, test);
-				//Phaser.Geom.Rectangle.Inflate(graphics, -20, 0);
-        if (new Date().getTime() > (this.time_now + this.interval - 2500)) {
-            this.time_now = new Date().getTime();
-            this.damage = 10;
-            if(this.damage >= this.playerHealth && this.firstZero == true){
-                this.playerHealth = 0;
-                this.firstZero = false;
-            }else{
-                this.playerHealth -= this.damage;
-            }
-        }
     }
 
     respawn (player) {
@@ -333,13 +306,12 @@ export class WorldScene extends Phaser.Scene{
     }
 
     onMeetNPC2 (player, NPC2) {
-        this.checkDirection(player, NPC2);
         if (new Date().getTime() > (this.time_now + this.interval)) {
             this.time_now = new Date().getTime();
             //console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
 
             this.talking = 1;
-						this.checkDialog = true;
+            this.checkDialog = true;
             this.liikumine = false;
             if (this.testHealth > 0 && this.enemyHealth > 0) {
                 this.quest1 = 1;
@@ -347,41 +319,6 @@ export class WorldScene extends Phaser.Scene{
                 this.quest1 = 2;
             }
 
-        }
-
-    }
-
-    onMeetNPC (player, NPC) {
-        this.checkDirection(player, NPC);
-
-        if (new Date().getTime() > (this.time_now + this.interval)) {
-            this.time_now = new Date().getTime();
-            console.log(new Date().getTime() + " every " + ((this.time_now + this.interval) - new Date().getTime()) + " milliseconds");
-            this.NPC3.visible = false;
-        }
-
-    }
-
-    checkDirection (player, NPC) {
-        if ((player.x - NPC.x) < 0) {
-            player.x -= 2;
-        } else {
-            player.x += 2;
-        }
-
-        if ((player.y - NPC.y) < 0) {
-            player.y -= 2;
-        } else {
-            player.y += 2;
-        }
-    }
-
-    onMeetEnemyNPC (player, npcEnemy) {
-        this.checkDirection(player, npcEnemy);
-
-        if (new Date().getTime() > (time_now + interval)) {
-            time_now = new Date().getTime();
-            console.log(new Date().getTime() + " every " + ((time_now + interval) - new Date().getTime()) + " milliseconds");
         }
 
     }

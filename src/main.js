@@ -5,6 +5,7 @@ import {WorldScene} from "./scenes/WorldScene.js";
 import {UIScene} from "./scenes/UIScene.js";
 import {LoadScene} from "./scenes/LoadScene.js";
 import {HelpScene} from "./scenes/HelpScene.js";
+import {EndScene} from "./scenes/EndScene.js";
 
 var config = {
   type: Phaser.AUTO,
@@ -22,7 +23,7 @@ var config = {
       }
   },
   scene:[
-    BootScene, LoadScene, WorldScene, UIScene, HelpScene
+    BootScene, LoadScene, WorldScene, UIScene, HelpScene, EndScene
   ],
   parent: 'game'
 };
