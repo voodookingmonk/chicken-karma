@@ -9,7 +9,13 @@ export class WorldScene extends Phaser.Scene{
             key: CST.SCENES.WORLD
         });
 
-    this.interval = 3000;
+    
+
+    }
+
+    init(){
+        console.log("World loading...");
+        this.interval = 3000;
     this.time_now = new Date().getTime();
     this.NPC_time_now = new Date().getTime();
     this.NPC_movement_direction = 0;
@@ -44,12 +50,7 @@ export class WorldScene extends Phaser.Scene{
 
     this.checkHealth = 100;
 
-		this.checkDialog = false;
-
-    }
-
-    init(){
-        console.log("World loading...");
+	this.checkDialog = false;
     }
 
     preload(){
@@ -195,7 +196,7 @@ export class WorldScene extends Phaser.Scene{
         this.player = this.add.existing(new Player(this, 700, 300));
         this.newEnemy = this.add.existing(new Enemy(this, 600, 300));
         this.NPC = this.add.existing(new NPC(this, 600, 300, this.player));
-				this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC2, false, this);
+		this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC2, false, this);
 
         let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
@@ -261,6 +262,7 @@ export class WorldScene extends Phaser.Scene{
 
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
+        console.log("WorldScene loaded"); // end
         }
 
     collide(player, enemy){

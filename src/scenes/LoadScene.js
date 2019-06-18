@@ -17,12 +17,10 @@ export class LoadScene extends Phaser.Scene{
 
     create(){
         let gameScene = this.scene.get(CST.SCENES.WORLD);
-
         this.scene.start('WorldScene');   
         this.scene.start('UIScene');
-        //this.scene.start('HelpScene');
 
-        //console.log("LoadScene loaded"); // end
+        console.log("LoadScene loaded"); // end
     }
 
     update(){

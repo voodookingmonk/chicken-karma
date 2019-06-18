@@ -21,7 +21,6 @@ export class HelpScene extends Phaser.Scene{
     create(){
         let gameScene = this.scene.get(CST.SCENES.WORLD);
 
-        console.log("HelpScene loaded"); // end
         let help = this.add.image(10, 10, "help").setOrigin(0);
 
         //close HelpScene
@@ -38,10 +37,13 @@ export class HelpScene extends Phaser.Scene{
         let resetButton  = this.add.image(275, 50, "reset").setInteractive();
 
         resetButton.on("pointerdown", ()=>{
-            this.scene.start('LoadScene');  
+            this.scene.stop('WorldScene');
+            this.scene.stop('UIScene');
+            this.scene.start('BootScene');
         });
 
-
+        
+        console.log("HelpScene loaded"); // end
     }
 
     update(){

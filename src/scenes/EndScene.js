@@ -22,7 +22,7 @@ export class EndScene extends Phaser.Scene{
         welcomeText.setFont = "Fresca";
         const start = this.add.text(115, 125, 'Start over', { fill: '#0f0' })
         .setInteractive()
-        .on('pointerdown', () => { this.scene.start('LoadScene'); })
+        .on('pointerdown', () => { this.scene.start('BootScene');})
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
 
