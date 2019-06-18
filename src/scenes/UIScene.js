@@ -19,21 +19,36 @@ export class UIScene extends Phaser.Scene{
     }
 
     preload(){
+        this.load.image("help", "assets/mushroom16_16.png");
     }
 
     create(){
-        this.gameScene = this.scene.get(CST.SCENES.WORLD);
+        console.log("UI loaded"); // end
 
+        this.gameScene = this.scene.get(CST.SCENES.WORLD);
         //console.log(gameScene);
         this.playerHealth = this.gameScene.playerHealth;
         this.playerHealthMax = this.gameScene.playerHealthMax;
 
-        console.log("UI loaded"); // end
-
+        //call HelpScene
+        this.helpButton  = this.add.image(300, 5, "help").setOrigin(0).setDepth(1).setInteractive();
+        
+        this.helpButton.on("pointerover", ()=>{
+            this.helpButton.setTexture("help");
+        });
+        this.helpButton.on("pointerout", ()=>{
+            this.helpButton.setTexture("help");
+        });
+        this.helpButton.on("pointerdown", ()=>{
+            this.scene.start('HelpScene');
+            this.scene.stop('UIScene');
+            this.scene.pause('WorldScene');
+        });
         // graphics fixedToCamera
         this.graphics = this.add.graphics();
         this.graphics.fixedToCamera = true;
         this.graphics.setScrollFactor(0);
+
         //Healthbar bg
         this.bar = new Phaser.Geom.Rectangle(43, 10, (this.playerHealthMax / 2), 7);
         this.graphics.fillStyle(0xff3333);
@@ -49,29 +64,32 @@ export class UIScene extends Phaser.Scene{
     }
 
     update(){
-
+        //call health bar
         if(this.gameScene.playerHealth >= -100){
             this.drawHealthBar();
         }
+        
 
-				//dialoog
-				if (this.gameScene.checkDialog === false) {
-					this.talking = 1;
-				} else {
-						//console.log(this.talking);
-						this.graphics = new DialogBox(this, 32, 180, 250, 50, 35, 185, "Tere", this.talking);
-						this.graphics.drawDialogBox();
-						this.graphics.addText();
-						if (this.gameScene.cursors.space.isDown && this.talking < 2){
-							//  this.graphics.npcText.destroy();
-								this.talking += 1;
-						}
-				}
-				if ((this.gameScene.cursors.left.isDown || this.gameScene.cursors.right.isDown || this.gameScene.cursors.up.isDown || this.gameScene.cursors.down.isDown) && this.talking > 1){
-						this.talking = 0;
-						this.gameScene.checkDialog = false;
-						this.graphics.npcText.visible = false;
-				}
+        
+
+        //dialoog
+        if (this.gameScene.checkDialog === false) {
+            this.talking = 1;
+        } else {
+                //console.log(this.talking);
+                this.graphics = new DialogBox(this, 32, 180, 250, 50, 35, 185, "Tere", this.talking);
+                this.graphics.drawDialogBox();
+                this.graphics.addText();
+                if (this.gameScene.cursors.space.isDown && this.talking < 2){
+                    //  this.graphics.npcText.destroy();
+                        this.talking += 1;
+                }
+        }
+        if ((this.gameScene.cursors.left.isDown || this.gameScene.cursors.right.isDown || this.gameScene.cursors.up.isDown || this.gameScene.cursors.down.isDown) && this.talking > 1){
+                this.talking = 0;
+                this.gameScene.checkDialog = false;
+                this.graphics.npcText.visible = false;
+        }
 
     }
 
@@ -87,12 +105,16 @@ export class UIScene extends Phaser.Scene{
                 this.bar2 = new Phaser.Geom.Rectangle(93, 10, w, 7);
                 this.graphics.fillRectShape(this.bar2);
             }else{
+                //healed
                 this.bar2 = new Phaser.Geom.Rectangle(43, 10, 50, 7);
                 this.graphics.fillStyle(0xff3333);
                 this.graphics.fillRectShape(this.bar2);
             }
         }
         if(this.gameScene.playerHealth < 0){
+            this.graphics.clear(this.bar2);
+            this.bar2 = new Phaser.Geom.Rectangle(43, 10, 50, 7);
+            this.graphics.fillRectShape(this.bar2);
             this.death();
         }
 

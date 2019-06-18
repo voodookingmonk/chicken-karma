@@ -274,6 +274,7 @@ export class WorldScene extends Phaser.Scene{
         if (Phaser.Input.Keyboard.JustDown(this.keyE)){
             enemy.health -= 1;
             this.scene.stop('UIScene');
+            this.scene.stop('HelpScene');
             this.scene.start('EndScene');   
 
         }

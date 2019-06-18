@@ -18,9 +18,9 @@ export class EndScene extends Phaser.Scene{
     create(){
         let gameScene = this.scene.get(CST.SCENES.WORLD);
 
-        const welcomeText = this.add.text(100, 50, 'Game over!', { fill: '#0f0' });
+        const welcomeText = this.add.text(120, 50, 'Game over!', { fill: '#0f0' });
         welcomeText.setFont = "Fresca";
-        const start = this.add.text(115, 125, 'Start over!', { fill: '#0f0' })
+        const start = this.add.text(115, 125, 'Start over', { fill: '#0f0' })
         .setInteractive()
         .on('pointerdown', () => { this.scene.start('LoadScene'); })
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
