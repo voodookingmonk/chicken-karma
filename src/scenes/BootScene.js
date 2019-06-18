@@ -63,16 +63,16 @@ export class BootScene extends Phaser.Scene{
     }
 
     create(){
-        //this.scene.start('LoadScene');
-        console.log("Boot loaded");
-
         const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' });
         welcomeText.setFont = "Fresca";
+        
         const start = this.add.text(115, 125, 'Start game!', { fill: '#0f0' })
         .setInteractive()
         .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
+
+        console.log("Boot loaded");
     }
 
     update(){

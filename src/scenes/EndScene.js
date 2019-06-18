@@ -27,7 +27,7 @@ export class EndScene extends Phaser.Scene{
         const start = this.add.text(105, 200, 'Start over!', { fill: '#0f0' })
         .setInteractive()
         .on('pointerdown', () => { 
-            this.scene.start('LoadScene'); 
+            this.scene.start('BootScene'); 
             gameScene.karma = 0;
             gameScene.playerHealth = 100;
             gameScene.enemiesKilled = 0;

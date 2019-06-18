@@ -9,39 +9,41 @@ export class WorldScene extends Phaser.Scene{
             key: CST.SCENES.WORLD
         });
 
-    this.npcText = null;
-    this.liikumine = true;
-
-    //Healthbar:
-    this.playerHealth = 100; // player health for health bar
-    this.playerHealthMax = 100; // player health max
-    this.firstTime = null;
-
-    //Quest:
-    this.talking = 0;
-    this.quest1 = 0;
-    this.text = null;
-
-    this.map = null;
-    this.tiles = null;
-    this.grass = null;
-    this.obstacles = null;
-    this.graphics = 0;
-    this.graphicsText = 0;
-
-    this.chickenCount = 1; // amount of chickens spawned
-    this.enemyCount = 1; // amount of enemies spawned
-    this.enemiesKilled = 0; // enemies killed, gameover reaction
-    this.karma = 0; // karma points for game purpose
-    this.updateCounter = 0; // timing counter
-
-    this.checkHealth = 100;
-    this.checkDialog = false;
+    
 
     }
 
     init(){
         console.log("World loading...");
+        this.npcText = null;
+        this.liikumine = true;
+
+        //Healthbar:
+        this.playerHealth = 100; // player health for health bar
+        this.playerHealthMax = 100; // player health max
+        this.firstTime = null;
+
+        //Quest:
+        this.talking = 0;
+        this.quest1 = 0;
+        this.text = null;
+
+        this.map = null;
+        this.tiles = null;
+        this.grass = null;
+        this.obstacles = null;
+        this.graphics = 0;
+        this.graphicsText = 0;
+
+        this.chickenCount = 1; // amount of chickens spawned
+        this.enemyCount = 1; // amount of enemies spawned
+        this.enemiesKilled = 0; // enemies killed, gameover reaction
+        this.karma = 0; // karma points for game purpose
+        this.updateCounter = 0; // timing counter
+
+        this.checkHealth = 100;
+
+        this.checkDialog = false;
     }
 
     preload(){
@@ -254,6 +256,7 @@ export class WorldScene extends Phaser.Scene{
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
 
+        console.log("WorldScene loaded"); // end
         }
 
     collide(player, enemy){
