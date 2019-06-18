@@ -15,42 +15,35 @@ export class WorldScene extends Phaser.Scene{
 
     init(){
         console.log("World loading...");
-        this.interval = 3000;
-    this.time_now = new Date().getTime();
-    this.NPC_time_now = new Date().getTime();
-    this.NPC_movement_direction = 0;
-    this.Enemy_time_now = new Date().getTime();
-    this.Enemy_movement_direction = 0;
-    this.npcText = null;
-    this.liikumine = true;
-    //Healthbar:
-    this.test = null;
-    this.playerHealth = 100;
-    this.playerHealthMax = 100;
-    this.testHealth = 100;
-    this.enemyHealth = 100;
-    this.damage = null;
-    this.firstZero = true;
-    //Quest:
-    this.talking = 0;
-    this.quest1 = 0;
-    this.text = null;
+        this.npcText = null;
+        this.liikumine = true;
 
-    this.map = null;
-    this.tiles = null;
-    this.grass = null;
-    this.obstacles = null;
-    this.singleNPC = null;
+        //Healthbar:
+        this.playerHealth = 100; // player health for health bar
+        this.playerHealthMax = 100; // player health max
+        this.firstTime = null;
 
-    this.graphics = 0;
-    this.graphicsText = 0;
+        //Quest:
+        this.talking = 0;
+        this.quest1 = 0;
+        this.text = null;
 
+        this.map = null;
+        this.tiles = null;
+        this.grass = null;
+        this.obstacles = null;
+        this.graphics = 0;
+        this.graphicsText = 0;
 
-    this.chickenCount = 100; // amount of chickens spawned
+        this.chickenCount = 1; // amount of chickens spawned
+        this.enemyCount = 1; // amount of enemies spawned
+        this.enemiesKilled = 0; // enemies killed, gameover reaction
+        this.karma = 0; // karma points for game purpose
+        this.updateCounter = 0; // timing counter
 
-    this.checkHealth = 100;
+        this.checkHealth = 100;
 
-	this.checkDialog = false;
+        this.checkDialog = false;
     }
 
     preload(){
@@ -194,9 +187,9 @@ export class WorldScene extends Phaser.Scene{
         // our player sprite created through the phycis system
 
         this.player = this.add.existing(new Player(this, 700, 300));
-        this.newEnemy = this.add.existing(new Enemy(this, 600, 300));
+        //this.newEnemy = this.add.existing(new Enemy(this, 600, 300, this.player));
         this.NPC = this.add.existing(new NPC(this, 600, 300, this.player));
-		this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC2, false, this);
+        this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC2, false, this);
 
         let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
@@ -217,13 +210,15 @@ export class WorldScene extends Phaser.Scene{
             let singleChicken = this.add.existing(new Chicken(this, x, y, this.player));
             this.physics.add.existing(singleChicken);
             this.chickens.add(singleChicken);
-            if (i <= this.chickenCount/2){
-                let singleEnemy = this.add.existing(new Enemy(this, x, y));
+
+            if (i < this.enemyCount){
+                x = Phaser.Math.RND.between(700, 900);
+                y = Phaser.Math.RND.between(200, 400);
+                let singleEnemy = this.add.existing(new Enemy(this, x, y, this.player));
                 //this.singleNPC = this.add.existing(new NPC(this, x, y, this.player));
                 this.physics.add.existing(singleEnemy);
                 //this.physics.add.existing(this.singleNPC);
                 this.enemies.add(singleEnemy);
-
             }
         }
 
@@ -240,7 +235,8 @@ export class WorldScene extends Phaser.Scene{
         this.physics.add.collider(this.chickens, this.obstacles);
         this.physics.add.collider(this.enemies, this.obstacles);
         this.physics.add.collider(this.npcs, this.obstacles);
-        this.physics.add.collider(this.npcs, this.npcs);
+        //this.physics.add.collider(this.enemies, this.player);
+        //this.physics.add.collider(this.npcs, this.npcs);
         // limit camera to map
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(this.player);
@@ -249,46 +245,43 @@ export class WorldScene extends Phaser.Scene{
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.physics.add.collider(this.player, this.chickens, this.collide, false, this);
-        //this.physics.add.collider(this.player, this.npcs, this.collide, false, this);
 
-        //this.physics.add.collider(this.player, this.healer, this.heal, false, this);
-        //this.physics.add.overlap(this.player, this.NPC, this.onMeetNPC, false, this);
-        /*this.physics.add.overlap(this.player, this.NPC2, this.onMeetNPC2, false, this);
-        this.physics.add.overlap(this.player, this.NPC3, this.onMeetNPC3, false, this);
-        this.physics.add.overlap(this.player, this.npcEnemy, this.damageToPlayer, false, this);
-        this.physics.add.overlap(this.player, this.test, this.damageToPlayer, false, this);*/
-        //this.input.keyboard.on('keydown_E', this.dmg, this);
+        this.physics.add.collider(this.player, this.chickens, this.collide, false, this);
+        this.physics.add.collider(this.player, this.enemies, this.collide, false, this);
+        this.physics.add.collider(this.player, this.npcs, (player, enemy)=>{
+            this.collide(player, enemy);
+            this.talk(player, enemy);
+        }, false, this);
 
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        this.keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
 
         console.log("WorldScene loaded"); // end
         }
 
     collide(player, enemy){
-
         enemy.collided = true;
 
-        if (enemy.counter === 75 && player.health > -1){
+        if ((enemy.firstAttack || enemy.canAttack) && player.health > -1 ){
+            enemy.firstAttack = false;
+            enemy.canAttack = false;
             player.health -= enemy.damage;
         }
 
         if (Phaser.Input.Keyboard.JustDown(this.keyE)){
-            enemy.health -= 1;
-            this.scene.stop('UIScene');
-            this.scene.stop('HelpScene');
-            this.scene.start('EndScene');   
-
+            player.anims.play('enemyRight', true);
+            enemy.health -= 1;   
         }
-
-        //console.log(player.health + " " + enemy.health);
-        //enemy.active = false;
-        //enemy.visible = false;
-
-        //console.log(enemy.health);
     }
 
     attack(){
+
+    }
+
+    talk(player, enemy) {
+
+        let what = ["Tere", "Merilin", "How", "Are", "You", "Doing"];
+        let talk = new DialogBox(this, 600, 300, what);
 
     }
 
@@ -326,8 +319,19 @@ export class WorldScene extends Phaser.Scene{
 
     }
 
-    update(){
+    update(time, delta){
 
+        this.updateCounter++;
+
+        if (this.updateCounter == 100){
+            this.updateCounter = 0;
+        }
+
+        if (this.enemiesKilled === 1){
+            this.scene.stop('UIScene');
+            this.scene.stop('WorldScene');
+            this.scene.start('EndScene');
+        }
     }
 }
 
@@ -346,11 +350,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.body.mass = 500;
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
+        this.movement = true;
 
-        this.moveleft = false;
-        this.moveright = false;
-        this.moveup = false;
-        this.movedown = false;
         this.counter = 0;
     }
 
@@ -409,20 +410,18 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
         this.body.collideWorldBounds = true;
         this.body.immovable = true;
         this.keys = this.scene.input.keyboard.createCursorKeys();
-        this.speed = 200;
+
         this.scene = scene;
-
-        this.moveleft = false;
-        this.moveright = false;
-        this.moveup = false;
-        this.movedown = false;
         this.player = player;
-        this.counter = 0;
 
-        this.graphics = 0;
-        this.bar = null;
-
+        this.speed = 200;
+        this.karma = -1;
         this.health = 5;
+        this.canAttack = false;
+
+        this.collided = false;
+
+        this.counter = 0;
     }
 
     create(){
@@ -438,20 +437,7 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
             this.counter = 0;
         }
 
-        if (this.body.velocity.x > 0){
-
-            this.anims.play('enemyRight', true);
-            this.flipX = false;
-
-        } else if (this.body.velocity.x < 0){
-
-            this.anims.play('enemyLeft', true);
-            this.flipX = true;
-
-        }
-
         this.body.setVelocity(0);
-        this.follow(this.player);
 
         this.checkAlive();
         //this.drawHealthBar();
@@ -462,6 +448,7 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
             //this.visible = false;
             //this.active = false;
             this.disableBody(true, true);
+            this.scene.karma += this.karma;
         }
     }
 
@@ -480,23 +467,23 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.body.collideWorldBounds = true;
         this.body.immovable = true;
         this.keys = this.scene.input.keyboard.createCursorKeys();
-        this.speed = 300;
 
-        this.moveleft = false;
-        this.moveright = false;
-        this.moveup = false;
-        this.movedown = false;
+        this.damage = 5; // object damage
+        this.speed = 10; // object movement speed
+        this.health = 2; // object health
+        this.karma = 1; // object karma point
 
-        this.direction = 0;
-        this.previousTimer = 0;
-        this.speed = 10;
-        this.firstTime = true;
-        this.interval = Phaser.Math.RND.between(50, 100);
-        this.damage = 0;
-        this.counter = 0;
-        this.health = 1;
-        this.collided = false;
-        this.player = player;
+        this.direction = 0; // moving direction
+        this.firstTime = true; // first time launch to start moving without timer
+        this.firstAttack = true;
+        this.canAttack = true;
+
+        this.interval = Phaser.Math.RND.between(50, 100); // choosing when to switch direction (timer based)
+        this.previousTimer = 0; // timers for events
+        this.counter = 0; // counter for events
+
+        this.collided = false; // used for following
+        this.player = player; // used for following the player
 
         this.minX = 500;
         this.maxX = 700;
@@ -514,16 +501,14 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.counter += 1;
 
         if (this.counter == 100){
+            this.canAttack = true;
             this.counter = 0;
         }
 
         if (!this.collided){
             this.randomRoaming();
-        }
-        this.maxBounds();
-        this.checkAlive();
-
-        if (this.collided){
+            this.maxBounds();
+        } else {
             this.follow(this.player);
     
             if (this.body.velocity.x > 0){
@@ -538,6 +523,8 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
     
             }
         }
+
+        this.checkAlive();
     }
 
     follow(player){
@@ -549,6 +536,7 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
             //this.visible = false;
             //this.active = false;
             this.disableBody(true, true);
+            this.scene.karma += this.karma;
         }
     }
 
@@ -630,10 +618,6 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         }
     }
 
-    specificRoaming(){
-
-    }
-
     makeNPCMove(x, y){
         this.body.setVelocityX(x);
         this.body.setVelocityY(y);
@@ -641,27 +625,32 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
 }
 
 class Enemy extends Phaser.Physics.Arcade.Sprite{
-    constructor (scene, x, y){
+    constructor (scene, x, y, player){
         super(scene, x, y);
 
         this.setTexture('enemy');
         this.setPosition(x, y);
         scene.physics.world.enableBody(this, 0);
         this.body.collideWorldBounds = true;
+        this.body.immovable = true;
         this.keys = this.scene.input.keyboard.createCursorKeys();
-        this.speed = 80;
+        this.player = player;
 
-        this.moveleft = false;
-        this.moveright = false;
-        this.moveup = false;
-        this.movedown = false;
+        this.speed = 80; // object speed
+        this.karma = 1; // object karma point
+        this.health = 2; // object health
+        this.damage = 24; // object damage
 
-        this.direction = 0;
-        this.previousTimer = 0;
-        this.speed = 40;
-        this.firstTime = true;
-        this.interval = Phaser.Math.RND.between(50, 100);
-        this.damage = 10;
+        this.collided = false; // used for following
+
+        this.firstTime = true; // first time movement
+        this.canAttack = true;
+        this.firstAttack = true;
+
+        this.interval = Phaser.Math.RND.between(50, 100); // random timed movement
+        this.direction = 0; // random moving direction
+        this.previousTimer = 0; // counter
+        this.counter = 0;
 
 
     }
@@ -672,8 +661,47 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
-        this.previousTimer += 1;
-        this.randomRoaming();
+        this.previousTimer++;
+        this.counter++;
+
+        if (this.counter == 100){
+            this.canAttack = true;
+            this.counter = 0;
+        }
+
+        if (!this.collided){
+            this.randomRoaming();
+        } else {
+            this.follow(this.player);
+    
+            if (this.body.velocity.x > 0){
+
+                this.anims.play('enemyRight', true);
+                this.flipX = false;
+    
+            } else if (this.body.velocity.x < 0){
+    
+                this.anims.play('enemyLeft', true);
+                this.flipX = true;
+    
+            }
+        }
+
+        this.checkAlive();
+    }
+
+    follow(player){
+        this.scene.physics.moveToObject(this, player, 80);
+    }
+
+    checkAlive(){
+        if (this.health <= 0){
+            //this.visible = false;
+            //this.active = false;
+            this.disableBody(true, true);
+            this.scene.karma += this.karma;
+            this.scene.enemiesKilled++;
+        }
     }
 
     randomRoaming(){
@@ -736,5 +764,47 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
     makeNPCMove(x, y){
         this.body.setVelocityX(x);
         this.body.setVelocityY(y);
+    }
+}
+
+class DialogBox extends Phaser.GameObjects.Graphics{
+    constructor(scene, x, y, texts){
+        super(scene);
+        scene.add.existing(this);
+        this.scene = scene;
+
+        this.x = x;
+        this.y = y;
+
+        this.texts = texts;
+        this.something = true;
+        
+        this.currentText;
+
+        this.counter = 0;
+        this.number = 0;
+    }
+
+    preUpdate(){
+        this.counter++;
+
+        if (this.counter % 50 == 0){
+            if (this.something){
+                this.draw(this.texts[this.number]);
+                this.number++;
+                this.something = false;
+            } else {
+                this.destroy();
+                this.something = true;
+            }
+        }
+    }
+
+    draw(input){
+        this.currentText = this.scene.add.text(this.x, this.y, input, { font: 'bold 64pt Arial', fill: 'white', fontSize: 64, wordWrap: true });
+    }
+
+    destroy(){
+        this.currentText.destroy();
     }
 }

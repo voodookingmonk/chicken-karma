@@ -18,13 +18,24 @@ export class EndScene extends Phaser.Scene{
     create(){
         let gameScene = this.scene.get(CST.SCENES.WORLD);
 
-        const welcomeText = this.add.text(120, 50, 'Game over!', { fill: '#0f0' });
+        this.scene.stop('WorldScene');   
+        this.scene.stop('UIScene');
+        this.scene.stop('HelpScene');
+
+        const welcomeText = this.add.text(85, 15, 'Game over!', { fill: '#0f0', fontSize: 24 });
         welcomeText.setFont = "Fresca";
-        const start = this.add.text(115, 125, 'Start over', { fill: '#0f0' })
+        const start = this.add.text(105, 200, 'Start over!', { fill: '#0f0' })
         .setInteractive()
-        .on('pointerdown', () => { this.scene.start('BootScene');})
+        .on('pointerdown', () => { 
+            this.scene.start('BootScene'); 
+            gameScene.karma = 0;
+            gameScene.playerHealth = 100;
+            gameScene.enemiesKilled = 0;
+        })
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
+
+        let karma = this.add.text(85, 15, `${gameScene.karma}`);
 
         console.log("EndScene loaded"); // end
     }
