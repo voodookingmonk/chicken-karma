@@ -39,34 +39,6 @@ export class HelpScene extends Phaser.Scene{
             
         });
 
-        
-        
-
-
-
-
-
-/*
-        const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' });
-        welcomeText.setFont = "Fresca";
-        const start = this.add.text(115, 125, 'Start game!', { fill: '#0f0' })
-        .setInteractive()
-        .on('pointerdown', () => { this.scene.start('LoadScene'); })
-        .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
-        .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
-
-
-        this.graphics = this.add.graphics();
-        this.bg = new Phaser.Geom.Rectangle(10, 230, 310, 220);
-
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.input.keyboard.on('keydown_I', ()=>{
-            console.log("väljas");
-            this.scene.setVisible(false, 'HelpScene');
-            //this.scene.run('WorldScene');
-            //this.scene.run('UIScene');
-        });*/
-
     }
 
     update(){
