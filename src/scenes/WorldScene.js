@@ -152,7 +152,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyLeft',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [22, 28, 34]
+                frames: [8, 9, 10, 11]
             }),
             frameRate: 10,
             repeat: -1
@@ -162,7 +162,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyRight',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [22, 28, 34]
+                frames: [8, 9, 10, 11]
             }),
             frameRate: 10,
             repeat: -1
@@ -171,7 +171,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyUp',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [23, 29, 35]
+                frames: [4, 5, 6, 7]
             }),
             frameRate: 10,
             repeat: -1
@@ -179,7 +179,7 @@ export class WorldScene extends Phaser.Scene{
         this.anims.create({
             key: 'enemyDown',
             frames: this.anims.generateFrameNumbers('enemy', {
-                frames: [21, 27, 33]
+                frames: [0, 1, 2, 3]
             }),
             frameRate: 10,
             repeat: -1
@@ -188,10 +188,7 @@ export class WorldScene extends Phaser.Scene{
     }
 
     create(){
-        //let UIScene = this.scene.get(CST.SCENES.UI);
-
-
-        let uiScene = this.scene.get(CST.SCENES.UI);
+      	let uiScene = this.scene.get(CST.SCENES.UI);
 
         // our player sprite created through the phycis system
 
@@ -225,7 +222,7 @@ export class WorldScene extends Phaser.Scene{
                 this.physics.add.existing(singleEnemy);
                 //this.physics.add.existing(this.singleNPC);
                 this.enemies.add(singleEnemy);
-                //this.npcs.add(this.singleNPC);
+
             }
         }
 
@@ -239,14 +236,10 @@ export class WorldScene extends Phaser.Scene{
 
         // don't walk on trees
         this.physics.add.collider(this.player, this.obstacles);
-        /*this.physics.add.collider(this.npcEnemy, this.obstacles);*/
         this.physics.add.collider(this.chickens, this.obstacles);
         this.physics.add.collider(this.enemies, this.obstacles);
         this.physics.add.collider(this.npcs, this.obstacles);
         this.physics.add.collider(this.npcs, this.npcs);
-
-        //this.physics.add.collider(this.npcs, this.player);
-
         // limit camera to map
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(this.player);
