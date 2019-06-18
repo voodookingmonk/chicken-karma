@@ -70,7 +70,7 @@ export class BootScene extends Phaser.Scene{
         welcomeText.setFont = "Fresca";
         const start = this.add.text(115, 125, 'Start game!', { fill: '#0f0' })
         .setInteractive()
-        .on('pointerdown', () => { this.scene.start('LoadScene'); })
+        .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
     }

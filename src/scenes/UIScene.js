@@ -109,6 +109,7 @@ export class UIScene extends Phaser.Scene{
                     fill: "red",
                     align: "center"
             });
+            
             //respawn();
     }
 }
