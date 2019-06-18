@@ -6,6 +6,7 @@ export const CST = {
     WORLD: "WorldScene",
     UI: "UIScene",
     LOAD: "LoadScene",
-    HELP: "HelpScene"
+    HELP: "HelpScene",
+    END: "EndScene"
     }
 };
