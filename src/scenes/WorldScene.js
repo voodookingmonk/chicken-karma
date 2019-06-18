@@ -490,7 +490,7 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.speed = 10;
         this.firstTime = true;
         this.interval = Phaser.Math.RND.between(50, 100);
-        this.damage = 30;
+        this.damage = 0;
         this.counter = 0;
         this.health = 1;
         this.collided = false;
