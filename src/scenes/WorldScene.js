@@ -9,49 +9,50 @@ export class WorldScene extends Phaser.Scene{
             key: CST.SCENES.WORLD
         });
 
-    this.npcText = null;
-    this.liikumine = true;
-
-    //Healthbar:
-    this.playerHealth = 100; // player health for health bar
-    this.playerHealthMax = 100; // player health max
-    this.firstTime = null;
-
-    //Quest:
-    this.talking = 0;
-    this.quest1 = 0;
-    this.text = null;
-    this.talkedToKing = false;
-    this.questUI;
-
-    this.map = null;
-    this.tiles = null;
-    this.grass = null;
-    this.obstacles = null;
-    this.graphics = 0;
-    this.graphicsText = 0;
-
-    this.chickenCount = 69; // amount of chickens spawned
-    this.enemyCount = 15; // amount of enemies spawned
-    this.enemiesKilled = 0; // enemies killed, gameover reaction
-    this.karma = 0; // karma points for game purpose
-    this.updateCounter = 0; // timing counter
-    this.talkToOneNPCAtATime = true; // so can´t talk to multiple NPCS at a time
-    this.talkCounter = 0;
-
-    this.checkHealth = 100;
-    this.checkDialog = false;
+    
 
     }
 
     init(){
         console.log("World loading...");
+        this.npcText = null;
+        this.liikumine = true;
+
+        //Healthbar:
+        this.playerHealth = 100; // player health for health bar
+        this.playerHealthMax = 100; // player health max
+        this.firstTime = null;
+
+        //Quest:
+        this.talking = 0;
+        this.quest1 = 0;
+        this.text = null;
+        this.talkedToKing = false;
+        this.questUI;
+
+        //graphics
+        this.map = null;
+        this.tiles = null;
+        this.grass = null;
+        this.obstacles = null;
+        this.graphics = 0;
+        this.graphicsText = 0;
+
+        //Mobs and karma mechanics
+        this.chickenCount = 69; // amount of chickens spawned
+        this.enemyCount = 15; // amount of enemies spawned
+        this.enemiesKilled = 0; // enemies killed, gameover reaction
+        this.karma = 0; // karma points for game purpose
+        this.updateCounter = 0; // timing counter
+        this.talkToOneNPCAtATime = true; // so can´t talk to multiple NPCS at a time
+        this.talkCounter = 0;
+
+        this.checkHealth = 100;
+
+        this.checkDialog = false;
     }
 
     preload(){
-
-		//this.sys.install('DialogModalPlugin');
-        //console.log(this.sys.dialogModal);
 
         // create the map
         this.map = this.make.tilemap({
@@ -271,9 +272,9 @@ export class WorldScene extends Phaser.Scene{
         this.questUI = this.add.text(10, 40, "Talk To The King", { fontFamily: 'Arial', fill: 'black', fontSize: 10, wordWrap: true }).setScrollFactor(0);
 
         this.questUITitle.fixedToCamera = true;
-        //this.questUITitle.setScrollFactor(0);
         this.questUI.fixedToCamera = true;
-        //this.questUI.setScrollFactor(0);
+
+        console.log("WorldScene loaded"); // end
         }
 
     collide(player, enemy){

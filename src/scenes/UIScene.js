@@ -6,6 +6,10 @@ export class UIScene extends Phaser.Scene{
         super({
             key: CST.SCENES.UI
         });
+    }
+
+    init(){
+        console.log("UI loading...");
         this.graphics = 0;
         this.bar = null;
         this.bar2 = null;
@@ -14,17 +18,11 @@ export class UIScene extends Phaser.Scene{
 
     }
 
-    init(){
-        console.log("UI loading...");
-    }
-
     preload(){
         this.load.image("help", "assets/mushroom16_16.png");
     }
 
     create(){
-        console.log("UI loaded"); // end
-
         this.gameScene = this.scene.get(CST.SCENES.WORLD);
         this.playerHealth = this.gameScene.playerHealth;
         this.playerHealthMax = this.gameScene.playerHealthMax;
@@ -54,7 +52,9 @@ export class UIScene extends Phaser.Scene{
         });
 
 				//Dialoog
-				//this.talking = 1;
+                //this.talking = 1;
+        
+        console.log("UI loaded"); // end
     }
 
     update(){
@@ -96,6 +96,7 @@ export class UIScene extends Phaser.Scene{
 
                 this.graphics.clear(this.bar2);
                 this.bar2 = new Phaser.Geom.Rectangle(93, 10, w, 7);
+                this.graphics.fillStyle(0x000000);
                 this.graphics.fillRectShape(this.bar2);
             }else{
                 //healed
@@ -123,8 +124,12 @@ export class UIScene extends Phaser.Scene{
                     font: "30px Arial",
                     fill: "red",
                     align: "center"
-            });
-            
+            });  
+            this.scene.stop('WorldScene');
+            this.scene.stop('UIScene');
+            this.scene.stop('HelpScene');
+            this.scene.start('EndScene'); 
+              
             //respawn();
     }
 }
