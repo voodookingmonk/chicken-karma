@@ -13,9 +13,9 @@ export class HelpScene extends Phaser.Scene{
     }
 
     preload(){
-        this.load.image("close", "assets/mushroom16_16.png");
+        this.load.image("close", "assets/close.png");
         this.load.image("help", "assets/help.png"); 
-        this.load.image("reset", "assets/reset.png"); 
+        //this.load.image("reset", "assets/reset.png"); 
     }
 
     create(){
@@ -34,7 +34,7 @@ export class HelpScene extends Phaser.Scene{
         //if(this.scene.manager.isSleeping('BootScene') == false){
 
             //close HelpScene
-            let closeButton  = this.add.image(280,25, "close").setInteractive();
+            let closeButton  = this.add.image(287, 25, "close").setInteractive();
 
             closeButton.on("pointerdown", ()=>{
                 this.scene.start('UIScene');
@@ -43,14 +43,22 @@ export class HelpScene extends Phaser.Scene{
             });
 
             //reset game
-            let resetButton  = this.add.image(275, 50, "reset").setInteractive();
+
+            this.reset = this.add.text(200, 210, 'Reset game', { fill: '#000' }).setInteractive()
+            .on('pointerdown', () => { 
+                this.scene.stop('WorldScene');
+                this.scene.stop('UIScene');
+                this.scene.start('BootScene'); }) 
+            .on('pointerover', () => this.reset.setStyle({ fill: '#f00'}) )
+            .on('pointerout', () => this.reset.setStyle({ fill: '#000' }) );
+            /*let resetButton  = this.add.image(275, 50, "reset").setInteractive();
 
             resetButton.on("pointerdown", ()=>{
                 
                 this.scene.stop('WorldScene');
                 this.scene.stop('UIScene');
                 this.scene.start('BootScene');
-            });
+            });*/
        /* }else{
             //close HelpScene
             let closeButton  = this.add.image(280,25, "close").setInteractive();
