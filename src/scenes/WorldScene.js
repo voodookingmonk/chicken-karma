@@ -9,8 +9,6 @@ export class WorldScene extends Phaser.Scene{
             key: CST.SCENES.WORLD
         });
 
-    
-
     }
 
     init(){
@@ -283,7 +281,7 @@ export class WorldScene extends Phaser.Scene{
     }
 
     attack(player, enemy){
-        if ((this.talkedToKing || enemy.NPCType == "Chicken") && (enemy.firstAttack || enemy.canAttack) && player.health > -1 ){
+        if ((enemy.firstAttack || enemy.canAttack) && player.health > -1 ){
             enemy.collided = true;
             enemy.firstAttack = false;
             enemy.canAttack = false;
@@ -293,12 +291,10 @@ export class WorldScene extends Phaser.Scene{
             player.turnToVisible = true;
         }
 
-        if ((this.talkedToKing || enemy.NPCType == "Chicken") && Phaser.Input.Keyboard.JustDown(this.keyE)){
+        if (Phaser.Input.Keyboard.JustDown(this.keyE)){
             player.anims.play('enemyRight', true);
             enemy.health -= 1;   
             let newAttack = new Pow(this, player, enemy);
-        } else if (!this.talkedToKing){
-            console.log("has not talked to king");
         }
     }
 
@@ -324,7 +320,7 @@ export class WorldScene extends Phaser.Scene{
                 dialogue = ["I´m the the fool", "Hello"];
             }
 
-            let talk = new DialogBox(this, 5, 175, dialogue, player, enemy);
+            let talk = new DialogBox(this, 5, 175, 3, dialogue, player, enemy); // scene, x, y, timing, dialogue array, player, enemy
             enemy.number = 0;
         }
 
@@ -815,7 +811,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
 }
 
 class DialogBox extends Phaser.GameObjects.Graphics{
-    constructor(scene, x, y, texts, player, enemy){
+    constructor(scene, x, y, timing, texts, player, enemy){
         super(scene);
         scene.add.existing(this);
         this.scene = scene;
@@ -829,6 +825,7 @@ class DialogBox extends Phaser.GameObjects.Graphics{
         this.textsLength = this.texts.length;
         this.drawBoolean = true;
         this.drawWhiteBoxFirstTime = true;
+        this.timing = timing;
         
         this.currentText;
 
@@ -844,7 +841,7 @@ class DialogBox extends Phaser.GameObjects.Graphics{
     preUpdate(){
         this.counter++;
 
-        if (this.number <= this.textsLength && this.counter % 50 == 0){
+        if (this.number <= this.textsLength && this.counter % this.timing == 0){
 
             if (this.drawBoolean){
                 if(this.drawWhiteBoxFirstTime){
@@ -934,8 +931,7 @@ class Pow extends Phaser.GameObjects.Graphics{ // power of women
     }
 
     drawText(){
-        //this.currentText = this.scene.add.text(this.enemy.x-10, this.enemy.y-40, "pow", { font: 'bold 16pt Arial', fill: 'yellow', fontSize: 64, wordWrap: true });
-        this.currentImage = this.scene.add.image(this.enemy.x-10,this.enemy.y-10,'./assets/pow_25x25.png');
+        this.currentImage = this.scene.add.image(this.enemy.x-10, this.enemy.y-20, 'pow');
     }
 
     destroyText(){

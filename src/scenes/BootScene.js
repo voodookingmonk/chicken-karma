@@ -7,6 +7,9 @@ export class BootScene extends Phaser.Scene{
             key: CST.SCENES.BOOT
         });
 
+        this.counter = 0;
+        this.firstTime = true;
+
     }
 
     init(){
@@ -60,15 +63,24 @@ export class BootScene extends Phaser.Scene{
 
         //fixed to camera test:
         this.load.image('mushroom', './assets/mushroom16_16.png');
+        this.load.image('pow', './assets/pow_25x25.png');
     }
 
     create(){
-        //this.scene.start('LoadScene');
         console.log("Boot loaded");
+    
+        this.anims.create({
+            key: 'chickenDown',
+            frames: this.anims.generateFrameNumbers('chicken', {
+                frames: [0, 1, 2, 3]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
 
         const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' });
         welcomeText.setFont = "Fresca";
-
+        
         let startpic = this.add.image(165, 130, 'startpic');
 
         const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' })
@@ -76,15 +88,30 @@ export class BootScene extends Phaser.Scene{
         .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
-
-        this.chicken = this.physics.add.sprite(50, 100, 'chicken', 6);
-
-        
+    
     }
 
     update(){
+        this.counter++;
+
+        if (this.firstTime || this.counter % 25 == 0){
+            this.firstTime = false;
+            this.spawnChickens();
+        }
     }
 
-    updateCounter(){
+    spawnChickens(){
+        let matrix = this.physics.add.group({
+			key: 'chicken',
+			repeat: 20,
+            setXY: { x: 10, y: 0, stepX: 20, stepY: 0 },
+            velocityY: 50,
+            bounceY: 1,
+            depth: -1
+        });
+
+        console.log(matrix);
+
+        matrix.playAnimation('chickenDown');
     }
 }
