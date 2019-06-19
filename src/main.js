@@ -9,12 +9,10 @@ import {EndScene} from "./scenes/EndScene.js";
 
 var config = {
   type: Phaser.AUTO,
-  width: 640, // 320
-  height: 360, // 240
-  zoom: 3,
+  zoom: 2,
   pixelArt: true,
-  width:320,
-  height:240,
+  width: 500, // 320
+  height: 320, // 240
   physics: {
       default: "arcade",
       arcade: {

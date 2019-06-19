@@ -19,7 +19,7 @@ export class UIScene extends Phaser.Scene{
     }
 
     preload(){
-        this.load.image("help", "assets/mushroom16_16.png");
+        this.load.image("help", "assets/pause.png");
     }
 
     create(){
@@ -28,7 +28,7 @@ export class UIScene extends Phaser.Scene{
         this.playerHealthMax = this.gameScene.playerHealthMax;
 
         //call HelpScene
-        this.helpButton  = this.add.image(310, 10, "help").setInteractive();
+        this.helpButton  = this.add.image(480, 20, "help").setInteractive();
         
         this.helpButton.on("pointerdown", ()=>{
             this.scene.start('HelpScene');
