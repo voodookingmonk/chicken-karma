@@ -9,9 +9,9 @@ import {EndScene} from "./scenes/EndScene.js";
 
 var config = {
   type: Phaser.AUTO,
-  width: 320,
-  height: 240,
-  zoom: 2,
+  width: 640, // 320
+  height: 360, // 240
+  zoom: 3,
   pixelArt: true,
   width:320,
   height:240,

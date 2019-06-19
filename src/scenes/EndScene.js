@@ -62,6 +62,7 @@ export class EndScene extends Phaser.Scene{
     }
 
     update(){
+
     }
 
 }
