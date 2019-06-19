@@ -60,6 +60,15 @@ export class BootScene extends Phaser.Scene{
 
         //fixed to camera test:
         this.load.image('mushroom', './assets/mushroom16_16.png');
+
+        this.anims.create({
+            key: 'chkdwn',
+            frames: this.anims.generateFrameNumbers('chicken', {
+                frames: [0, 1, 2, 3]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
     }
 
     create(){
@@ -73,6 +82,10 @@ export class BootScene extends Phaser.Scene{
         .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
+
+        this.chicken = this.physics.add.sprite(50, 100, 'chicken', 6);
+        
+        
     }
 
     update(){
