@@ -39,6 +39,8 @@ export class WorldScene extends Phaser.Scene{
         //Mobs and karma mechanics
         this.chickenCount = 3; // amount of chickens spawned
         this.enemyCount = 3; // amount of enemies spawned
+        this.chickenCount = 34; // amount of chickens spawned
+        this.enemyCount = 15; // amount of enemies spawned
         this.enemiesKilled = 0; // enemies killed, gameover reaction
         this.karma = 0; // karma points for game purpose
         this.updateCounter = 0; // timing counter
