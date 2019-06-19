@@ -59,28 +59,27 @@ export class BootScene extends Phaser.Scene{
         });
 
         //fixed to camera test:
-        this.load.image('startpic', './assets/chicken_21x16.png');
+        this.load.image('mushroom', './assets/mushroom16_16.png');
     }
 
     create(){
+        //this.scene.start('LoadScene');
+        console.log("Boot loaded");
+
         const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' });
         welcomeText.setFont = "Fresca";
 
         let startpic = this.add.image(165, 130, 'startpic');
-        
+
         const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' })
         .setInteractive()
         .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
-/*
-        const info = this.add.text(140, 210, 'Info', { fill: '#0f0' })
-        .setInteractive()
-        .on('pointerdown', () => { this.scene.switch('HelpScene'); }) 
-        .on('pointerover', () => info.setStyle({ fill: '#ff0'}) )
-        .on('pointerout', () => info.setStyle({ fill: '#0f0' }) );
-*/
-        console.log("Boot loaded");
+
+        this.chicken = this.physics.add.sprite(50, 100, 'chicken', 6);
+
+        
     }
 
     update(){
