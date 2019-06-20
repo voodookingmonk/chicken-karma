@@ -223,6 +223,10 @@ export class WorldScene extends Phaser.Scene{
         this.spawnEnemies(640, 1160, 511, 682, 6, "Chicken");
         this.spawnEnemies(1650, 2200, 220, 600, this.enemyCount, "Enemy");
 
+        //might change the player's collision box
+        this.player.body.setSize(25, 25, 0, 15);
+        this.player.body.offset.y = 10;
+
         //treetops and stuff above player
         let top = this.map.createStaticLayer('Top', this.tiles, 0, 0);
 
