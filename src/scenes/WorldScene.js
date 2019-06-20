@@ -28,11 +28,10 @@ export class WorldScene extends Phaser.Scene{
         this.talkedToKing = false;
         this.questUI;
         this.dialogueHappening = true;
-        this.kingDialogue = ["Cluck. Po, I am king Roland.", "I have summoned you here to give you a quest.", "If you succeed then I shall redeem you of all your wrongdoings.", "You must kill the slimes that are east of the city.", "They might attack the city so I want you to kill them please."];
-        this.healerDialogue = ["Welcome traveller", "I have healed your wounds", "Now go and clear out the slimes.", "cluck"];
-        this.witchDialogue = ["Welcome I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret, but ssh", "The chickens are mind controlling the villagers.", "The chickens fear the slimes.", "So before you slay all the slimes, be sure to kill the chickens."];
-        this.foolDialogue = ["The slimes are bad.", "No the cluck clucks are bad", "No, no, no, no the slimes are bad cluck.", "Where is the witch?", "We need the witch?"];
-
+        this.kingDialogue = ["CLUCK... Po, I am king Roland.", "I have summoned you here to give you a quest.", "If you succeed then I shall redeem you of all your wrongdoings.", "There are dangerous slimes attacking the village and you are our last hope! CLUCK...", "You must kill them! CLUCK... head east of the city."];
+        this.healerDialogue = ["Welcome traveller! CLUCK...", "I have healed your wounds.", "Now go and clear out the slimes.", "CLUCK..."];
+        this.witchDialogue = ["Welcome, I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret, but sssh!", "The chickens are mind controlling the villagers.", "The chickens fear the slimes.", "So before you slay all the slimes, be sure to kill the chickens."];
+        this.foolDialogue = ["CLUCK...The slimes are bad. CLUCK...", "No the cluck clucks are bad", "No, no, no, no CLUCK...the slimes are bad CLUCK.", "Where is the witch?!", "We need the witch!"];
 
         //graphics
         this.map = null;
@@ -196,7 +195,7 @@ export class WorldScene extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('playerAttack', {
                 frames: [0, 1, 2, 3, 4, 5, 6, 7]
             }),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });
 
@@ -224,7 +223,7 @@ export class WorldScene extends Phaser.Scene{
         this.enemies = this.add.group();
         this.npcs = this.add.group();
 
-        this.npcs.add(this.NPC_healer); 
+        this.npcs.add(this.NPC_healer);
         this.npcs.add(this.NPC_fool);
         this.npcs.add(this.NPC_witch);
         this.npcs.add(this.NPC_King);
@@ -274,8 +273,8 @@ export class WorldScene extends Phaser.Scene{
         var style = { fontFamily: 'Arial', fill: 'black', fontSize: 10, wordWrap: true, wordWrap: { width: 78, useAdvancedWrap: true } };
 
         this.questUITitle = this.add.text(10, 30, "Quest:", style).setScrollFactor(0);
-        this.questUI = this.add.text(10, 40, "First talk to the King to get the quest", style).setScrollFactor(0);
-        this.questUIHint = this.add.text(10, 90, "Hint: Healer is South-East in the village", style).setScrollFactor(0);
+        this.questUI = this.add.text(10, 40, "Talk to the King for a quest.", style).setScrollFactor(0);
+        this.questUIHint = this.add.text(10, 90, "Hint: Healer is South-East in the village.", style).setScrollFactor(0);
 
         this.questUITitle.fixedToCamera = true;
         this.questUI.fixedToCamera = true;
@@ -302,7 +301,7 @@ export class WorldScene extends Phaser.Scene{
         if (Phaser.Input.Keyboard.JustDown(this.keySPACE)){
             player.attackingAnimationCounter = 0;
             player.attackingAnimation = true;
-            enemy.health -= 1;   
+            enemy.health -= 1;
             let newAttack = new Pow(this, player, enemy);
         }
     }
@@ -363,7 +362,7 @@ export class WorldScene extends Phaser.Scene{
     spawnEnemies(xMin, xMax, yMin, yMax, amount, type){
         let target;
 
-        for (let i = 0; i < amount; i++){        
+        for (let i = 0; i < amount; i++){
             let x = Phaser.Math.RND.between(xMin, xMax);
             let y = Phaser.Math.RND.between(yMin, yMax);
 
@@ -394,7 +393,7 @@ export class WorldScene extends Phaser.Scene{
         }
 
         if (this.talkedToKing){
-            this.questUI.setText("Head east to kill slimes " + this.enemiesKilled + "/" + this.enemyCount);
+            this.questUI.setText("Head east to kill slimes. " + this.enemiesKilled + "/" + this.enemyCount);
         }
 
         if (this.updateCounter == 100){
@@ -416,7 +415,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.scene = scene;
 
         this.gameScene = scene.scene.get(CST.SCENES.WORLD);
-        this.health = this.gameScene.playerHealth;   
+        this.health = this.gameScene.playerHealth;
 
         this.setTexture('player');
         this.setPosition(x, y);
@@ -478,16 +477,15 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         if (!this.attackingAnimation){
             this.animations('left', 'right', 'up', 'down', false);
         } else {
-            //this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
             this.anims.play('playerAtk', true);
             this.body.setSize(32, 32);
-            this.body.offset.x = -3;
-            this.body.offset.y = 5;
-            if (this.attackingAnimationCounter % 50 === 0){
+            this.body.offset.x = -4;
+            this.body.offset.y = 4;
+            if (this.attackingAnimationCounter % 30 === 0){
                 this.attackingAnimationCounter = 0;
                 this.attackingAnimation = false;
                 this.body.setSize(25, 25);
-                this.body.offset.x = 0;
+                this.body.offset.x = 0; // im
                 this.body.offset.y = 10;
             }
         }
@@ -629,17 +627,17 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
             this.randomRoaming();
         } else {
             this.follow(this.player);
-    
+
             if (this.body.velocity.x > 0){
 
                 this.anims.play('chickenRight', true);
                 this.flipX = false;
-    
+
             } else if (this.body.velocity.x < 0){
-    
+
                 this.anims.play('chickenLeft', true);
                 this.flipX = true;
-    
+
             }
         }
 
@@ -790,17 +788,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
             this.randomRoaming();
         } else {
             this.follow(this.player);
-    
+
             if (this.body.velocity.x > 0){
 
                 this.anims.play('enemyRight', true);
                 this.flipX = false;
-    
+
             } else if (this.body.velocity.x < 0){
-    
+
                 this.anims.play('enemyLeft', true);
                 this.flipX = true;
-    
+
             }
         }
 
@@ -899,7 +897,7 @@ class DialogBox extends Phaser.GameObjects.Graphics{
         this.drawWhiteBoxFirstTime = true;
         this.firstTime = true;
         this.timing;
-        
+
         this.currentText;
 
         this.counter = 0;
@@ -975,7 +973,7 @@ class Pow extends Phaser.GameObjects.Graphics{ // power of women
         this.times = 0;
         this.drawBoolean = true;
         this.drawWhiteBoxFirstTime = true;
-        
+
         this.currentText;
 
         this.counter = 0;
