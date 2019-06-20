@@ -1,4 +1,4 @@
-# Arvutimäng "Chicken Karma"
+# Arvutimängu "Chicken Karma" demo
 ## Raimo Pregel, Henri Tammo, Vahur Vogt, Merilin Võrk
 
 Tallinna Ülikooli digitehnoloogiate instituudi tarkvaraarenduse praktika raames valmis 6. rühmal arvutimäng. 
