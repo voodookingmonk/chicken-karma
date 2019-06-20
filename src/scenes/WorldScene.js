@@ -261,12 +261,6 @@ export class WorldScene extends Phaser.Scene{
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
         // quest UI addon
-        /*let uiBackground = this.add.graphics();
-        let rect = new Phaser.Geom.Rectangle(8, 30, 85, 50);
-        uiBackground.fillStyle(0xFFFFFF, 0.75);
-        uiBackground.fillRectShape(rect);
-        uiBackground.fixedToCamera = true;
-        uiBackground.setScrollFactor(0);*/
 
         this.userInterfaceHelper(8, 30, 85, 50);
         this.userInterfaceHelper(8, 90, 85, 40);
@@ -327,7 +321,6 @@ export class WorldScene extends Phaser.Scene{
                 if (this.talkToWitchOnce){
                     this.karma += 2;
                     this.talkToWitchOnce = false;
-                    console.log(this.karma);
                 }
                 dialogue = ["I´m the witch", "Hello"];
             } else if (enemy.NPCType === "Fool"){
@@ -405,8 +398,10 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
         this.movement = true;
+        this.attackingAnimation = false;
 
         this.counter = 0;
+        this.attackingAnimationCounter = 0;
 
         this.turnToVisible = false;
     }
@@ -417,8 +412,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
-
         this.counter++;
+        this.attackingAnimationCounter++;
 
         this.keyT = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
 
@@ -455,16 +450,24 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         }
 
         // Update the animation last and give left/right animations precedence over up/down animations
+        if (!this.attackingAnimation){
+            this.animations('left', 'right', 'up', 'down');
+        } else {
+
+        }
+    }
+
+    animations(left, right, up, down){
         if (this.keys.left.isDown) {
-            this.anims.play('left', true);
+            this.anims.play(left, true);
             this.flipX = false;
         } else if (this.keys.right.isDown) {
-            this.anims.play('right', true);
+            this.anims.play(right, true);
             this.flipX = false;
         } else if (this.keys.up.isDown) {
-            this.anims.play('up', true);
+            this.anims.play(up, true);
         } else if (this.keys.down.isDown) {
-            this.anims.play('down', true);
+            this.anims.play(down, true);
         } else {
             this.anims.stop();
         }
