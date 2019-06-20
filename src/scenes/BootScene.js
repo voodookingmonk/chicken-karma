@@ -9,6 +9,7 @@ export class BootScene extends Phaser.Scene{
 
         this.counter = 0;
         this.firstTime = true;
+        this.matrix;
 
     }
 
@@ -70,6 +71,23 @@ export class BootScene extends Phaser.Scene{
         console.log("Boot loaded");
     
         this.anims.create({
+            key: 'chickenRight',
+            frames: this.anims.generateFrameNumbers('chicken', {
+                frames: [4, 5, 6, 7]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'chickenUp',
+            frames: this.anims.generateFrameNumbers('chicken', {
+                frames: [8, 9, 10, 11]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
             key: 'chickenDown',
             frames: this.anims.generateFrameNumbers('chicken', {
                 frames: [0, 1, 2, 3]
@@ -81,13 +99,13 @@ export class BootScene extends Phaser.Scene{
         const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' }).setDepth(1);
         welcomeText.setFont = "Fresca";
         
-        let startpic = this.add.image(165, 130, 'startpic');
+        let startpic = this.add.image(165, 130, 'startpic').setDepth(1);
 
         const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' })
         .setInteractive()
         .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
-        .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
-        .on('pointerout', () => start.setStyle({ fill: '#0f0' }) )
+        .on('pointerover', () => start.setStyle({ fill: '#ff0'}))
+        .on('pointerout', () => start.setStyle({ fill: '#0f0' }))
         .setDepth(1);
     
     }
@@ -95,24 +113,19 @@ export class BootScene extends Phaser.Scene{
     update(){
         this.counter++;
 
-        if (this.firstTime || this.counter % 25 == 0){
-            this.firstTime = false;
+        if (this.counter % 25 === 0){
             this.spawnChickens();
         }
     }
 
     spawnChickens(){
-        let matrix = this.physics.add.group({
+        this.matrix = this.physics.add.group({
 			key: 'chicken',
 			repeat: 15,
             setXY: { x: 10, y: 0, stepX: 20, stepY: 0 },
-            velocityY: 50,
-            bounceY: -1,
-            setDepth: 0
+            velocityY: 50
         });
 
-        //matrix.setDepth(0);
-
-        matrix.playAnimation('chickenDown');
+        this.matrix.playAnimation('chickenDown');
     }
 }
