@@ -413,6 +413,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.setPosition(x, y);
         scene.physics.world.enableBody(this, 0);
         this.body.collideWorldBounds = true;
+        this.body.immovable = true;
 
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
@@ -468,7 +469,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         if (!this.attackingAnimation){
             this.animations('left', 'right', 'up', 'down', false);
         } else {
-            this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true);
+            this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
             this.body.setSize(30, 30);
             if (this.attackingAnimationCounter % 15 === 0){
                 this.attackingAnimation = false;
@@ -479,7 +480,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     }
 
     animations(left, right, up, down, statement){
-
 
         if (this.keys.left.isDown) {
             this.anims.play(left, true);
