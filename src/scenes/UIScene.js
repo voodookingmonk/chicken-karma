@@ -29,7 +29,7 @@ export class UIScene extends Phaser.Scene{
 
         //call HelpScene
         this.helpButton  = this.add.image(480, 20, "help").setInteractive();
-        
+
         this.keyESC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         this.helpButton.on("pointerdown", ()=>{
@@ -47,15 +47,15 @@ export class UIScene extends Phaser.Scene{
         this.bar = new Phaser.Geom.Rectangle(43, 10, (this.playerHealthMax / 2), 7);
         this.graphics.fillStyle(0xff3333);
         this.graphics.fillRectShape(this.bar);
-				this.t = this.add.text(10, 6.5, "Health ", {
-            font: "9px Arial",
+				this.t = this.add.text(8, 6.5, "Health ", {
+            font: "11px Arial",
             fill: "black",
             align: "center"
         });
 
 				//Dialoog
                 //this.talking = 1;
-        
+
         console.log("UI loaded"); // end
     }
 
@@ -71,9 +71,9 @@ export class UIScene extends Phaser.Scene{
         if(this.gameScene.playerHealth >= -100){
             this.drawHealthBar();
         }
-        
 
-        
+
+
         //dialoog
         if (this.gameScene.checkDialog === false) {
             this.talking = 1;
@@ -133,12 +133,12 @@ export class UIScene extends Phaser.Scene{
                     font: "30px Arial",
                     fill: "red",
                     align: "center"
-            });  
+            });
             this.scene.stop('WorldScene');
             this.scene.stop('UIScene');
             this.scene.stop('HelpScene');
-            this.scene.start('EndScene'); 
-              
+            this.scene.start('EndScene');
+
             //respawn();
     }
 }
