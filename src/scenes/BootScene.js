@@ -19,6 +19,10 @@ export class BootScene extends Phaser.Scene{
 
     preload(){
         //this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
+        
+        //title screen
+        this.load.image('titlescreen', './assets/title_screen_500x320.png');
+        this.load.image('startbutton', './assets/start_button.png');
 
         // map tiles
         this.load.image('tiles', './assets/map/spritesheet.png');
@@ -97,17 +101,16 @@ export class BootScene extends Phaser.Scene{
             repeat: -1
         });
 
-        const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' }).setDepth(1);
-        welcomeText.setFont = "Fresca";
+/*         const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' }).setDepth(1); */
+        /* welcomeText.setFont = "Fresca"; */
         
-        let startpic = this.add.image(165, 130, 'startpic').setDepth(1);
+        let startpic = this.add.image(250, 160, 'titlescreen');
 
-        const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' })
+
+/*         const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' }) */
+        const start = this.add.image(185, 220, 'startbutton')
         .setInteractive()
-        .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
-        .on('pointerover', () => start.setStyle({ fill: '#ff0'}))
-        .on('pointerout', () => start.setStyle({ fill: '#0f0' }))
-        .setDepth(1);
+        .on('pointerdown', () => { this.scene.start('LoadScene'); }); // LoadScene
     
     }
 
