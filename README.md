@@ -27,4 +27,4 @@ Mängu kirjeldus:
 Meeskonna blogi:
 http://suvepraktika.cs.tlu.ee/2019/ryhm06/
  
-Litsents: LICENSE.md
+![Litsents](https://github.com/raimop/tap/blob/master/LICENSE.md)
