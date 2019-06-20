@@ -479,11 +479,14 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         } else {
             //this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
             this.anims.play('playerAtk', true);
-            this.body.setSize(30, 30);
+            this.body.setSize(35, 35);
+            this.body.offset.x = -5;
+            this.body.offset.y = -2;
             if (this.attackingAnimationCounter % 50 === 0){
                 this.attackingAnimationCounter = 0;
                 this.attackingAnimation = false;
                 this.body.setSize(25, 25);
+                this.body.offset.x = 0;
                 this.body.offset.y = 10;
             }
         }
