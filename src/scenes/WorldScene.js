@@ -37,15 +37,12 @@ export class WorldScene extends Phaser.Scene{
         this.graphicsText = 0;
 
         //Mobs and karma mechanics
-        this.chickenCount = 3; // amount of chickens spawned
-        this.enemyCount = 3; // amount of enemies spawned
-        this.chickenCount = 34; // amount of chickens spawned
+        this.chickenCount = 69; // amount of chickens spawned
         this.enemyCount = 15; // amount of enemies spawned
         this.enemiesKilled = 0; // enemies killed, gameover reaction
         this.karma = 0; // karma points for game purpose
         this.updateCounter = 0; // timing counter
         this.talkToOneNPCAtATime = true; // so can´t talk to multiple NPCS at a time
-        this.talkToWitchOnce = true;
         this.talkCounter = 0;
 
         this.checkHealth = 100;
@@ -192,13 +189,13 @@ export class WorldScene extends Phaser.Scene{
 
         this.player = this.add.existing(new Player(this, 700, 300));
 
-        this.NPC_King = this.add.existing(new NPC(this, 778, 240, this.player));
+        this.NPC_King = this.add.existing(new NPC(this, 700, 200, this.player));
         this.NPC_King.NPCType = "King";
-        this.NPC_healer = this.add.existing(new NPC(this, 1012, 540, this.player));
+        this.NPC_healer = this.add.existing(new NPC(this, 800, 200, this.player));
         this.NPC_healer.NPCType = "Healer";
-        this.NPC_witch = this.add.existing(new NPC(this, 90, 68, this.player));
+        this.NPC_witch = this.add.existing(new NPC(this, 900, 200, this.player));
         this.NPC_witch.NPCType = "Witch";
-        this.NPC_fool = this.add.existing(new NPC(this, 487, 443, this.player));
+        this.NPC_fool = this.add.existing(new NPC(this, 1000, 200, this.player));
         this.NPC_fool.NPCType = "Fool";
 
         let npcText = this.add.text(16, 16, 'tere', {
@@ -217,16 +214,17 @@ export class WorldScene extends Phaser.Scene{
         this.npcs.add(this.NPC_King);
 
         for (let i = 0; i < this.chickenCount; i++) {
-            let x = Phaser.Math.RND.between(90, 1160);
-            let y = Phaser.Math.RND.between(130, 650);
+            let x = Phaser.Math.RND.between(500, 700);
+            let y = Phaser.Math.RND.between(200, 400);
 
             let singleChicken = this.add.existing(new Chicken(this, x, y, this.player));
             this.physics.add.existing(singleChicken);
             this.chickens.add(singleChicken);
 
             if (i < this.enemyCount){
-                x = Phaser.Math.RND.between(1650, 2200);
-                y = Phaser.Math.RND.between(220, 600);
+                console.log(i + " " + this.enemyCount);
+                x = Phaser.Math.RND.between(700, 900);
+                y = Phaser.Math.RND.between(200, 400);
                 let singleEnemy = this.add.existing(new Enemy(this, x, y, this.player));
                 this.physics.add.existing(singleEnemy);
                 this.enemies.add(singleEnemy);
@@ -259,24 +257,17 @@ export class WorldScene extends Phaser.Scene{
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        this.keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
 
         // quest UI addon
-        /*let uiBackground = this.add.graphics();
-        let rect = new Phaser.Geom.Rectangle(8, 30, 85, 50);
+        let uiBackground = this.add.graphics();
+        let rect = new Phaser.Geom.Rectangle(8, 30, 85, 25);
         uiBackground.fillStyle(0xFFFFFF, 0.75);
         uiBackground.fillRectShape(rect);
         uiBackground.fixedToCamera = true;
-        uiBackground.setScrollFactor(0);*/
-
-        this.userInterfaceHelper(8, 30, 85, 50);
-        this.userInterfaceHelper(8, 90, 85, 40);
-
-        //var style = { font: 'bold 60pt Arial', fill: 'white', align: 'left', wordWrap: true, wordWrapWidth: 450 };
-        var style = { fontFamily: 'Arial', fill: 'black', fontSize: 10, wordWrap: true, wordWrap: { width: 78, useAdvancedWrap: true } };
-
-        this.questUITitle = this.add.text(10, 30, "Quest:", style).setScrollFactor(0);
-        this.questUI = this.add.text(10, 40, "First talk to the King to get the quest", style).setScrollFactor(0);
-        this.questUIHint = this.add.text(10, 90, "Hint: Healer is South-East in the village", style).setScrollFactor(0);
+        uiBackground.setScrollFactor(0);
+        this.questUITitle = this.add.text(10, 30, "Quest:", { fontFamily: 'Arial', fill: 'black', fontSize: 10, wordWrap: true }).setScrollFactor(0);
+        this.questUI = this.add.text(10, 40, "Talk To The King", { fontFamily: 'Arial', fill: 'black', fontSize: 10, wordWrap: true }).setScrollFactor(0);
 
         this.questUITitle.fixedToCamera = true;
         this.questUI.fixedToCamera = true;
@@ -320,36 +311,22 @@ export class WorldScene extends Phaser.Scene{
             this.talkToOneNPCAtATime = false;
             if (enemy.NPCType === "King"){
                 this.talkedToKing = true;
-                dialogue = ["I´m the king", "Hello"];
+                dialogue = ["Cluck. Po, I am king Roland.", "I have summoned you here to give you a quest.", "If you succeed then I shall redeem you of all your wrongdoings.", "Your objective is to clear out the slime men that have been gathering their forces to the east of the city.", "It seems that they have been gathering their forces for an attack but our army is away fighting a war, so it falls upon you to save the city."];
             } else if (enemy.NPCType === "Healer"){
-                dialogue = ["I´m the healer", "Hello"];
+                dialogue = ["Your health is restored.", "Now go and clear out the slimes."];
             } else if (enemy.NPCType === "Witch"){
-                if (this.talkToWitchOnce){
-                    this.karma += 2;
-                    this.talkToWitchOnce = false;
-                    console.log(this.karma);
-                }
-                dialogue = ["I´m the witch", "Hello"];
+                dialogue = ["Welcome Po, I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret.", "The chickens are mind controlling  the villagers.", "The slimes are the only thing keeping the chickens from moving further away from the village.", "So before you slay all the slimes, be sure to kill the chickens.","I would do it myself but I am too weak."];
             } else if (enemy.NPCType === "Fool"){
-                dialogue = ["I´m the the fool", "Hello"];
+                dialogue = ["The slimes are bad.", "No the cluck clucks are bad", "No, no, no, no the slimes are bad cluck.", "Where is the witch, we need the witch?"];
             }
 
-            let talk = new DialogBox(this, 5, 175, 35, dialogue, player, enemy); // scene, x, y, timing, dialogue array, player, enemy
+            let talk = new DialogBox(this, 5, 175, 45, dialogue, player, enemy); // scene, x, y, timing, dialogue array, player, enemy
             enemy.number = 0;
         }
 
         if (this.talkCounter > 150){
             this.talkToOneNPCAtATime = true;
         }
-    }
-
-    userInterfaceHelper(x, y, width, height){
-        let uiBackground = this.add.graphics();
-        let rect = new Phaser.Geom.Rectangle(x, y, width, height); // 8 30 85 50
-        uiBackground.fillStyle(0xFFFFFF, 0.75);
-        uiBackground.fillRectShape(rect);
-        uiBackground.fixedToCamera = true;
-        uiBackground.setScrollFactor(0);
     }
 
     respawn (player) {
@@ -373,14 +350,14 @@ export class WorldScene extends Phaser.Scene{
         this.talkCounter++;
 
         if (this.talkedToKing){
-            this.questUI.setText("Head east to kill slimes " + this.enemiesKilled + "/" + this.enemyCount);
+            this.questUI.setText("Kill mobs " + this.enemiesKilled + "/" + this.enemyCount);
         }
 
         if (this.updateCounter == 100){
             this.updateCounter = 0;
         }
 
-        if (this.talkedToKing && this.enemiesKilled === this.enemyCount){
+        if (this.enemiesKilled === this.enemyCount){
             this.scene.stop('UIScene');
             this.scene.stop('WorldScene');
             this.scene.start('EndScene');
@@ -400,7 +377,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.setPosition(x, y);
         scene.physics.world.enableBody(this, 0);
         this.body.collideWorldBounds = true;
-        //this.body.immovable = true;
+        this.body.immovable = true;
 
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
@@ -419,12 +396,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         super.preUpdate(time, delta);
 
         this.counter++;
-
-        this.keyT = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
-
-        if (Phaser.Input.Keyboard.JustDown(this.keyT)){
-            console.log(this.x + " " + this.y);
-        }
 
         if (this.turnToVisible){
             this.turnToVisible = false;
@@ -517,6 +488,8 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
 
     checkAlive(){
         if (this.health <= 0){
+            //this.visible = false;
+            //this.active = false;
             this.disableBody(true, true);
             this.scene.karma += this.karma;
         }
@@ -535,13 +508,12 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.setPosition(x, y);
         scene.physics.world.enableBody(this, 0);
         this.body.collideWorldBounds = true;
-        this.body.immovable = false;
         this.keys = this.scene.input.keyboard.createCursorKeys();
 
-        this.damage = 5; // object damage
+        this.damage = 0; // object damage
         this.speed = 10; // object movement speed
         this.health = 2; // object health
-        this.karma = 2; // object karma point
+        this.karma = 1; // object karma point
         this.NPCType = "Chicken";
 
         this.direction = 0; // moving direction
@@ -578,7 +550,7 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
 
         if (!this.collided){
             this.randomRoaming();
-            //this.maxBounds();
+            this.maxBounds();
         } else {
             this.follow(this.player);
     
@@ -604,6 +576,8 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
 
     checkAlive(){
         if (this.health <= 0){
+            //this.visible = false;
+            //this.active = false;
             this.disableBody(true, true);
             this.scene.karma += this.karma;
         }
@@ -765,6 +739,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     checkAlive(){
         if (this.health <= 0){
+            //this.visible = false;
+            //this.active = false;
             this.disableBody(true, true);
             this.scene.karma += this.karma;
             this.scene.enemiesKilled++;
@@ -901,7 +877,7 @@ class DialogBox extends Phaser.GameObjects.Graphics{
     }
 
     drawText(input){
-        this.currentText = this.scene.add.text(this.x+5, this.y+5, input, { font: 'bold 16pt Arial', fill: 'black', fontSize: 64, wordWrap: true });
+        this.currentText = this.scene.add.text(this.x+5, this.y+5, input, { font: 'bold 8pt Arial', fill: 'black', fontSize: 6, wordWrap: { width: 300} });
         this.currentText.fixedToCamera = true;
         this.currentText.setScrollFactor(0);
     }
