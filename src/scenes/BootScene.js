@@ -29,7 +29,8 @@ export class BootScene extends Phaser.Scene{
         // our two characters
         this.load.spritesheet('player', './assets/player.png', {
             frameWidth: 23,
-            frameHeight: 35
+            frameHeight: 35,
+            spacing: 1,
         });
         this.load.spritesheet('npc', './assets/RPG_assets.png', {
             frameWidth: 16,

@@ -233,6 +233,10 @@ export class WorldScene extends Phaser.Scene{
             }
         }
 
+        //might change the player's collision box
+        this.player.body.setSize(25, 25, 0, 15);
+        this.player.body.offset.y = 10;
+
         //treetops and stuff above player
         let top = this.map.createStaticLayer('Top', this.tiles, 0, 0);
 
