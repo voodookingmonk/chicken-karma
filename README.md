@@ -3,7 +3,7 @@
 
 Tallinna Ülikooli digitehnoloogiate instituudi tarkvaraarenduse praktika raames valmis 6. rühmal arvutimäng. 
 
-Tarkvaraarenduse praktika raames valmis 6. rühmal arvutimäng. Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on action rollimänguga (RPG - Role-Playing Game), kus mängija eesmärk on päästa küla koletiste käest ja koguda karmapunkte. Projekti ajendiks oli meeskonnaliikmete huvi arvutimängude loomise vastu ning soov proovida leida mängule uudne, kaasahaarav ning uuesti mängima kutsuv puänt. 
+Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on action rollimänguga (RPG - Role-Playing Game), kus mängija eesmärk on päästa küla koletiste käest ja koguda karmapunkte. Projekti ajendiks oli meeskonnaliikmete huvi arvutimängude loomise vastu ning soov proovida leida mängule uudne, kaasahaarav ning uuesti mängima kutsuv puänt. 
 
 Kasutatud tehnoloogiad: 
 1. Phaser 3.17.0
