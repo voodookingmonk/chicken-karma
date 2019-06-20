@@ -320,18 +320,18 @@ export class WorldScene extends Phaser.Scene{
             this.talkToOneNPCAtATime = false;
             if (enemy.NPCType === "King"){
                 this.talkedToKing = true;
-                dialogue = ["I´m the king", "Hello"];
+                dialogue = ["Cluck. Po, I am king Roland.", "I have summoned you here to give you a quest.", "If you succeed then I shall redeem you of all your wrongdoings.", "Your objective is to clear out the slime men that have been gathering their forces to the east of the city.", "It seems that they have been gathering their forces for an attack but our army is away fighting a war, so it falls upon you to save the city."];
             } else if (enemy.NPCType === "Healer"){
-                dialogue = ["I´m the healer", "Hello"];
+                dialogue = ["Your health is restored.", "Now go and clear out the slimes."];
             } else if (enemy.NPCType === "Witch"){
                 if (this.talkToWitchOnce){
                     this.karma += 2;
                     this.talkToWitchOnce = false;
                     console.log(this.karma);
                 }
-                dialogue = ["I´m the witch", "Hello"];
+                dialogue = ["Welcome Po, I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret.", "The chickens are mind controlling  the villagers.", "The slimes are the only thing keeping the chickens from moving further away from the village.", "So before you slay all the slimes, be sure to kill the chickens.","I would do it myself but I am too weak."];
             } else if (enemy.NPCType === "Fool"){
-                dialogue = ["I´m the the fool", "Hello"];
+                dialogue = ["The slimes are bad.", "No the cluck clucks are bad", "No, no, no, no the slimes are bad cluck.", "Where is the witch, we need the witch?"];
             }
 
             let talk = new DialogBox(this, 5, 175, 35, dialogue, player, enemy); // scene, x, y, timing, dialogue array, player, enemy
@@ -901,7 +901,7 @@ class DialogBox extends Phaser.GameObjects.Graphics{
     }
 
     drawText(input){
-        this.currentText = this.scene.add.text(this.x+5, this.y+5, input, { font: 'bold 16pt Arial', fill: 'black', fontSize: 64, wordWrap: true });
+        this.currentText = this.scene.add.text(this.x+5, this.y+5, input, { font: 'bold 8pt Arial', fill: 'black', fontSize: 6, wordWrap: { width: 300} });
         this.currentText.fixedToCamera = true;
         this.currentText.setScrollFactor(0);
     }
