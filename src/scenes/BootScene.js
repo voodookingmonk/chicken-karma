@@ -105,29 +105,12 @@ export class BootScene extends Phaser.Scene{
         const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' })
         .setInteractive()
         .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
-        .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
+        .on('pointerover', () => start.setStyle({ fill: '#ff0'}))
         .on('pointerout', () => start.setStyle({ fill: '#0f0' }))
         .setDepth(1);
     
     }
 
     update(){
-        this.counter++;
-
-        if (this.counter % 25 === 0){
-            this.spawnChickens();
-        }
-    }
-
-    spawnChickens(){
-        this.matrix = this.physics.add.group({
-			key: 'chicken',
-			repeat: 15,
-            setXY: { x: 10, y: 0, stepX: 20, stepY: 0 },
-            velocityY: 50,
-            depth: -1
-        });
-
-        this.matrix.playAnimation('chickenDown');
     }
 }
