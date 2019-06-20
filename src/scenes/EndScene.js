@@ -16,7 +16,8 @@ export class EndScene extends Phaser.Scene{
         this.load.image("worst", "assets/worst.png");
         this.load.image("medium", "assets/medium.png");
         this.load.image("best", "assets/best.png");
-		this.load.image("dead", "assets/dead.png");
+        this.load.image("dead", "assets/dead.png");
+        this.load.image("restart", "assets/restart.png");
     }
 
     create(){
@@ -29,8 +30,8 @@ export class EndScene extends Phaser.Scene{
 
 				if(gameScene.karma >= 0 && gameScene.karma < 31 && gameScene.playerHealth > 0){
             console.log("worst");
-            this.ending = this.add.text(150, 45, 'Oh no! Po finished the quest, but it turns out that the king was mind controlled by the chickens and helped them in pursuit of taking over the village and then, the world! With the slime people out of sight, chickens now had the ultimate power over every living being...including Po.', { fill: '#0f0', fontSize: 12 , wordWrap: { width: 160}});
-            let worst = this.add.image(10, 70, "worst").setOrigin(0);
+            /* this.ending = this.add.text(150, 45, 'Oh no! Turns out that the king was mind controlled by the chickens and helped them in pursuit of taking over the village and then, the world! With the slime people out of sight, chickens now had the ultimate power over every living being...including Po.', { fill: '#0f0', fontSize: 12 , wordWrap: { width: 160}}); */
+            let worst = this.add.image(0, 0, "worst").setOrigin(0);
         }
         if(gameScene.karma >= 31 && gameScene.karma < 98 && gameScene.playerHealth > 0){
             console.log("medium");
@@ -45,13 +46,11 @@ export class EndScene extends Phaser.Scene{
         }
         if(gameScene.playerHealth <= 0){
             console.log("dead");
-            this.ending = this.add.text(250, 45, 'Po died and thus he was unable to save the village and redeem himself', { fill: '#0f0', fontSize: 12 , wordWrap: { width: 160}});
-            let best = this.add.image(10, 70, "dead").setOrigin(0);
+            /* this.ending = this.add.text(150, 45, 'Po died and thus he was unable to save the village and redeem himself', { fill: '#0f0', fontSize: 12 , wordWrap: { width: 160}}); */
+            let dead = this.add.image(0, 0, "dead").setOrigin(0);
         }
 
-        const welcomeText = this.add.text(85, 15, 'Game over!', { fill: '#0f0', fontSize: 24 });
-        welcomeText.setFont = "Fresca";
-        const start = this.add.text(105, 220, 'Start over', { fill: '#0f0' })
+        const start = this.add.image(250, 260, 'restart')
         .setInteractive()
         .on('pointerdown', () => {
             this.scene.start('BootScene');
@@ -59,11 +58,6 @@ export class EndScene extends Phaser.Scene{
             gameScene.playerHealth = 100;
             gameScene.enemiesKilled = 0;
         })
-        .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
-        .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
-
-        let karma = this.add.text(280, 20, `${gameScene.karma}`);
-
         console.log("EndScene loaded"); // end
     }
 
