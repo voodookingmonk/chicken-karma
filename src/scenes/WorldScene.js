@@ -377,6 +377,11 @@ export class WorldScene extends Phaser.Scene{
         this.updateCounter++;
         this.talkCounter++;
 
+        if (Phaser.Input.Keyboard.JustDown(this.keyE)){
+            this.player.attackingAnimationCounter = 0;
+            this.player.attackingAnimation = true;
+        }
+
         if (this.talkedToKing){
             this.questUI.setText("Head east to kill slimes " + this.enemiesKilled + "/" + this.enemyCount);
         }
@@ -391,10 +396,6 @@ export class WorldScene extends Phaser.Scene{
             this.scene.start('EndScene');
         }
 
-        if (Phaser.Input.Keyboard.JustDown(this.keyX)){
-            this.dialogueHappening = false;
-            console.log("hello");
-        }
     }
 }
 
@@ -420,6 +421,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.attackingAnimationCounter = 0;
 
         this.turnToVisible = false;
+
+        this.keyE = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
     }
 
     create(){
@@ -461,16 +464,20 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
         // Update the animation last and give left/right animations precedence over up/down animations
         if (!this.attackingAnimation){
-            this.animations('left', 'right', 'up', 'down');
+            this.animations('left', 'right', 'up', 'down', false);
         } else {
-            this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft');
-            if (this.attackingAnimationCounter % 30 === 0){
+            this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true);
+            this.body.setSize(30, 30);
+            if (this.attackingAnimationCounter % 15 === 0){
                 this.attackingAnimation = false;
+                this.body.setSize(25, 25);
             }
         }
     }
 
-    animations(left, right, up, down){
+    animations(left, right, up, down, statement){
+
+
         if (this.keys.left.isDown) {
             this.anims.play(left, true);
             this.flipX = false;
@@ -482,7 +489,11 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         } else if (this.keys.down.isDown) {
             this.anims.play(down, true);
         } else {
-            this.anims.stop();
+            if (statement){
+                this.anims.play(left, true);
+            } else {
+                this.anims.stop();
+            }
         }
     }
 }
