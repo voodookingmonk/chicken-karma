@@ -18,7 +18,6 @@ export class BootScene extends Phaser.Scene{
     }
 
     preload(){
-        //this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
 
         //title screen
         this.load.image('titlescreen', './assets/title_screen_500x320.png');
@@ -72,9 +71,6 @@ export class BootScene extends Phaser.Scene{
 
     create(){
         console.log("Boot loaded");
-
-/*         const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' }).setDepth(1); */
-        /* welcomeText.setFont = "Fresca"; */
 
         let startpic = this.add.image(250, 160, 'titlescreen');
 
