@@ -20,6 +20,10 @@ export class BootScene extends Phaser.Scene{
     preload(){
         //this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
 
+        //title screen
+        this.load.image('titlescreen', './assets/title_screen_500x320.png');
+        this.load.image('startbutton', './assets/start_button.png');
+
         // map tiles
         this.load.image('tiles', './assets/map/spritesheet.png');
 
@@ -27,11 +31,12 @@ export class BootScene extends Phaser.Scene{
         this.load.tilemapTiledJSON('map', './assets/map/map.json');
 
         // our two characters
-        this.load.spritesheet('player', './assets/player.png', {
+        this.load.spritesheet('player', './assets/npcs/player.png', {
             frameWidth: 23,
             frameHeight: 35,
             spacing: 1,
         });
+				/*
         this.load.spritesheet('npc', './assets/RPG_assets.png', {
             frameWidth: 16,
             frameHeight: 16
@@ -43,22 +48,34 @@ export class BootScene extends Phaser.Scene{
         this.load.spritesheet('npc3', './assets/RPG_assets.png', {
             frameWidth: 16,
             frameHeight: 16
+        });*/
+        this.load.spritesheet('healer', './assets/npcs/healer.png', {
+            frameWidth: 21,
+            frameHeight: 35
         });
-        this.load.spritesheet('healer', './assets/RPG_assets.png', {
-            frameWidth: 16,
-            frameHeight: 16
+				this.load.spritesheet('king', './assets/npcs/king.png', {
+            frameWidth: 21,
+            frameHeight: 35
         });
-        this.load.spritesheet('chicken', './assets/chicken_21x16.png', {
+				this.load.spritesheet('witch', './assets/npcs/witch.png', {
+            frameWidth: 21,
+            frameHeight: 35
+        });
+				this.load.spritesheet('fool', './assets/npcs/clown.png', {
+            frameWidth: 21,
+            frameHeight: 35
+        });
+        this.load.spritesheet('chicken', './assets/npcs/chicken_21x16.png', {
             frameWidth: 21,
             frameHeight: 16
         });
-
+				/*
         this.load.spritesheet('npcEnemy', './assets/RPG_assets.png', {
             frameWidth: 16,
             frameHeight: 16
-        });
+        });*/
 
-        this.load.spritesheet('enemy', './assets/monster_25x35.png', {
+        this.load.spritesheet('enemy', './assets/npcs/monster_25x35.png', {
             frameWidth: 25,
             frameHeight: 35
         });
@@ -70,13 +87,13 @@ export class BootScene extends Phaser.Scene{
         })
 
         //fixed to camera test:
-        this.load.image('mushroom', './assets/mushroom16_16.png');
+        //this.load.image('mushroom', './assets/mushroom16_16.png');
         this.load.image('pow', './assets/pow_25x25.png');
     }
 
     create(){
         console.log("Boot loaded");
-    
+
         this.anims.create({
             key: 'chickenRight',
             frames: this.anims.generateFrameNumbers('chicken', {
@@ -103,18 +120,17 @@ export class BootScene extends Phaser.Scene{
             repeat: -1
         });
 
-        const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' }).setDepth(1);
-        welcomeText.setFont = "Fresca";
-        
-        let startpic = this.add.image(165, 130, 'startpic').setDepth(1);
+/*         const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' }).setDepth(1); */
+        /* welcomeText.setFont = "Fresca"; */
 
-        const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' })
+        let startpic = this.add.image(250, 160, 'titlescreen');
+
+
+/*         const start = this.add.text(115, 185, 'Start game', { fill: '#0f0' }) */
+        const start = this.add.image(185, 220, 'startbutton')
         .setInteractive()
-        .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
-        .on('pointerover', () => start.setStyle({ fill: '#ff0'}))
-        .on('pointerout', () => start.setStyle({ fill: '#0f0' }))
-        .setDepth(1);
-    
+        .on('pointerdown', () => { this.scene.start('LoadScene'); }); // LoadScene
+
     }
 
     update(){
