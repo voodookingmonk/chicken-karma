@@ -35,7 +35,7 @@ export class EndScene extends Phaser.Scene{
         }
         if(gameScene.karma >= 31 && gameScene.karma < 98 && gameScene.playerHealth > 0){
             console.log("medium");
-            this.ending = this.add.text(150, 40, 'Po finished the quest, but The king banished Po from the village! He was confused, but soon came by an old witch who explained that the chickens were mind controlling the villagers. Now that the slimes are gone, it is only matter of time before chickens regain their power and take over the world.', { fill: '#0f0', fontSize: 12 , wordWrap: { width: 165}});
+            this.ending = this.add.text(150, 40, 'The king banished Po from the village! He was confused, but soon came by an old witch who explained that the chickens were mind controlling the villagers. Now that the slimes are gone, it is only matter of time before chickens regain their power and take over the world.', { fill: '#0f0', fontSize: 12 , wordWrap: { width: 165}});
             let medium = this.add.image(10, 70, "medium").setOrigin(0);
 
         }
