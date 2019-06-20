@@ -14,6 +14,8 @@ Kasutatud tehnoloogiad:
 6. Adobe Photshop 2019
 7. Tiled 1.2.4
 
+![alt text](https://raw.githubusercontent.com/raimop/tap/master/path/to/capture1.png)
+
 Mäng aadressil: https://raimop.github.io/tap/rpg.html
 
 Dokumentatsioon:
