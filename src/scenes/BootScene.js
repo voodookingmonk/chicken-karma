@@ -78,7 +78,7 @@ export class BootScene extends Phaser.Scene{
             repeat: -1
         });
 
-        const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' });
+        const welcomeText = this.add.text(100, 50, 'Chicken Karma!', { fill: '#0f0' }).setDepth(1);
         welcomeText.setFont = "Fresca";
         
         let startpic = this.add.image(165, 130, 'startpic');
@@ -87,7 +87,8 @@ export class BootScene extends Phaser.Scene{
         .setInteractive()
         .on('pointerdown', () => { this.scene.start('LoadScene'); }) // LoadScene
         .on('pointerover', () => start.setStyle({ fill: '#ff0'}) )
-        .on('pointerout', () => start.setStyle({ fill: '#0f0' }) );
+        .on('pointerout', () => start.setStyle({ fill: '#0f0' }) )
+        .setDepth(1);
     
     }
 
@@ -103,14 +104,14 @@ export class BootScene extends Phaser.Scene{
     spawnChickens(){
         let matrix = this.physics.add.group({
 			key: 'chicken',
-			repeat: 20,
+			repeat: 15,
             setXY: { x: 10, y: 0, stepX: 20, stepY: 0 },
             velocityY: 50,
-            bounceY: 1,
-            depth: -1
+            bounceY: -1,
+            setDepth: 0
         });
 
-        console.log(matrix);
+        //matrix.setDepth(0);
 
         matrix.playAnimation('chickenDown');
     }
