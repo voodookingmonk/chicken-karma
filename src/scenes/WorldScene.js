@@ -310,17 +310,17 @@ export class WorldScene extends Phaser.Scene{
             if (enemy.NPCType === "King"){
                 this.talkedToKing = true;
                 dialogue = ["Cluck. Po, I am king Roland.", "I have summoned you here to give you a quest.", "If you succeed then I shall redeem you of all your wrongdoings.", "You must kill the slimes that are east of the city.", "They might attack the city so I want you to kill them please."];
-                this.talkWait = 1200;
+                this.talkWait = 600;
             } else if (enemy.NPCType === "Healer"){
-                dialogue = ["I am the healer", "I will heal your wounds","Your health is restored.", "Now go and clear out the slimes.", "cluck"];
-                this.talkWait = 700;
+                dialogue = ["Welcome traveller", "I have healed your wounds", "Now go and clear out the slimes.", "cluck"];
+                this.talkWait = 600;
             } else if (enemy.NPCType === "Witch"){
                 if (this.talkToWitchOnce){
                     this.karma += 2;
                     this.talkToWitchOnce = false;
                 }
                 dialogue = ["Welcome I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret, but ssh", "The chickens are mind controlling the villagers.", "The chickens fear the slimes.", "So before you slay all the slimes, be sure to kill the chickens."];
-                this.talkWait = 1300;
+                this.talkWait = 800;
             } else if (enemy.NPCType === "Fool"){
                 dialogue = ["The slimes are bad.", "No the cluck clucks are bad", "No, no, no, no the slimes are bad cluck.", "Where is the witch?", "We need the witch?"];
                 this.talkWait = 800;
@@ -330,6 +330,8 @@ export class WorldScene extends Phaser.Scene{
             let talk = new DialogBox(this, 5, 255, 60, dialogue, player, enemy); // scene, x, y, timing, dialogue array, player, enemy
             enemy.number = 0;
         }
+
+        console.log(this.talkCounter > this.talkWait);
 
         if (this.talkCounter > this.talkWait){
             this.talkToOneNPCAtATime = true;
@@ -471,6 +473,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             if (this.attackingAnimationCounter % 15 === 0){
                 this.attackingAnimation = false;
                 this.body.setSize(25, 25);
+                this.body.offset.y = 10;
             }
         }
     }
@@ -879,6 +882,7 @@ class DialogBox extends Phaser.GameObjects.Graphics{
         this.textsLength = this.texts.length;
         this.drawBoolean = true;
         this.drawWhiteBoxFirstTime = true;
+        this.firstTime = true;
         this.timing;
         
         this.currentText;
@@ -895,16 +899,8 @@ class DialogBox extends Phaser.GameObjects.Graphics{
     preUpdate(){
         this.counter++;
 
-        if (this.texts[this.number] !== undefined){
-            this.timing = this.texts[this.number].length * 10;
-        }
-
-        if (this.drawBoolean){
-            this.timing = 25;
-        }
-
-        if (this.number < this.textsLength && this.counter % this.timing == 0){
-
+        if (this.number < this.textsLength && (this.counter === 25 || this.firstTime)){
+            this.firstTime = false;
             if (this.drawBoolean){
                 if(this.drawWhiteBoxFirstTime){
                     this.drawWhiteBox();
@@ -912,11 +908,14 @@ class DialogBox extends Phaser.GameObjects.Graphics{
                 }
                 this.drawText(this.texts[this.number]);
                 this.drawBoolean = false;
-            } else {
-                this.number++;
-                this.destroyText();
-                this.drawBoolean = true;
             }
+        }
+
+        if (this.number < this.textsLength && this.counter === 150){
+            this.number++;
+            this.destroyText();
+            this.drawBoolean = true;
+            this.counter = 0;
         }
 
     if (this.number == this.textsLength){
