@@ -482,7 +482,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             this.body.setSize(32, 32);
             this.body.offset.x = -3;
             this.body.offset.y = 5;
-            if (this.attackingAnimationCounter % 50 === 0){
+            if (this.attackingAnimationCounter % 30 === 0){
                 this.attackingAnimationCounter = 0;
                 this.attackingAnimation = false;
                 this.body.setSize(25, 25);
