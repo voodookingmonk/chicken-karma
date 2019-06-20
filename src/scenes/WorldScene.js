@@ -33,7 +33,6 @@ export class WorldScene extends Phaser.Scene{
         this.witchDialogue = ["Welcome I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret, but ssh", "The chickens are mind controlling the villagers.", "The chickens fear the slimes.", "So before you slay all the slimes, be sure to kill the chickens."];
         this.foolDialogue = ["The slimes are bad.", "No the cluck clucks are bad", "No, no, no, no the slimes are bad cluck.", "Where is the witch?", "We need the witch?"];
 
-
         //graphics
         this.map = null;
         this.tiles = null;
@@ -196,7 +195,7 @@ export class WorldScene extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('playerAttack', {
                 frames: [0, 1, 2, 3, 4, 5, 6, 7]
             }),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });
 
