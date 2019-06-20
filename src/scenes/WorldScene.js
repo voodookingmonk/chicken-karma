@@ -274,7 +274,7 @@ export class WorldScene extends Phaser.Scene{
 
         this.questUITitle = this.add.text(10, 30, "Quest:", style).setScrollFactor(0);
         this.questUI = this.add.text(10, 40, "Talk to the King for a quest.", style).setScrollFactor(0);
-        this.questUIHint = this.add.text(10, 90, "Hint: Healer is South-East in the village", style).setScrollFactor(0);
+        this.questUIHint = this.add.text(10, 90, "Hint: Healer is South-East in the village.", style).setScrollFactor(0);
 
         this.questUITitle.fixedToCamera = true;
         this.questUI.fixedToCamera = true;
