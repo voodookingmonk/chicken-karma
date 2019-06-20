@@ -27,7 +27,7 @@ export class EndScene extends Phaser.Scene{
         this.scene.stop('HelpScene');
         console.log(gameScene.karma);
 
-				if(gameScene.karma >= 1 && gameScene.karma < 31 && gameScene.playerHealth > 0){
+				if(gameScene.karma >= 0 && gameScene.karma < 31 && gameScene.playerHealth > 0){
             console.log("worst");
             this.ending = this.add.text(150, 45, 'Oh no! Po finished the quest, but it turns out that the king was mind controlled by the chickens and helped them in pursuit of taking over the village and then, the world! With the slime people out of sight, chickens now had the ultimate power over every living being...including Po.', { fill: '#0f0', fontSize: 12 , wordWrap: { width: 160}});
             let worst = this.add.image(10, 70, "worst").setOrigin(0);
