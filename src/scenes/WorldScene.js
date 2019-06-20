@@ -186,6 +186,15 @@ export class WorldScene extends Phaser.Scene{
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'playerAtk',
+            frames: this.anims.generateFrameNumbers('playerAttack', {
+                frames: [0, 1, 2, 3, 4, 5, 6, 7]
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+
     }
 
     create(){
@@ -468,12 +477,16 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         if (!this.attackingAnimation){
             this.animations('left', 'right', 'up', 'down', false);
         } else {
-            this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
-            this.body.setSize(30, 30);
-            if (this.attackingAnimationCounter % 15 === 0){
+            //this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
+            this.anims.play('playerAtk', true);
+            this.body.setSize(35, 35);
+            this.body.offset.x = -5;
+            this.body.offset.y = -2;
+            if (this.attackingAnimationCounter % 50 === 0){
                 this.attackingAnimationCounter = 0;
                 this.attackingAnimation = false;
                 this.body.setSize(25, 25);
+                this.body.offset.x = 0;
                 this.body.offset.y = 10;
             }
         }

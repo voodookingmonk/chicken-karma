@@ -61,6 +61,12 @@ export class BootScene extends Phaser.Scene{
             frameHeight: 35
         });
 
+        this.load.spritesheet('playerAttack', './assets/player_attack_45x35.png', {
+            frameWidth: 45,
+            frameHeight: 35,
+            spacing: 1
+        })
+
         this.load.image('pow', './assets/pow_25x25.png');
     }
 

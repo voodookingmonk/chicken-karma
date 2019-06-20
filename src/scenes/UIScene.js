@@ -30,6 +30,8 @@ export class UIScene extends Phaser.Scene{
         //call HelpScene
         this.helpButton  = this.add.image(480, 20, "help").setInteractive();
 
+        this.keyESC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
         this.helpButton.on("pointerdown", ()=>{
             this.scene.start('HelpScene');
             this.scene.stop('UIScene');
@@ -58,6 +60,13 @@ export class UIScene extends Phaser.Scene{
     }
 
     update(){
+        if (Phaser.Input.Keyboard.JustDown(this.keyESC)){
+            console.log("hello");
+            this.scene.start('HelpScene');
+            this.scene.stop('UIScene');
+            this.scene.pause('WorldScene');
+        }
+
         //call health bar
         if(this.gameScene.playerHealth >= -100){
             this.drawHealthBar();
