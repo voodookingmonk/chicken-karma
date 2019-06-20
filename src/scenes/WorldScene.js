@@ -253,6 +253,7 @@ export class WorldScene extends Phaser.Scene{
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        this.keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
         // quest UI addon
@@ -288,7 +289,7 @@ export class WorldScene extends Phaser.Scene{
             player.turnToVisible = true;
         }
 
-        if (Phaser.Input.Keyboard.JustDown(this.keyE)){
+        if (Phaser.Input.Keyboard.JustDown(this.keySPACE)){
             player.attackingAnimationCounter = 0;
             player.attackingAnimation = true;
             enemy.health -= 1;   
@@ -330,8 +331,6 @@ export class WorldScene extends Phaser.Scene{
             let talk = new DialogBox(this, 5, 255, 60, dialogue, player, enemy); // scene, x, y, timing, dialogue array, player, enemy
             enemy.number = 0;
         }
-
-        console.log(this.talkCounter > this.talkWait);
 
         if (this.talkCounter > this.talkWait){
             this.talkToOneNPCAtATime = true;
@@ -379,7 +378,7 @@ export class WorldScene extends Phaser.Scene{
         this.updateCounter++;
         this.talkCounter++;
 
-        if (Phaser.Input.Keyboard.JustDown(this.keyE)){
+        if (Phaser.Input.Keyboard.JustDown(this.keySPACE)){
             this.player.attackingAnimationCounter = 0;
             this.player.attackingAnimation = true;
         }
@@ -472,6 +471,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
             this.body.setSize(30, 30);
             if (this.attackingAnimationCounter % 15 === 0){
+                this.attackingAnimationCounter = 0;
                 this.attackingAnimation = false;
                 this.body.setSize(25, 25);
                 this.body.offset.y = 10;

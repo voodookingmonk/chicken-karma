@@ -45,7 +45,7 @@ export class UIScene extends Phaser.Scene{
         this.bar = new Phaser.Geom.Rectangle(43, 10, (this.playerHealthMax / 2), 7);
         this.graphics.fillStyle(0xff3333);
         this.graphics.fillRectShape(this.bar);
-				this.t = this.add.text(10, 6.5, "Health : ", {
+				this.t = this.add.text(10, 6.5, "Health ", {
             font: "9px Arial",
             fill: "black",
             align: "center"
