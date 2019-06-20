@@ -28,6 +28,11 @@ export class WorldScene extends Phaser.Scene{
         this.talkedToKing = false;
         this.questUI;
         this.dialogueHappening = true;
+        this.kingDialogue = ["CLUCK... Po, I am king Roland.", "I have summoned you here to give you a quest.", "If you succeed then I shall redeem you of all your wrongdoings.", "There are dangerous CLUCK... slimes attacking the village and you are our last hope in survival!", "You must kill them! CLUCK... head east of the city."];
+        this.healerDialogue = ["Welcome traveller! CLUCK...", "I have healed your wounds.", "Now go and clear out the slimes.", "CLUCK..."];
+        this.witchDialogue = ["Welcome, I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret, but sssh!", "The chickens are mind controlling the villagers.", "The chickens fear the slimes.", "So before you slay all the slimes, be sure to kill the chickens."];
+        this.foolDialogue = ["CLUCK...The slimes are bad. CLUCK...", "No the cluck clucks are bad", "No, no, no, no CLUCK...the slimes are bad CLUCK.", "Where is the witch?!", "We need the witch!"];
+
 
         //graphics
         this.map = null;
@@ -193,16 +198,12 @@ export class WorldScene extends Phaser.Scene{
 
         // our player sprite created through the phycis system
 
-        this.player = this.add.existing(new Player(this, 700, 300));
+        this.player = this.add.existing(new Player(this, 778, 280));
 
-        this.NPC_King = this.add.existing(new NPC(this, 778, 240, this.player));
-        this.NPC_King.NPCType = "King";
-        this.NPC_healer = this.add.existing(new NPC(this, 1012, 540, this.player));
-        this.NPC_healer.NPCType = "Healer";
-        this.NPC_witch = this.add.existing(new NPC(this, 90, 68, this.player));
-        this.NPC_witch.NPCType = "Witch";
-        this.NPC_fool = this.add.existing(new NPC(this, 487, 443, this.player));
-        this.NPC_fool.NPCType = "Fool";
+        this.NPC_King = this.add.existing(new NPC(this, 778, 240, "King", this.player));
+        this.NPC_healer = this.add.existing(new NPC(this, 1012, 540, "Healer", this.player));
+        this.NPC_witch = this.add.existing(new NPC(this, 150, 68, "Witch", this.player));
+        this.NPC_fool = this.add.existing(new NPC(this, 487, 443, "Fool", this.player));
 
         let npcText = this.add.text(16, 16, 'tere', {
             fontSize: '32px',
@@ -310,20 +311,20 @@ export class WorldScene extends Phaser.Scene{
             enemy.canTalkAgain = false;
             if (enemy.NPCType === "King"){
                 this.talkedToKing = true;
-                dialogue = ["CLUCK... Po, I am king Roland.", "I have summoned you here to give you a quest.", "If you succeed then I shall redeem you of all your wrongdoings.", "There are dangerous CLUCK... slimes attacking the village and you are our last hope in survival!", "You must kill them! CLUCK... head east of the city."];
-                this.talkWait = 600;
+                dialogue = this.kingDialogue;
+                this.talkWait = 750;
             } else if (enemy.NPCType === "Healer"){
-                dialogue = ["Welcome traveller! CLUCK...", "I have healed your wounds.", "Now go and clear out the slimes.", "CLUCK..."];
+                dialogue = this.healerDialogue;
                 this.talkWait = 600;
             } else if (enemy.NPCType === "Witch"){
                 if (this.talkToWitchOnce){
                     this.karma += 2;
                     this.talkToWitchOnce = false;
                 }
-                dialogue = ["Welcome, I heard that you are on a quest to kill the slimes.", "Allow me to let you in on a secret, but sssh!", "The chickens are mind controlling the villagers.", "The chickens fear the slimes.", "So before you slay all the slimes, be sure to kill the chickens."];
+                dialogue = this.witchDialogue;
                 this.talkWait = 800;
             } else if (enemy.NPCType === "Fool"){
-                dialogue = ["CLUCK...The slimes are bad. CLUCK...", "No the cluck clucks are bad", "No, no, no, no CLUCK...the slimes are bad CLUCK.", "Where is the witch?!", "We need the witch!"];
+                dialogue = this.foolDialogue;
                 this.talkWait = 800;
             }
 
@@ -468,9 +469,12 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         if (!this.attackingAnimation){
             this.animations('left', 'right', 'up', 'down', false);
         } else {
-            this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
-            this.body.setSize(30, 30);
-            if (this.attackingAnimationCounter % 15 === 0){
+            //this.animations('chickenLeft', 'chickenLeft', 'chickenLeft', 'chickenLeft', true); // attack
+            this.anims.play('playerAtk', true);
+            this.body.setSize(32, 32);
+            this.body.offset.x = -3;
+            this.body.offset.y = 5;
+            if (this.attackingAnimationCounter % 50 === 0){
                 this.attackingAnimationCounter = 0;
                 this.attackingAnimation = false;
                 this.body.setSize(25, 25);
@@ -502,10 +506,10 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 }
 
 class NPC extends Phaser.Physics.Arcade.Sprite{
-    constructor (scene, x, y, player){
+    constructor (scene, x, y, type, player){
         super(scene, x, y);
 
-        this.setTexture('enemy');
+        this.setTexture(type);
         this.setPosition(x, y);
         scene.physics.world.enableBody(this, 0);
         this.body.collideWorldBounds = true;
@@ -522,7 +526,7 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
         this.canAttack = false; // if NPC is able to attack
         this.canTalk = true; // dialogue, so it won´t start talking multiple times
         this.canTalkAgain = true;
-        this.NPCType = "";
+        this.NPCType = type;
 
         this.collided = false; // collision with player check
 
@@ -571,6 +575,7 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.body.collideWorldBounds = true;
         this.body.immovable = false;
         this.keys = this.scene.input.keyboard.createCursorKeys();
+        this.scene = scene;
 
         this.damage = 5; // object damage
         this.speed = 10; // object movement speed

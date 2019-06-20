@@ -18,7 +18,6 @@ export class BootScene extends Phaser.Scene{
     }
 
     preload(){
-        //this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
 
         //title screen
         this.load.image('titlescreen', './assets/title_screen_500x320.png');
@@ -36,19 +35,19 @@ export class BootScene extends Phaser.Scene{
             frameHeight: 35,
             spacing: 1,
         });
-        this.load.spritesheet('healer', './assets/npcs/healer.png', {
+        this.load.spritesheet('Healer', './assets/npcs/healer.png', {
             frameWidth: 21,
             frameHeight: 35
         });
-				this.load.spritesheet('king', './assets/npcs/king.png', {
+				this.load.spritesheet('King', './assets/npcs/king.png', {
             frameWidth: 21,
             frameHeight: 35
         });
-				this.load.spritesheet('witch', './assets/npcs/witch.png', {
+				this.load.spritesheet('Witch', './assets/npcs/witch.png', {
             frameWidth: 21,
             frameHeight: 35
         });
-				this.load.spritesheet('fool', './assets/npcs/clown.png', {
+				this.load.spritesheet('Fool', './assets/npcs/clown.png', {
             frameWidth: 21,
             frameHeight: 35
         });
@@ -72,32 +71,6 @@ export class BootScene extends Phaser.Scene{
 
     create(){
         console.log("Boot loaded");
-
-        this.anims.create({
-            key: 'chickenRight',
-            frames: this.anims.generateFrameNumbers('chicken', {
-                frames: [4, 5, 6, 7]
-            }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'chickenUp',
-            frames: this.anims.generateFrameNumbers('chicken', {
-                frames: [8, 9, 10, 11]
-            }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'chickenDown',
-            frames: this.anims.generateFrameNumbers('chicken', {
-                frames: [0, 1, 2, 3]
-            }),
-            frameRate: 10,
-            repeat: -1
-        });
 
         let startpic = this.add.image(250, 160, 'titlescreen');
 
