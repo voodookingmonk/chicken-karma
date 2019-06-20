@@ -111,21 +111,5 @@ export class BootScene extends Phaser.Scene{
     }
 
     update(){
-        this.counter++;
-
-        if (this.counter % 25 === 0){
-            this.spawnChickens();
-        }
-    }
-
-    spawnChickens(){
-        this.matrix = this.physics.add.group({
-			key: 'chicken',
-			repeat: 15,
-            setXY: { x: 10, y: 0, stepX: 20, stepY: 0 },
-            velocityY: 50
-        });
-
-        this.matrix.playAnimation('chickenDown');
     }
 }
