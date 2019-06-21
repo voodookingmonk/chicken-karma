@@ -5,12 +5,13 @@ Tallinna Ülikooli digitehnoloogiate instituudi tarkvaraarenduse praktika raames
 
 Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on action rollimänguga (RPG - Role-Playing Game), kus mängija eesmärk on päästa küla koletiste käest ja koguda karmapunkte. Projekti ajendiks oli meeskonnaliikmete huvi arvutimängude loomise vastu ning soov proovida leida mängule uudne, kaasahaarav ning uuesti mängima kutsuv puänt. 
 
-Kasutatud tehnoloogiad: 
+### Kasutatud tehnoloogiad: 
 1. Phaser 3.17.0
-2. JQuery 3.4.1
-3. Apache 2.4.3 (Z-WAMP 2.2.1)
+2. ECMAScript 2015 (JS ES6)
+3. JQuery 3.4.1
+4. Apache 2.4.3 (Z-WAMP 2.2.1)
 
-Arendusvahendid:
+### Arendusvahendid:
 1. Hub 2.11.2
 2. Jira 8.2.2
 3. Visual Paradigm 15.2
@@ -19,16 +20,16 @@ Arendusvahendid:
 6. Tiled 1.2.4
 7. Visual Studio Code 1.35.1
 
-Paigaldusjuhised:
+### Paigaldusjuhised:
 
-Kui kloonida GitHub-i, siis on vöimalik kasutada GitHubi enda tasuta teenust, et käivitada mängu nende serveris.
+#### Kui kloonida GitHub-i, siis on vöimalik kasutada GitHubi enda tasuta teenust, et käivitada mängu nende serveris.
 1. Alusta projekti kloonimisega - 
 `$ git clone https://github.com/raimop/tap.git`
 2. Selleks on vaja minna enda kloonitud repositooriumisse, sealt valida "Settings", siis otsida üles "GitHub Pages" valida korrektne "source" (vaikimisi peaks olema master branch). 
 3. Seejärel uueneb ja tekib kiri: "Your site is ready to be published at https://kasutajanimi.github.io/repositooriumi_nimi." 
 4. Viimaks tuleb minna lingile: https://kasutajanimi.github.io/repositooriumi_nimi/rpg.html
 
-Vöimalik veel laadida failid üles iseenda veebiserverisse vöi kasutada lokaalset veebiserverit (näiteks Z-WAMP 2.2.1 -i alla laadides ja üles seades, mis sisaldab Apache 2.4.3 http serverit).
+#### Vöimalik veel laadida failid üles iseenda veebiserverisse vöi kasutada lokaalset veebiserverit (näiteks Z-WAMP 2.2.1 -i alla laadides ja üles seades, mis sisaldab Apache 2.4.3 http serverit).
 1. Selleks lae alla Z-WAMP aadressilt http://zwamp.sourceforge.net/
 2. Paigalda .zip fail soovitud kohta
 3. Sisene paigaldatud kausta ja seejärel vdrive/web/
@@ -37,7 +38,7 @@ Vöimalik veel laadida failid üles iseenda veebiserverisse vöi kasutada lokaal
 5. Käivitada peakaustas zwamp.exe fail
 6. Seejärel minna veebribrauseris aadressile: localhost/tap/rpg.html (vöi localhost:80/tap/rpg.html) 
 
-NB! Kui Z-WAMPi käivitamisega ei käivitu Apache veebiserver, siis on vöimalik, et port 80 on juba kasutuses teise veebiserveri poolt.
+#### NB! Kui Z-WAMPi käivitamisega ei käivitu Apache veebiserver, siis on vöimalik, et port 80 on juba kasutuses teise veebiserveri poolt.
 1. Selleks tuleb leida üles Z-WAMPi ikoon tegumiriba (*taskbar*) süsteemisalvest (*system tray/notification area*)
 2. Vajutada sellel paremat nuppu, sealt valida "Configuration"
 3. Seejärel valida "Apache Main"
@@ -49,15 +50,15 @@ Pärast seda veenduge, et pärast Z-WAMPile vajutamist süsteemisalvest oleks "S
 
 ![Pilt mängust](https://github.com/raimop/tap/blob/master/Capture1.PNG)
 
-Mäng aadressil: https://raimop.github.io/tap/rpg.html
+#### Mäng aadressil: https://raimop.github.io/tap/rpg.html
 
-Dokumentatsioon:
+#### Dokumentatsioon:
  https://docs.google.com/document/d/1pv5wdfglbeUKZaPArzpP4L2ZFNS06ZgfNsZDOravHyo/edit?usp=sharing
 
-Mängu kirjeldus:
+#### Mängu kirjeldus:
  https://docs.google.com/document/d/1uMksxKzDv4DrD2q9vAxyl20p2XT8bZKm1R1YyL1ddyk/edit?usp=sharing
  
-Meeskonna blogi:
+#### Meeskonna blogi:
 http://suvepraktika.cs.tlu.ee/2019/ryhm06/
  
 ![Litsents](https://github.com/raimop/tap/blob/master/LICENSE.md)
