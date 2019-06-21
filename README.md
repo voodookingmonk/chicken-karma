@@ -10,7 +10,8 @@ Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on actio
 2. ECMAScript 2015 (JS ES6)
 3. JQuery 3.4.1
 4. Apache 2.4.3 (Z-WAMP 2.2.1)
-5. HTML/CSS
+5. HTML5
+6. CSS3
 
 ### Arendusvahendid:
 1. Hub 2.11.2
