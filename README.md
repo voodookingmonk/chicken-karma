@@ -50,7 +50,7 @@ Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on actio
 Pärast seda veenduge, et pärast Z-WAMPile vajutamist süsteemisalvest oleks "Services" alt näha, et "Apache" ees on sinise tagataustaga linnuke.
 
 
-![Pilt mängust](https://github.com/raimop/tap/blob/master/Capture1.PNG)
+![Pilt mängust](https://github.com/raimop/tap/blob/master/Chicken Karma.PNG)
 
 #### Mäng aadressil: https://raimop.github.io/chicken-karma/index.html
 
