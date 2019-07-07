@@ -29,7 +29,7 @@ Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on actio
 `$ git clone https://github.com/raimop/tap.git`
 2. Selleks on vaja minna enda kloonitud repositooriumisse, sealt valida "Settings", siis otsida üles "GitHub Pages" valida korrektne "source" (vaikimisi peaks olema master branch). 
 3. Seejärel uueneb ja tekib kiri: "Your site is ready to be published at https://kasutajanimi.github.io/repositooriumi_nimi." 
-4. Viimaks tuleb minna lingile: https://kasutajanimi.github.io/repositooriumi_nimi/rpg.html
+4. Viimaks tuleb minna lingile: https://kasutajanimi.github.io/repositooriumi_nimi/index.html
 
 #### Vöimalik veel laadida failid üles iseenda veebiserverisse vöi kasutada lokaalset veebiserverit (näiteks Z-WAMP 2.2.1 -i alla laadides ja üles seades, mis sisaldab Apache 2.4.3 http serverit).
 1. Selleks lae alla Z-WAMP aadressilt http://zwamp.sourceforge.net/
@@ -38,7 +38,7 @@ Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on actio
 4. Sinna kausta kloonida 
 `$ git clone https://github.com/raimop/tap.git`
 5. Käivitada peakaustas zwamp.exe fail
-6. Seejärel minna veebribrauseris aadressile: localhost/tap/rpg.html (vöi localhost:80/tap/rpg.html) 
+6. Seejärel minna veebribrauseris aadressile: localhost/chicken-karma/index.html (vöi localhost:80/chicken-karma/index.html) 
 
 #### NB! Kui Z-WAMPi käivitamisega ei käivitu Apache veebiserver, siis on vöimalik, et port 80 on juba kasutuses teise veebiserveri poolt.
 1. Selleks tuleb leida üles Z-WAMPi ikoon tegumiriba (*taskbar*) süsteemisalvest (*system tray/notification area*)
@@ -52,7 +52,7 @@ Pärast seda veenduge, et pärast Z-WAMPile vajutamist süsteemisalvest oleks "S
 
 ![Pilt mängust](https://github.com/raimop/tap/blob/master/Capture1.PNG)
 
-#### Mäng aadressil: https://raimop.github.io/tap/rpg.html
+#### Mäng aadressil: https://raimop.github.io/chicken-karma/index.html
 
 #### Dokumentatsioon:
  https://docs.google.com/document/d/1pv5wdfglbeUKZaPArzpP4L2ZFNS06ZgfNsZDOravHyo/edit?usp=sharing
