@@ -2,6 +2,8 @@
 import { CST } from "../CST.js";
 import thisGame from "../main.js";
 import { UIScene } from "./UIScene.js";
+import { DialogBox as DialogBox } from "./UIScene.js";
+import { Pow as Pow } from "./UIScene.js";
 
 export class WorldScene extends Phaser.Scene{
 	constructor(){
@@ -50,7 +52,7 @@ export class WorldScene extends Phaser.Scene{
         this.enemiesKilled = 0; // enemies killed, gameover reaction
         this.karma = 0; // karma points for game purpose
         this.updateCounter = 0; // timing counter
-        this.talkToOneNPCAtATime = true; // so can´t talk to multiple NPCS at a time
+        this.canTalkToNPCAgain = true; // so can´t talk to multiple NPCS at a time
         this.talkWait = 1000;
         this.talkToWitchOnce = true;
         this.talkCounter = 0;
@@ -202,7 +204,7 @@ export class WorldScene extends Phaser.Scene{
     }
 
     create(){
-      	let uiScene = this.scene.get(CST.SCENES.UI);
+      	this.uiScene = this.scene.get(CST.SCENES.UI);
 
         // our player sprite created through the phycis system
 
@@ -265,34 +267,23 @@ export class WorldScene extends Phaser.Scene{
         this.keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
-        // quest UI addon
-
-        this.userInterfaceHelper(8, 30, 85, 50);
-        this.userInterfaceHelper(8, 90, 85, 40);
-
-        var style = { fontFamily: 'Arial', fill: 'black', fontSize: 10, wordWrap: true, wordWrap: { width: 78, useAdvancedWrap: true } };
-
-        this.questUITitle = this.add.text(10, 30, "Quest:", style).setScrollFactor(0);
-        this.questUI = this.add.text(10, 40, "Talk to the King for a quest.", style).setScrollFactor(0);
-        this.questUIHint = this.add.text(10, 90, "Hint: Healer is South-East in the village.", style).setScrollFactor(0);
-
-        this.questUITitle.fixedToCamera = true;
-        this.questUI.fixedToCamera = true;
-
         console.log("WorldScene loaded"); // end
         }
 
-    collide(player, enemy){
-        this.attack(player, enemy);
-        this.talk(player, enemy);
+    collide(player, target){
+        this.attack(player, target);
+
+        if (target.canTalk){
+            this.talk(player, target);
+        }
     }
 
-    attack(player, enemy){
-        if ((enemy.firstAttack || enemy.canAttack) && player.health > -1 ){
-            enemy.collided = true;
-            enemy.firstAttack = false;
-            enemy.canAttack = false;
-            player.health -= enemy.damage;
+    attack(player, target){
+        if ((target.firstAttack || target.canAttack) && player.health > -1 ){
+            target.collided = true;
+            target.firstAttack = false;
+            target.canAttack = false;
+            player.health -= target.damage;
 
             player.visible = false;
             player.turnToVisible = true;
@@ -301,48 +292,36 @@ export class WorldScene extends Phaser.Scene{
         if (Phaser.Input.Keyboard.JustDown(this.keySPACE)){
             player.attackingAnimationCounter = 0;
             player.attackingAnimation = true;
-            enemy.health -= 1;
-            let newAttack = new Pow(this, player, enemy);
+            target.health -= 1;
+            let newAttack = new Pow(this, player, target);
         }
     }
 
-    talk(player, enemy) {
+    talk(player, target) {
         let dialogue;
 
-        if (enemy.NPCType === "Healer"){
+        if (target.npcType === "Healer"){
             this.heal(player);
         }
 
-        if (this.talkToOneNPCAtATime && enemy.canTalk && enemy.canTalkAgain){ // && enemy.canTalkAgain
-            this.talkCounter = 0;
-            enemy.canTalk = false;
-            enemy.canTalkAgain = false;
-            if (enemy.NPCType === "King"){
+        if (this.canTalkToNPCAgain && target.canTalk){ // this.talkToOneNPCAtATime && enemy.canTalkAgain
+            this.canTalkToNPCAgain = false;
+            if (target.npcType === "King"){
                 this.talkedToKing = true;
                 dialogue = this.kingDialogue;
-                this.talkWait = 750;
-            } else if (enemy.NPCType === "Healer"){
+            } else if (target.npcType === "Healer"){
                 dialogue = this.healerDialogue;
-                this.talkWait = 600;
-            } else if (enemy.NPCType === "Witch"){
+            } else if (target.npcType === "Fool"){
+                dialogue = this.foolDialogue;
+            }else if (target.npcType === "Witch"){
                 if (this.talkToWitchOnce){
                     this.karma += 2;
                     this.talkToWitchOnce = false;
                 }
                 dialogue = this.witchDialogue;
-                this.talkWait = 800;
-            } else if (enemy.NPCType === "Fool"){
-                dialogue = this.foolDialogue;
-                this.talkWait = 800;
             }
 
-            this.talkToOneNPCAtATime = false;
-            let talk = new DialogBox(this, 5, 255, 60, dialogue, player, enemy); // scene, x, y, timing, dialogue array, player, enemy
-            enemy.number = 0;
-        }
-
-        if (this.talkCounter > this.talkWait){
-            this.talkToOneNPCAtATime = true;
+            let talk = new DialogBox(this.uiScene, 5, 255, 60, dialogue, player, target); // scene, x, y, timing, dialogue array, player, enemy
         }
     }
 
@@ -392,10 +371,6 @@ export class WorldScene extends Phaser.Scene{
             this.player.attackingAnimation = true;
         }
 
-        if (this.talkedToKing){
-            this.questUI.setText("Head east to kill slimes. " + this.enemiesKilled + "/" + this.enemyCount);
-        }
-
         if (this.updateCounter == 100){
             this.updateCounter = 0;
         }
@@ -427,6 +402,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.speed = 200;
         this.movement = true;
         this.attackingAnimation = false;
+        this.canMove = true;
 
         this.counter = 0;
         this.attackingAnimationCounter = 0;
@@ -442,17 +418,18 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
-        this.counter++;
-        this.attackingAnimationCounter++;
+        //this.counter++;
+        //this.attackingAnimationCounter++;
 
         if (this.turnToVisible){
             this.turnToVisible = false;
-            this.counter = 0;
+            this.gameScene.time.delayedCall(100, () => { this.visible = true; });
+            //this.counter = 0;
         }
 
-        if (this.counter == 5){
+        /*if (this.counter == 5){
             this.visible = true;
-        }
+        }*/
 
         this.gameScene.playerHealth = this.health;
 
@@ -460,34 +437,42 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
         //Player movement
         // Horizontal movement
-        if (this.keys.left.isDown) {
-            this.body.setVelocityX(-this.speed);
-        } else if (this.keys.right.isDown) {
-            this.body.setVelocityX(this.speed);
-        }
+        if (this.canMove){
 
-        // Vertical movement
-        if (this.keys.up.isDown) {
-            this.body.setVelocityY(-this.speed);
-        } else if (this.keys.down.isDown) {
-            this.body.setVelocityY(this.speed);
-        }
-
-        // Update the animation last and give left/right animations precedence over up/down animations
-        if (!this.attackingAnimation){
-            this.animations('left', 'right', 'up', 'down', false);
-        } else {
-            this.anims.play('playerAtk', true);
-            this.body.setSize(32, 32);
-            this.body.offset.x = -4;
-            this.body.offset.y = 4;
-            if (this.attackingAnimationCounter % 30 === 0){
-                this.attackingAnimationCounter = 0;
-                this.attackingAnimation = false;
-                this.body.setSize(25, 25);
-                this.body.offset.x = 0; // im
-                this.body.offset.y = 10;
+            if (this.keys.left.isDown) {
+                this.body.setVelocityX(-this.speed);
+            } else if (this.keys.right.isDown) {
+                this.body.setVelocityX(this.speed);
             }
+
+            // Vertical movement
+            if (this.keys.up.isDown) {
+                this.body.setVelocityY(-this.speed);
+            } else if (this.keys.down.isDown) {
+                this.body.setVelocityY(this.speed);
+            }
+        
+
+            // Update the animation last and give left/right animations precedence over up/down animations
+            if (!this.attackingAnimation){
+                this.animations('left', 'right', 'up', 'down', false);
+            } else {
+                this.anims.play('playerAtk', true);
+                this.body.setSize(32, 32);
+                this.body.offset.x = -4;
+                this.body.offset.y = 4;
+                this.gameScene.time.delayedCall(400, () => {
+                //if (this.attackingAnimationCounter % 30 === 0){
+                    //this.attackingAnimationCounter = 0;
+                    this.body.setSize(25, 25);
+                    this.body.offset.x = 0; // im
+                    this.body.offset.y = 10;
+                    this.attackingAnimation = false;
+                //}
+                });
+            }
+        } else {
+            this.anims.stop();
         }
     }
 
@@ -532,13 +517,11 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
         this.karma = -1; // object karma point influence
         this.health = 5; // object health
         this.canAttack = false; // if NPC is able to attack
-        this.canTalk = true; // dialogue, so it won´t start talking multiple times
+        this.canTalk = true; // checking if this object is able to talk
         this.canTalkAgain = true;
-        this.NPCType = type;
+        this.npcType = type;
 
         this.collided = false; // collision with player check
-
-        this.counter = 0;
     }
 
     create(){
@@ -546,13 +529,6 @@ class NPC extends Phaser.Physics.Arcade.Sprite{
     }
 
     preUpdate(time, delta){
-        super.preUpdate(time, delta);
-        this.counter += 1;
-
-        if (this.counter === 100){
-            this.counter = 0;
-        }
-
         this.body.setVelocity(0);
 
         this.checkAlive();
@@ -584,21 +560,25 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.body.immovable = false;
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.scene = scene;
+        this.gameScene = scene.scene.get(CST.SCENES.WORLD);
 
         this.damage = 5; // object damage
         this.speed = 10; // object movement speed
         this.health = 2; // object health
         this.karma = 2; // object karma point
-        this.NPCType = "Chicken";
+        this.npcType = "Chicken";
+        this.canTalk = false;
 
         this.direction = 0; // moving direction
         this.firstTime = true; // first time launch to start moving without timer
         this.firstAttack = true;
         this.canAttack = true;
+        this.timerBoolean = true;
 
         this.interval = Phaser.Math.RND.between(50, 100); // choosing when to switch direction (timer based)
         this.previousTimer = 0; // timers for events
         this.counter = 0; // counter for events
+        this.timer;
 
         this.collided = false; // used for following
         this.player = player; // used for following the player
@@ -754,7 +734,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
         this.karma = 2; // object karma point
         this.health = 2; // object health
         this.damage = 10; // object damage
-        this.NPCType = "Enemy";
+        this.npcType = "Enemy";
+        this.canTalk = false;
 
         this.collided = false; // used for following
 
@@ -877,139 +858,5 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
     makeNPCMove(x, y){
         this.body.setVelocityX(x);
         this.body.setVelocityY(y);
-    }
-}
-
-class DialogBox extends Phaser.GameObjects.Graphics{
-    constructor(scene, x, y, timing, texts, player, enemy){
-        super(scene);
-        scene.add.existing(this);
-        this.scene = scene;
-        this.player = player;
-        this.enemy = enemy;
-
-        this.x = x;
-        this.y = y;
-
-        this.texts = texts;
-        this.textsLength = this.texts.length;
-        this.drawBoolean = true;
-        this.drawWhiteBoxFirstTime = true;
-        this.firstTime = true;
-        this.timing;
-
-        this.currentText;
-
-        this.counter = 0;
-        this.number = 0;
-
-        this.rect;
-        this.text;
-
-        this.graphicsText;
-    }
-
-    preUpdate(){
-        this.counter++;
-
-        if (this.number < this.textsLength && (this.counter === 25 || this.firstTime)){
-            this.firstTime = false;
-            if (this.drawBoolean){
-                if(this.drawWhiteBoxFirstTime){
-                    this.drawWhiteBox();
-                    this.drawWhiteBoxFirstTime = false;
-                }
-                this.drawText(this.texts[this.number]);
-                this.drawBoolean = false;
-            }
-        }
-
-        if (this.number < this.textsLength && this.counter === 150){
-            this.number++;
-            this.destroyText();
-            this.drawBoolean = true;
-            this.counter = 0;
-        }
-
-    if (this.number == this.textsLength){
-        this.enemy.canTalk = true;
-        this.destroyWhiteBox();
-    }
-    }
-
-    drawWhiteBox(){
-        this.graphicsText = this.scene.add.graphics();
-        this.rect = new Phaser.Geom.Rectangle(this.x, this.y, 489, 61);
-        this.graphicsText.fillStyle(0xFFFFFF, 0.75);
-        this.graphicsText.fillRectShape(this.rect);
-        this.graphicsText.fixedToCamera = true;
-        this.graphicsText.setScrollFactor(0);
-    }
-
-    destroyWhiteBox(){
-        this.graphicsText.destroy();
-        this.enemy.canTalkAgain = true;
-    }
-
-    drawText(input){
-        this.currentText = this.scene.add.text(this.x+5, this.y+5, input, { font: 'bold 8pt Arial', fill: 'black', fontSize: 6, wordWrap: { width: 500} });
-        this.currentText.fixedToCamera = true;
-        this.currentText.setScrollFactor(0);
-    }
-
-    destroyText(){
-        this.currentText.destroy();
-    }
-}
-
-class Pow extends Phaser.GameObjects.Graphics{ // power of women
-    constructor(scene, player, enemy){
-        super(scene);
-        scene.add.existing(this);
-        this.scene = scene;
-        this.player = player;
-        this.enemy = enemy;
-
-        this.times = 0;
-        this.drawBoolean = true;
-        this.drawWhiteBoxFirstTime = true;
-
-        this.currentText;
-
-        this.counter = 0;
-        this.number = 0;
-
-        this.rect;
-        this.text;
-        this.box;
-
-        this.currentImage;
-    }
-
-    preUpdate(){
-        this.counter++;
-
-        if (this.number <= this.times && this.counter % 10 == 0){
-
-            if (this.drawBoolean){
-                this.drawText();
-                this.drawBoolean = false;
-            } else {
-                this.number++;
-                this.destroyText();
-                this.drawBoolean = true;
-            }
-        }
-
-        if (this.number == this.times){
-        }
-    }
-
-    drawText(){
-        this.currentImage = this.scene.add.image(this.enemy.x-10, this.enemy.y-20, 'pow');
-    }
-
-    destroyText(){
-        this.currentImage.destroy();
     }
 }
