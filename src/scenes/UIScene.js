@@ -176,7 +176,7 @@ export class UIScene extends Phaser.Scene{
 }
 
 export class DialogBox extends Phaser.GameObjects.Graphics{ // meant to be used in WorldScene
-    constructor(scene, x, y, timing, texts, player, enemy){
+    constructor(scene, x, y, texts, player, enemy){
         super(scene);
         scene.add.existing(this);
         this.scene = scene;

@@ -321,7 +321,7 @@ export class WorldScene extends Phaser.Scene{
                 dialogue = this.witchDialogue;
             }
 
-            let talk = new DialogBox(this.uiScene, 5, 255, 60, dialogue, player, target); // scene, x, y, timing, dialogue array, player, enemy
+            new DialogBox(this.uiScene, 5, 255, dialogue, player, target); // scene, x, y, timing, dialogue array, player, enemy
         }
     }
 
