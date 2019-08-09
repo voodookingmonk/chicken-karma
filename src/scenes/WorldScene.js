@@ -397,7 +397,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.attackingAnimation = false;
         this.canMove = true;
         this.timer;
-        this.attackingTimerCancellation = true;
+        this.canCreateTimer = true;
 
         this.toggleVisibility = false;
 
@@ -447,14 +447,14 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                 this.body.setSize(32, 32);
                 this.body.offset.x = -4;
                 this.body.offset.y = 4;
-                if (this.attackingTimerCancellation){
-                    this.attackingTimerCancellation = false;
+                if (this.canCreateTimer){
+                    this.canCreateTimer = false;
                     this.gameScene.time.delayedCall(800, () => {
                         this.body.setSize(25, 25);
                         this.body.offset.x = 0; // im
                         this.body.offset.y = 10;
                         this.attackingAnimation = false;
-                        this.attackingTimerCancellation = true;
+                        this.canCreateTimer = true;
                     });
                 }
             }
