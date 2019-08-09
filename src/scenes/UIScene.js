@@ -92,7 +92,7 @@ export class UIScene extends Phaser.Scene{
 
         // Hide/Show UI
         if (Phaser.Input.Keyboard.JustDown(this.keyC)){
-            (this.scene.isVisible() === true) ? this.scene.setVisible(false) : this.scene.setVisible(true);
+            this.scene.isVisible() === true ? this.scene.setVisible(false) : this.scene.setVisible(true); // ternary
         }
 
 
