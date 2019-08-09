@@ -51,11 +51,12 @@ export class WorldScene extends Phaser.Scene{
         this.aChickenIsKilled = false; // a chicken is killed
         this.enemiesKilled = 0; // enemies killed, gameover reaction
         this.karma = 0; // karma points for game purpose
-        this.updateCounter = 0; // timing counter
+        
+
         this.canTalkToNPCAgain = true; // so can´t talk to multiple NPCS at a time
         this.talkWait = 1000;
         this.talkToWitchOnce = true;
-        this.talkCounter = 0;
+        this.howOftenCanTargetsAttack = 1000; // ms
 
         this.checkHealth = 100;
 
@@ -284,15 +285,14 @@ export class WorldScene extends Phaser.Scene{
             target.firstAttack = false;
             target.canAttack = false;
             player.health -= target.damage;
+            player.toggleVisibility = true;
 
-            player.visible = false;
-            player.turnToVisible = true;
+            this.time.delayedCall(this.howOftenCanTargetsAttack, () => { target.canAttack = true; });  // delay in ms
         }
 
         if (Phaser.Input.Keyboard.JustDown(this.keySPACE)){
-            player.attackingAnimationCounter = 0;
             player.attackingAnimation = true;
-            target.health -= 1;
+            target.health -= player.damage;
             let newAttack = new Pow(this, player, target);
         }
     }
@@ -363,16 +363,8 @@ export class WorldScene extends Phaser.Scene{
 
     update(time, delta){
 
-        this.updateCounter++;
-        this.talkCounter++;
-
         if (Phaser.Input.Keyboard.JustDown(this.keySPACE)){
-            this.player.attackingAnimationCounter = 0;
-            this.player.attackingAnimation = true;
-        }
-
-        if (this.updateCounter == 100){
-            this.updateCounter = 0;
+            if (this.player.attackingAnimation === false) this.player.attackingAnimation = true;
         }
 
         if (this.talkedToKing && this.enemiesKilled === this.enemyCount){
@@ -400,14 +392,14 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.speed = 200;
+        this.damage = 1;
         this.movement = true;
         this.attackingAnimation = false;
         this.canMove = true;
+        this.timer;
+        this.attackingTimerCancellation = true;
 
-        this.counter = 0;
-        this.attackingAnimationCounter = 0;
-
-        this.turnToVisible = false;
+        this.toggleVisibility = false;
 
         this.keyE = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
     }
@@ -418,18 +410,12 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
-        //this.counter++;
-        //this.attackingAnimationCounter++;
 
-        if (this.turnToVisible){
-            this.turnToVisible = false;
+        if (this.toggleVisibility){
+            this.toggleVisibility = false;
+            this.visible = false;
             this.gameScene.time.delayedCall(100, () => { this.visible = true; });
-            //this.counter = 0;
         }
-
-        /*if (this.counter == 5){
-            this.visible = true;
-        }*/
 
         this.gameScene.playerHealth = this.health;
 
@@ -457,26 +443,27 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             if (!this.attackingAnimation){
                 this.animations('left', 'right', 'up', 'down', false);
             } else {
-                this.anims.play('playerAtk', true);
+                this.anims.play('playerAtk', true, 0, this);
                 this.body.setSize(32, 32);
                 this.body.offset.x = -4;
                 this.body.offset.y = 4;
-                this.gameScene.time.delayedCall(400, () => {
-                //if (this.attackingAnimationCounter % 30 === 0){
-                    //this.attackingAnimationCounter = 0;
-                    this.body.setSize(25, 25);
-                    this.body.offset.x = 0; // im
-                    this.body.offset.y = 10;
-                    this.attackingAnimation = false;
-                //}
-                });
+                if (this.attackingTimerCancellation){
+                    this.attackingTimerCancellation = false;
+                    this.gameScene.time.delayedCall(800, () => {
+                        this.body.setSize(25, 25);
+                        this.body.offset.x = 0; // im
+                        this.body.offset.y = 10;
+                        this.attackingAnimation = false;
+                        this.attackingTimerCancellation = true;
+                    });
+                }
             }
         } else {
             this.anims.stop();
         }
     }
 
-    animations(left, right, up, down, statement){
+    animations(left, right, up, down, condition){
 
         if (this.keys.left.isDown) {
             this.anims.play(left, true);
@@ -489,7 +476,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         } else if (this.keys.down.isDown) {
             this.anims.play(down, true);
         } else {
-            if (statement){
+            if (condition){
                 this.anims.play(left, true);
             } else {
                 this.anims.stop();
@@ -575,18 +562,12 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         this.canAttack = true;
         this.timerBoolean = true;
 
-        this.interval = Phaser.Math.RND.between(50, 100); // choosing when to switch direction (timer based)
-        this.previousTimer = 0; // timers for events
-        this.counter = 0; // counter for events
         this.timer;
+        this.canCreateTimer = true;
+        this.howOftenChangeDirection = Phaser.Math.RND.between(500, 3000); // ms
 
         this.collided = false; // used for following
         this.player = player; // used for following the player
-
-        this.minX = 500;
-        this.maxX = 700;
-        this.minY = 200;
-        this.maxY = 400;
     }
 
     create(){
@@ -595,16 +576,17 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
-        this.previousTimer += 1;
-        this.counter += 1;
-
-        if (this.counter == 100){
-            this.canAttack = true;
-            this.counter = 0;
-        }
 
         if (!this.collided){
-            this.randomRoaming();
+            if (this.canCreateTimer){
+                this.canCreateTimer = false;
+                this.timer = this.scene.time.addEvent({
+                    delay: 100, // ms
+                    callback: this.randomRoaming(),
+                    loop: true
+                });
+            }
+
         } else {
             this.follow(this.player);
 
@@ -635,82 +617,62 @@ class Chicken extends Phaser.Physics.Arcade.Sprite{
         }
     }
 
-    maxBounds(){
-        if (this.x > this.maxX){
-            this.anims.play('chickenRight', true);
-            this.flipX = true;
-            this.previousTimer = 0;
-            this.makeNPCMove(-this.speed, 0);
-        } else if (this.x < this.minX){
+    randomRoaming(){
+        if (typeof this.timer !== "undefined"){
+            this.timer.remove();
+        }
+
+        this.direction = Phaser.Math.RND.between(0, 8);
+
+        if (this.direction == 1){ // right
+            this.makeNPCMove(this.speed, 0);
+
             this.anims.play('chickenRight', true);
             this.flipX = false;
-            this.previousTimer = 0;
-            this.makeNPCMove(this.speed, 0);
-        }
-        if (this.y > this.maxY){
-            this.anims.play('chickenUp', true);
-            this.previousTimer = 0;
-            this.makeNPCMove(0, -this.speed);
-        } else if (this.y < this.minY){
-            this.anims.play('chickenDown', true);
-            this.previousTimer = 0;
+
+        } else if (this.direction == 2){ // left
+
+            this.makeNPCMove(-this.speed, 0);
+            this.anims.play('chickenRight', true);
+            this.flipX = true;
+
+        } else if (this.direction == 3){ // down
+
             this.makeNPCMove(0, this.speed);
+            this.anims.play('chickenDown', true);
+
+        } else if (this.direction == 4){ // up
+
+            this.makeNPCMove(0, -this.speed);
+            this.anims.play('chickenUp', true);
+
+        } else if (this.direction == 5){
+
+            this.makeNPCMove(this.speed, -this.speed);
+            this.anims.play('chickenRight', true);
+            this.flipX = false;
+
+        } else if (this.direction == 6){
+
+            this.makeNPCMove(this.speed, this.speed);
+            this.anims.play('chickenRight', true);
+            this.flipX = false;
+
+        } else if (this.direction == 7){
+
+            this.makeNPCMove(-this.speed, -this.speed);
+            this.anims.play('chickenLeft', true);
+            this.flipX = true;
+
+        } else if (this.direction == 8){
+
+            this.makeNPCMove(-this.speed, this.speed);
+            this.anims.play('chickenLeft', true);
+            this.flipX = true;
+
         }
-    }
 
-    randomRoaming(){
-        if (this.previousTimer == this.interval || this.firstTime){
-            this.firstTime = false;
-            this.direction = Phaser.Math.RND.between(0, 8);
-            if (this.direction == 1){ // right
-                this.makeNPCMove(this.speed, 0);
-
-                this.anims.play('chickenRight', true);
-                this.flipX = false;
-
-            } else if (this.direction == 2){ // left
-
-                this.makeNPCMove(-this.speed, 0);
-                this.anims.play('chickenRight', true);
-                this.flipX = true;
-
-            } else if (this.direction == 3){ // down
-
-                this.makeNPCMove(0, this.speed);
-                this.anims.play('chickenDown', true);
-
-            } else if (this.direction == 4){ // up
-
-                this.makeNPCMove(0, -this.speed);
-                this.anims.play('chickenUp', true);
-
-            } else if (this.direction == 5){
-
-                this.makeNPCMove(this.speed, -this.speed);
-                this.anims.play('chickenRight', true);
-                this.flipX = false;
-
-            } else if (this.direction == 6){
-
-                this.makeNPCMove(this.speed, this.speed);
-                this.anims.play('chickenRight', true);
-                this.flipX = false;
-
-            } else if (this.direction == 7){
-
-                this.makeNPCMove(-this.speed, -this.speed);
-                this.anims.play('chickenLeft', true);
-                this.flipX = true;
-
-            } else if (this.direction == 8){
-
-                this.makeNPCMove(-this.speed, this.speed);
-                this.anims.play('chickenLeft', true);
-                this.flipX = true;
-
-            }
-            this.previousTimer = 0;
-        }
+        this.scene.time.delayedCall(this.howOftenChangeDirection, () => { this.canCreateTimer = true; });
     }
 
     makeNPCMove(x, y){
@@ -743,10 +705,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
         this.canAttack = true;
         this.firstAttack = true;
 
-        this.interval = Phaser.Math.RND.between(50, 100); // random timed movement
         this.direction = 0; // random moving direction
-        this.previousTimer = 0; // counter
-        this.counter = 0;
+
+        this.timer;
+        this.canCreateTimer = true;
+        this.howOftenChangeDirection = Phaser.Math.RND.between(500, 3000);; // ms
 
 
     }
@@ -757,16 +720,16 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
-        this.previousTimer++;
-        this.counter++;
-
-        if (this.counter == 100){
-            this.canAttack = true;
-            this.counter = 0;
-        }
 
         if (!this.collided){
-            this.randomRoaming();
+            if (this.canCreateTimer){
+                this.canCreateTimer = false;
+                this.timer = this.scene.time.addEvent({
+                    delay: 100, // ms
+                    callback: this.randomRoaming(),
+                    loop: true
+                });
+            }
         } else {
             this.follow(this.player);
 
@@ -800,59 +763,56 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     randomRoaming(){
 
-        if (this.previousTimer == this.interval || this.firstTime){
-            this.firstTime = false;
-            this.direction = Phaser.Math.RND.between(0, 8);
-            if (this.direction == 1){ // right
-                this.makeNPCMove(this.speed, 0);
+        this.direction = Phaser.Math.RND.between(0, 8);
+        if (this.direction == 1){ // right
+            this.makeNPCMove(this.speed, 0);
 
-                this.anims.play('enemyRight', true);
-                this.flipX = false;
+            this.anims.play('enemyRight', true);
+            this.flipX = false;
 
-            } else if (this.direction == 2){ // left
+        } else if (this.direction == 2){ // left
 
-                this.makeNPCMove(-this.speed, 0);
-                this.anims.play('enemyLeft', true);
-                this.flipX = true;
+            this.makeNPCMove(-this.speed, 0);
+            this.anims.play('enemyLeft', true);
+            this.flipX = true;
 
-            } else if (this.direction == 3){ // down
+        } else if (this.direction == 3){ // down
 
-                this.makeNPCMove(0, this.speed);
-                this.anims.play('enemyDown', true);
+            this.makeNPCMove(0, this.speed);
+            this.anims.play('enemyDown', true);
 
-            } else if (this.direction == 4){ // up
+        } else if (this.direction == 4){ // up
 
-                this.makeNPCMove(0, -this.speed);
-                this.anims.play('enemyUp', true);
+            this.makeNPCMove(0, -this.speed);
+            this.anims.play('enemyUp', true);
 
-            } else if (this.direction == 5){
+        } else if (this.direction == 5){
 
-                this.makeNPCMove(this.speed, -this.speed);
-                this.anims.play('enemyRight', true);
-                this.flipX = false;
+            this.makeNPCMove(this.speed, -this.speed);
+            this.anims.play('enemyRight', true);
+            this.flipX = false;
 
-            } else if (this.direction == 6){
+        } else if (this.direction == 6){
 
-                this.makeNPCMove(this.speed, this.speed);
-                this.anims.play('enemyRight', true);
-                this.flipX = false;
+            this.makeNPCMove(this.speed, this.speed);
+            this.anims.play('enemyRight', true);
+            this.flipX = false;
 
-            } else if (this.direction == 7){
+        } else if (this.direction == 7){
 
-                this.makeNPCMove(-this.speed, -this.speed);
-                this.anims.play('enemyLeft', true);
-                this.flipX = true;
+            this.makeNPCMove(-this.speed, -this.speed);
+            this.anims.play('enemyLeft', true);
+            this.flipX = true;
 
-            } else if (this.direction == 8){
+        } else if (this.direction == 8){
 
-                this.makeNPCMove(-this.speed, this.speed);
-                this.anims.play('enemyLeft', true);
-                this.flipX = true;
+            this.makeNPCMove(-this.speed, this.speed);
+            this.anims.play('enemyLeft', true);
+            this.flipX = true;
 
-            }
-
-            this.previousTimer = 0;
         }
+
+        this.scene.time.delayedCall(this.howOftenChangeDirection, () => { this.canCreateTimer = true; });
     }
 
     makeNPCMove(x, y){
