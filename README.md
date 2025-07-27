@@ -1,6 +1,8 @@
-# Arvutimängu "Chicken Karma" demo
-## Raimo Pregel, Henri Tammo, Vahur Vogt, Merilin Võrk
+# Chicken Karma mäng / Chicken Karma game
 
+### Try: https://voodookingmonk.github.io/chicken-karma/
+
+<hr>
 Tallinna Ülikooli digitehnoloogiate instituudi tarkvaraarenduse praktika raames valmis 6. rühmal arvutimäng. 
 
 Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on action rollimänguga (RPG - Role-Playing Game), kus mängija eesmärk on päästa küla koletiste käest ja koguda karmapunkte. Projekti ajendiks oli meeskonnaliikmete huvi arvutimängude loomise vastu ning soov proovida leida mängule uudne, kaasahaarav ning uuesti mängima kutsuv puänt. 
@@ -26,7 +28,7 @@ Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on actio
 
 #### Kui kloonida GitHub-i, siis on vöimalik kasutada GitHubi enda tasuta teenust, et käivitada mängu nende serveris.
 1. Alusta projekti kloonimisega - 
-`$ git clone https://github.com/raimopew/chicken-karma.git`
+`$ git clone https://github.com/voodookingmonk/chicken-karma.git`
 2. Selleks on vaja minna enda kloonitud repositooriumisse, sealt valida "Settings", siis otsida üles "GitHub Pages" valida korrektne "source" (vaikimisi peaks olema master branch). 
 3. Seejärel uueneb ja tekib kiri: "Your site is ready to be published at https://kasutajanimi.github.io/repositooriumi_nimi." 
 4. Viimaks tuleb minna lingile: https://kasutajanimi.github.io/repositooriumi_nimi/index.html
@@ -36,7 +38,7 @@ Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on actio
 2. Paigalda .zip fail soovitud kohta
 3. Sisene paigaldatud kausta ja seejärel vdrive/web/
 4. Sinna kausta kloonida 
-`$ git clone https://github.com/raimopew/chicken-karma.git`
+`$ git clone https://github.com/voodookingmonk/chicken-karma.git`
 5. Käivitada peakaustas zwamp.exe fail
 6. Seejärel minna veebribrauseris aadressile: localhost/chicken-karma/index.html (vöi localhost:80/chicken-karma/index.html) 
 
@@ -50,9 +52,7 @@ Mäng on loodud Phaser raamistikuga ja kasutades JavaScript-i. Tegemist on actio
 Pärast seda veenduge, et pärast Z-WAMPile vajutamist süsteemisalvest oleks "Services" alt näha, et "Apache" ees on sinise tagataustaga linnuke.
 
 
-![Pilt mängust](https://github.com/raimopew/tap/blob/master/Chicken%20Karma.PNG)
-
-#### Mäng aadressil: https://raimopew.github.io/chicken-karma/index.html
+![Pilt mängust](https://github.com/voodookingmonk/tap/blob/master/Chicken%20Karma.PNG)
 
 #### Dokumentatsioon:
  https://docs.google.com/document/d/1pv5wdfglbeUKZaPArzpP4L2ZFNS06ZgfNsZDOravHyo/edit?usp=sharing
@@ -62,5 +62,7 @@ Pärast seda veenduge, et pärast Z-WAMPile vajutamist süsteemisalvest oleks "S
  
 #### Meeskonna blogi:
 http://suvepraktika.cs.tlu.ee/2019/ryhm06/
+
+## Raimo Pregel, Henri Tammo, Vahur Vogt, Merilin Võrk
  
-![Litsents](https://github.com/raimopew/chicken-karma/blob/master/LICENSE.md)
+![Litsents](https://github.com/voodookingmonk/chicken-karma/blob/master/LICENSE.md)
